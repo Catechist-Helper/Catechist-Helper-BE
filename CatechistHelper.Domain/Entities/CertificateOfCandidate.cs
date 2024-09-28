@@ -1,22 +1,21 @@
-﻿using CatechistHelper.Domain.Common;
-using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Domain.Entities
 {
     [Table("certificate_of_candidate")]
-    public class CertificateOfCandidate : BaseEntity
+    public class CertificateOfCandidate
     {
-        [Column("image")]
-        public string Image { get; set; } = null!;
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Column("candidate_id")]
-        [ForeignKey(nameof(Candidate))]
-        public Guid CandidateId { get; set; } 
-        public Candidate Candidate { get; set; } = null!;
+        [Column("image_url")]
+        public string ImageUrl { get; set; } = null!;
+
+        [Column("registration_id")]
+        [ForeignKey(nameof(Registration))]
+        public Guid RegistrationId { get; set; } 
+        public Registration Registration { get; set; } = null!;
     }
 }

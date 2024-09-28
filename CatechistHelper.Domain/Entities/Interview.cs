@@ -1,17 +1,16 @@
 ﻿using CatechistHelper.Domain.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Domain.Entities
 {
     [Table("interview")]
-    public class Interview : BaseEntity
-    { 
+    public class Interview
+    {
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Column("meeting_time")]
         public DateTime MeetingTime { get; set; }
 
@@ -22,9 +21,9 @@ namespace CatechistHelper.Domain.Entities
         [Column("is_passed")]
         public bool IsPassed { get; set; }
 
-        [Column("application_id")]
-        [ForeignKey(nameof(Application))]
-        public Guid ApplicationId { get; set; }
-        public Application Application { get; set; } = null!;
+        [Column("registration_id")]
+        [ForeignKey(nameof(Registration))]
+        public Guid RegistrationId { get; set; }
+        public Registration Registration { get; set; } = null!;
     }
 }

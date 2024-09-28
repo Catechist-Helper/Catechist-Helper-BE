@@ -24,7 +24,7 @@ namespace CatechistHelper.Infrastructure.Repositories
 
         #region Gett Async
 
-        public virtual async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        public virtual async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null!, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null!, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null!)
         {
             IQueryable<T> query = _dbSet;
             if (include != null) query = include(query);
@@ -99,10 +99,11 @@ namespace CatechistHelper.Infrastructure.Repositories
 
         #region Insert
 
-        public async Task InsertAsync(T entity)
+        public async Task<T> InsertAsync(T entity)
         {
-            if (entity == null) return;
+            if (entity == null) return null!;
             await _dbSet.AddAsync(entity);
+            return entity;
         }
 
         public async Task InsertRangeAsync(IEnumerable<T> entities)

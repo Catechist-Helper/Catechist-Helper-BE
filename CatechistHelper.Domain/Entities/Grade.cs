@@ -21,5 +21,14 @@ namespace CatechistHelper.Domain.Entities
 
         [InverseProperty(nameof(Grade))]
         public ICollection<Class> Classes { get; set; } = new List<Class>();
+
+        [Column("pastoral_year_id")]
+        [ForeignKey(nameof(PastoralYear))]
+        public Guid PastoralYearId { get; set; }
+        public PastoralYear PastoralYear { get; set; } = null!;
+
+        public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
+        public virtual ICollection<CatechistInGrade> CatechistInGrades { get; set; } = new List<CatechistInGrade>();
+
     }
 }

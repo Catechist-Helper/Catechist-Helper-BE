@@ -12,60 +12,10 @@ namespace CatechistHelper.Domain.Entities
         [Required]
         public string Email { get; set; } = null!;
 
-        [Column("hashed_password")]
+        [Column("hashed_password", TypeName = "varchar")]
         [StringLength(50)]
         [Required]
         public string HashedPassword { get; set; } = null!;
-
-        [Column("fullname")]
-        [StringLength(50)]
-        [Required]
-        public string FullName { get; set; } = null!;
-
-        [Column("gender")]
-        [StringLength(10)]
-        [Required]
-        public string Gender { get; set; } = null!;
-
-        [Column("date_of_birth")]
-        [Required]
-        public DateTime DateOfBirth { get; set; }
-
-        [Column("birth_place")]
-        [StringLength(20)]
-        [Required]
-        public string BirthPlace { get; set; } = null!;
-
-        [Column("father_name")]
-        [StringLength(50)]
-        [Required]
-        public string FatherName { get; set; } = null!;
-
-        [Column("father_phone")]
-        [StringLength(11)]
-        [Required]
-        public string FatherPhone { get; set; } = null!;
-
-        [Column("mother_name")]
-        [StringLength(50)]
-        [Required]
-        public string MotherName { get; set; } = null!;
-
-        [Column("mother_phone")]
-        [StringLength(11)]
-        [Required]
-        public string MotherPhone { get; set; } = null!;
-
-        [Column("image_url")]
-        public string ImageUrl { get; set; } = null!;
-
-        [Column("address")]
-        [StringLength(200)]
-        public string Address { get; set; } = null!;
-
-        [Column("phone")]
-        [StringLength(11)]
-        public string Phone { get; set; } = null!;
 
         [Column("role_id")]
         [ForeignKey(nameof(Role))]
@@ -75,9 +25,7 @@ namespace CatechistHelper.Domain.Entities
         [InverseProperty(nameof(Account))]
         public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
-        public virtual Candidate? Candidate { get; set; }
-
-        public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
+        public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
         public virtual ICollection<Recruiter> Recruiters { get; set; } = new List<Recruiter>();
 
         public virtual Catechist? Catechist { get; set; }

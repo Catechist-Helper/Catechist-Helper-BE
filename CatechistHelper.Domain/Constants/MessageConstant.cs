@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CatechistHelper.Domain.Entities;
 
 namespace CatechistHelper.Domain.Constants
 {
@@ -23,41 +19,131 @@ namespace CatechistHelper.Domain.Constants
 
         public static class Account
         {
-            #region User Field
-            private const string UserMessage = "người dùng";
-            private const string CenterMessage = "Trung tâm";
-            private const string UserName = "Tên đăng nhập";
-            private const string Password = "Mật khẩu";
-            private const string FullName = "Tên người dùng";
-            private const string Email = "email";
-            private const string Description = "Mô tả";
-            private const string UserStatus = "Trạng thái";
-            private const string Role = "Chức vụ";
+            #region Account Field
+            private const string AccountMessage = "Account";
+            private const string Email = "Email";
+            private const string Password = "Password";
+            private const string Role = "Role";
             #endregion
             public static class Require
             {
-                public const string UserNameRequired = UserName + RequiredSuffix;
-                public const string PasswordRequired = Password + RequiredSuffix;
-                public const string FullNameRequired = FullName + RequiredSuffix;
                 public const string EmailRequired = Email + RequiredSuffix;
-                public const string DescriptionRequired = Description + RequiredSuffix;
-                public const string StatusRequired = UserStatus + RequiredSuffix;
+                public const string PasswordRequired = Password + RequiredSuffix;
                 public const string RoleRequired = Role + RequiredSuffix;
             }
             public static class Success
             {
-                public static string CreateUser = String.Format(CreateSuccessTemplate, UserMessage);
-                public static string UpdateUser = String.Format(UpdateSuccessTemplate, UserMessage);
-                public static string DeleteUser = String.Format(DeleteSuccessTemplate, UserMessage);
+                public static string CreateAccount = String.Format(CreateSuccessTemplate, AccountMessage);
+                public static string UpdateAccount = String.Format(UpdateSuccessTemplate, AccountMessage);
+                public static string DeleteAccount = String.Format(DeleteSuccessTemplate, AccountMessage);
             }
             public static class Fail
             {
-                public static string CreateUser = String.Format(CreateFailTemplate, UserMessage);
-                public static string UpdateUser = String.Format(UpdateFailTemplate, UserMessage);
-                public static string DeleteUser = String.Format(DeleteFailTemplate, UserMessage);
-                public static string NotFoundCenter = String.Format(NotFoundTemplate, CenterMessage);
-                public static string NotFoundUser = String.Format(NotFoundTemplate, UserMessage);
-                public static string UserNameExisted = UserName + " đã tồn tại !!!";
+                public static string CreateAccount = String.Format(CreateFailTemplate, AccountMessage);
+                public static string UpdateAccount = String.Format(UpdateFailTemplate, AccountMessage);
+                public static string DeleteAccount = String.Format(DeleteFailTemplate, AccountMessage);
+                public static string NotFoundAccount = String.Format(NotFoundTemplate, AccountMessage);
+                public static string EmailExisted = Email + " đã tồn tại !!!";
+            }
+        }
+        public static class Registration
+        {
+            #region Registration Field
+            private const string RegistrationMessage = "Registration";
+            private const string FullName = "Full name";
+            private const string Gender = "Gender";
+            private const string Email = "Email";
+            private const string DateOfBirth = "Date of birth";
+            private const string Address = "Adress";
+            private const string Phone = "Phone";
+            private const string IsTeachingBefore = "Is teaching before";
+            private const string YearOfTeaching = "Year of teaching";
+            #endregion
+            public static class Require
+            {
+                public const string EmailRequired = Email + RequiredSuffix;
+                public const string GenderRequired = Gender + RequiredSuffix;
+                public const string FullNameRequired = FullName + RequiredSuffix;
+                public const string DateOfBirthRequired = DateOfBirth + RequiredSuffix;
+                public const string AddresseRequired = Address + RequiredSuffix;
+                public const string PhoneRequired = Phone + RequiredSuffix;
+                public const string IsTeachingBeforeeRequired = IsTeachingBefore + RequiredSuffix;
+                public const string YearOfTeachingRequired = YearOfTeaching + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateRegistration = String.Format(CreateSuccessTemplate, RegistrationMessage);
+                public static string UpdateRegistration = String.Format(UpdateSuccessTemplate, RegistrationMessage);
+                public static string DeleteRegistration = String.Format(UpdateSuccessTemplate, RegistrationMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateRegistration = String.Format(CreateFailTemplate, RegistrationMessage);
+                public static string UpdateRegistration = String.Format(UpdateFailTemplate, RegistrationMessage);
+                public static string DeleteRegistration = String.Format(DeleteFailTemplate, RegistrationMessage);
+                public static string NotFoundRegistration = String.Format(NotFoundTemplate, RegistrationMessage);
+            }
+        }
+        public static class Interview
+        {
+            #region Interview Field
+            private const string InterviewMessage = "Interview";
+            private const string RegistrationId = "Registration id";
+            private const string MeetingTime = "Meeting time";
+            #endregion
+            public static class Require
+            {
+                public const string MeetingTimeRequired = MeetingTime + RequiredSuffix;
+                public const string RegistrationIdRequired = RegistrationId + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateInterview = String.Format(CreateSuccessTemplate, InterviewMessage);
+                public static string UpdateInterview = String.Format(UpdateSuccessTemplate, InterviewMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateInterview = String.Format(CreateFailTemplate, InterviewMessage);
+                public static string UpdateInterview = String.Format(UpdateFailTemplate, InterviewMessage);
+                public static string DeleteInterview = String.Format(DeleteFailTemplate, InterviewMessage);
+            }
+        }
+        public static class InterviewProcess
+        {
+            #region InterviewProcess Field
+            private const string InterviewProcessMessage = "Interview process";
+            #endregion
+            public static class Require
+            {
+            }
+            public static class Success
+            {
+                public static string CreateInterviewProcess = String.Format(CreateSuccessTemplate, InterviewProcessMessage);
+                public static string UpdateInterviewProcess = String.Format(UpdateSuccessTemplate, InterviewProcessMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateInterviewProcess = String.Format(CreateFailTemplate, InterviewProcessMessage);
+                public static string UpdateInterviewProcess = String.Format(UpdateFailTemplate, InterviewProcessMessage);
+                public static string DeleteInterviewProcess = String.Format(DeleteFailTemplate, InterviewProcessMessage);
+            }
+        }
+        public static class CertificateOfCandidate
+        {
+            #region CertificateOfCandidate Field
+            private const string CertificateOfCandidateMessage = "Interview process";
+            #endregion
+            public static class Require
+            {
+            }
+            public static class Success
+            {
+                public static string CreateCertificateOfCandidate = String.Format(CreateSuccessTemplate, CertificateOfCandidateMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateCertificateOfCandidate = String.Format(CreateFailTemplate, CertificateOfCandidateMessage);
+                public static string DeleteCertificateOfCandidate = String.Format(DeleteFailTemplate, CertificateOfCandidateMessage);
             }
         }
     }
