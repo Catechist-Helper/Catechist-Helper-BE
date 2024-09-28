@@ -4,7 +4,6 @@
     {
         static ApiEndPointConstant()
         {
-
         }
 
         public const string RootEndPoint = "/api";
@@ -25,6 +24,47 @@
             public const string AccountsEndPoint = ApiEndpoint + "/accounts";
             // <summary>"api/v1/accounts/{id}"</summary>
             public const string AccountEndPoint = AccountsEndPoint + ByIdRoute;
+        }
+        public static class Candidate
+        {
+            /// <summary>"api/v1/candidates"</summary>
+            public const string CandidatesEndPoint = ApiEndpoint + "/candidates";
+            // <summary>"api/v1/candidates/{id}"</summary>
+            public const string CandidateEndPoint = CandidatesEndPoint + ByIdRoute;
+            // <summary>"api/v1/candidates/{id}/certificates"</summary>
+            public const string CertificatesOfCandidateEndPoint = CandidateEndPoint + "/certificates";
+        }
+        public static class CertificateOfCandidate
+        {
+            /// <summary>"api/v1/candidates"</summary>
+            public const string CertificatesOfCandidateEndPoint = ApiEndpoint + "/certificates-of-candidate";
+            // <summary>"api/v1/candidates/{id}"</summary>
+            public const string CertificateOfCandidateEndPoint = CertificatesOfCandidateEndPoint + ByIdRoute;
+        }
+        public static class Registration
+        {
+            /// <summary>"api/v1/registrations"</summary>
+            public const string RegistrationsEndPoint = ApiEndpoint + "/registrations";
+            // <summary>"api/v1/registrations/{id}"</summary>
+            public const string RegistrationEndPoint = RegistrationsEndPoint + ByIdRoute;
+            // <summary>"api/v1/registrations/{id}/interviews"</summary>
+            public const string InterviewsOfRegistrationEndPoint = RegistrationEndPoint + "/interviews";
+            // <summary>"api/v1/registrations/{id}/interview-processes"</summary>
+            public const string InterviewProcessesOfRegistrationEndPoint = RegistrationEndPoint + "/interview-processes";
+        }
+        public static class Interview
+        {
+            /// <summary>"api/v1/interviews"</summary>
+            public const string InterviewsEndPoint = ApiEndpoint + "/interviews";
+            // <summary>"api/v1/interviews/{id}"</summary>
+            public const string InterviewEndPoint = InterviewsEndPoint + ByIdRoute;
+        }
+        public static class InterviewProcess
+        {
+            /// <summary>"api/v1/interview-processes"</summary>
+            public const string InterviewProcessesEndPoint = ApiEndpoint + "/interview-processes";
+            // <summary>"api/v1/interview-processes/{id}"</summary>
+            public const string InterviewProcessEndPoint = InterviewProcessesEndPoint + ByIdRoute;
         }
         public static class Catechist
         {

@@ -1,13 +1,15 @@
-﻿using CatechistHelper.Domain.Common;
-using CatechistHelper.Domain.Enums;
+﻿using CatechistHelper.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
 {
     [Table("process")]
-    public class Process : BaseEntity
+    public class Process
     {
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Column("name")]
         [StringLength(50)]
         public string Name { get; set; } = null!;

@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
@@ -9,21 +10,63 @@ namespace CatechistHelper.Domain.Entities
         [Column("code")]
         public string Code { get; set; } = null!;
 
+        [Column("fullname")]
+        [StringLength(50)]
+        [Required]
+        public string FullName { get; set; } = null!;
+
+        [Column("gender")]
+        [StringLength(10)]
+        [Required]
+        public string Gender { get; set; } = null!;
+
+        [Column("date_of_birth")]
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Column("birth_place")]
+        [StringLength(20)]
+        public string? BirthPlace { get; set; }
+
+        [Column("father_name")]
+        [StringLength(50)]
+        public string? FatherName { get; set; }
+
+        [Column("father_phone")]
+        [StringLength(11)]
+        public string? FatherPhone { get; set; }
+
+        [Column("mother_name")]
+        [StringLength(50)]
+        public string? MotherName { get; set; }
+
+        [Column("mother_phone")]
+        [StringLength(11)]
+        public string? MotherPhone { get; set; }
+
+        [Column("image_url")]
+        public string? ImageUrl { get; set; }
+
+        [Column("address")]
+        [StringLength(200)]
+        public string? Address { get; set; }
+
+        [Column("phone")]
+        [StringLength(11)]
+        public string? Phone { get; set; }
+
         [Column("qualification")]
-        public string Qualification { get; set; } = null!;
+        public string? Qualification { get; set; }
 
         [Column("is_teaching")]
-        public bool IsTeaching { get; set; }
+        public bool IsTeaching { get; set; } = true;
 
         [Column("note")]
-        public string Note { get; set; } = null!;
+        public string? Note { get; set; }
 
         [Column("account_id")] 
         public Guid AccountId { get; set; }
         public Account Account { get; set; } = null!;
-
-        [InverseProperty(nameof(Catechist))]
-        public virtual ICollection<TrainingList> TrainingLists { get; set; } = new List<TrainingList>();
 
         [Column("christian_name_id")]
         [ForeignKey(nameof(ChristianName))]
@@ -43,5 +86,11 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
         public virtual ICollection<CatechistInSlot> CatechistInSlots { get; set; } = new List<CatechistInSlot>();
+
+        public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
+        public virtual ICollection<CatechistInGrade> CatechistInGrades { get; set; } = new List<CatechistInGrade>();
+
+        public virtual ICollection<TrainingList> TrainingLists { get; set; } = new List<TrainingList>();
+        public virtual ICollection<CatechistInTraining> CatechistInTrainings { get; set; } = new List<CatechistInTraining>();
     }
 }

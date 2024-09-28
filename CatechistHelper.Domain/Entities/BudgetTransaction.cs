@@ -1,16 +1,14 @@
-﻿using CatechistHelper.Domain.Common;
-using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Domain.Entities
 {
     [Table("budget_transaction")]
-    public class BudgetTransaction : BaseEntity
+    public class BudgetTransaction
     {
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Column("from_budget")]
         public double FromBudget { get; set; }
 

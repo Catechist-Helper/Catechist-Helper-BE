@@ -29,5 +29,10 @@ namespace CatechistHelper.Domain.Entities
         [ForeignKey(nameof(Account))]
         public Guid AccountId { get; set; }
         public virtual Account Account { get; set; } = null!;
+
+        [Column("post_category_id")]
+        [ForeignKey(nameof(PostCategory))]
+        public Guid PostCategoryId { get; set; }
+        public virtual PostCategory PostCategory { get; set; } = null!;
     }
 }

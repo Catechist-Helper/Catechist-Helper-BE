@@ -6,8 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CatechistHelper.Domain.Entities
 {
     [Table("interview_process")]
-    public class InterviewProcess : BaseEntity
+    public class InterviewProcess
     {
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Column("name")]
         [StringLength(20)]
         public string Name { get; set; } = null!;
@@ -16,9 +20,9 @@ namespace CatechistHelper.Domain.Entities
         [EnumDataType(typeof(InterviewProcessStatus))]
         public InterviewProcessStatus InterviewProcessStatus { get; set; }
 
-        [Column("application_id")]
-        [ForeignKey(nameof(Application))]
-        public Guid ApplicationId { get; set; }
-        public virtual Application Application { get; set; } = null!;
+        [Column("registration_id")]
+        [ForeignKey(nameof(Registration))]
+        public Guid RegistrationId { get; set; }
+        public virtual Registration Registration { get; set; } = null!;
     }
 }

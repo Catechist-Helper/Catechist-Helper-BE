@@ -26,9 +26,7 @@ namespace CatechistHelper.Domain.Entities
         [EnumDataType(typeof(TrainingListStatus))]
         public TrainingListStatus TrainingListStatus { get; set; }
 
-        [Column("catechist_id")]
-        [ForeignKey(nameof(Catechist))]
-        public Guid CatechistId { get; set; }
-        public Catechist Catechist { get; set; } = null!;
+        public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
+        public virtual ICollection<CatechistInTraining> CatechistInTrainings { get; set; } = new List<CatechistInTraining>();
     }
 }

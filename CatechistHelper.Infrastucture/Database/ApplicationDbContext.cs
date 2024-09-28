@@ -18,8 +18,7 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Candidate> Candidates { get; set; }
-        public DbSet<CatechistHelper.Domain.Entities.Application> Applications { get; set; }
+        public DbSet<Registration> Applications { get; set; }
         public DbSet<Interview> Interviews { get; set; }
         public DbSet<InterviewProcess> InterviewProcesses { get; set; }
         public DbSet<CertificateOfCandidate> CertificateOfCandidates { get; set; }
@@ -39,6 +38,8 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<BudgetTransaction> BudgetTransactions { get; set; }
         public DbSet<Process> Processs { get; set; }
         public DbSet<ParticipantInEvent> ParticipantInEvents { get; set; }
+        public DbSet<PostCategory> PostCategories { get; set; }
+        public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -66,37 +67,27 @@ namespace CatechistHelper.Infrastructure.Database
                 .WithMany(a => a.Posts)
                 .HasForeignKey(p => p.AccountId);
 
-            modelBuilder.Entity<Account>()
-               .HasOne(a => a.Candidate)
-               .WithOne(c => c.Account)
-               .HasForeignKey<Candidate>(c => c.AccountId);
-
-            modelBuilder.Entity<CatechistHelper.Domain.Entities.Application>()
-                .HasOne(a => a.Candidate)
-                .WithMany(c => c.Applications)
-                .HasForeignKey(a => a.CandidateId);
-
             modelBuilder.Entity<Interview>()
-                .HasOne(i => i.Application)
+                .HasOne(i => i.Registration)
                 .WithMany(a => a.Interviews)
-                .HasForeignKey(i => i.ApplicationId);
+                .HasForeignKey(i => i.RegistrationId);
 
             modelBuilder.Entity<InterviewProcess>()
-                .HasOne(i => i.Application)
+                .HasOne(i => i.Registration)
                 .WithMany(a => a.InterviewProcesses)
-                .HasForeignKey(i => i.ApplicationId);
+                .HasForeignKey(i => i.RegistrationId);
 
-            modelBuilder.Entity<CatechistHelper.Domain.Entities.Application>()
+            modelBuilder.Entity<Registration>()
                 .HasMany(a => a.Accounts)
-                .WithMany(a => a.Applications)
+                .WithMany(a => a.Registrations)
                 .UsingEntity<Recruiter>(
                     l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.ClientSetNull),
-                    r => r.HasOne<CatechistHelper.Domain.Entities.Application>(e => e.Application).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.ClientSetNull));
+                    r => r.HasOne<Registration>(e => e.Registration).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.ClientSetNull));
 
             modelBuilder.Entity<CertificateOfCandidate>()
-                .HasOne(c => c.Candidate)
+                .HasOne(c => c.Registration)
                 .WithMany(c => c.CertificateOfCandidates)
-                .HasForeignKey(c => c.CandidateId);
+                .HasForeignKey(c => c.RegistrationId);
 
             modelBuilder.Entity<Account>()
                .HasOne(a => a.Catechist)
@@ -104,9 +95,11 @@ namespace CatechistHelper.Infrastructure.Database
                .HasForeignKey<Catechist>(c => c.AccountId);
 
             modelBuilder.Entity<TrainingList>()
-               .HasOne(t => t.Catechist)
+               .HasMany(t => t.Catechists)
                .WithMany(c => c.TrainingLists)
-               .HasForeignKey(t => t.CatechistId);
+               .UsingEntity<CatechistInTraining>(
+                    l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CatechistInTrainings),
+                    r => r.HasOne<TrainingList>(e => e.TrainingList).WithMany(e => e.CatechistInTrainings));
 
             modelBuilder.Entity<Catechist>()
                .HasOne(c => c.ChristianName)
@@ -145,7 +138,8 @@ namespace CatechistHelper.Infrastructure.Database
             modelBuilder.Entity<Class>()
                .HasOne(c => c.PastoralYear)
                .WithMany(p => p.Classes)
-               .HasForeignKey(c => c.PastoralYearId);
+               .HasForeignKey(c => c.PastoralYearId)
+               .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Class>()
                .HasMany(c => c.Catechists)
@@ -209,6 +203,23 @@ namespace CatechistHelper.Infrastructure.Database
                  .UsingEntity<MemberOfProcess>(
                      l => l.HasOne<Account>(e => e.Account).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.ClientSetNull),
                      r => r.HasOne<Process>(e => e.Process).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.ClientSetNull));
+
+            modelBuilder.Entity<Grade>()
+                .HasOne(g => g.PastoralYear)
+                .WithMany(p => p.Grades)
+                .HasForeignKey(g => g.PastoralYearId);
+
+            modelBuilder.Entity<Grade>()
+                 .HasMany(g => g.Catechists)
+                 .WithMany(c => c.Grades)
+                 .UsingEntity<CatechistInGrade>(
+                     l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.ClientSetNull),
+                     r => r.HasOne<Grade>(e => e.Grade).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.ClientSetNull));
+
+            modelBuilder.Entity<Post>()
+               .HasOne(p => p.PostCategory)
+               .WithMany(p => p.Posts)
+               .HasForeignKey(p => p.PostCategoryId);
             #endregion
         }
     }
