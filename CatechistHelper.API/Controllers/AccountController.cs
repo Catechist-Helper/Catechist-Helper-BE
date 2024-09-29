@@ -4,6 +4,8 @@ using CatechistHelper.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.Authentication;
+using CatechistHelper.Domain.Dtos.Requests.Authentication;
 
 namespace CatechistHelper.API.Controllers
 {
@@ -55,6 +57,16 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             Result<bool> result = await _accountService.Delete(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+
+        [HttpPost(ApiEndPointConstant.Authentication.LoginEndPoint)]
+        [ProducesResponseType(typeof(Result<LoginResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            Result<LoginResponse> result = await _accountService.LoginAsync(request);
             return StatusCode((int)result.StatusCode, result);
         }
     }

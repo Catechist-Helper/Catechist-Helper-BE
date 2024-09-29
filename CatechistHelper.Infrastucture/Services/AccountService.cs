@@ -13,6 +13,9 @@ using Microsoft.Extensions.Logging;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.Authentication;
+using CatechistHelper.Infrastructure.Utils;
+using CatechistHelper.Domain.Dtos.Requests.Authentication;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -77,7 +80,7 @@ namespace CatechistHelper.Infrastructure.Services
                     throw new Exception(MessageConstant.Account.Fail.EmailExisted);
                 }
 
-                Account account = request.Adapt<Account>();         
+                Account account = request.Adapt<Account>();
                 account.HashedPassword = request.Password;
 
                 Account result = await _unitOfWork.GetRepository<Account>().InsertAsync(account);
@@ -137,6 +140,49 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return Fail<bool>(ex.Message);
             }
+        }
+
+        public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
+        {
+
+            try
+            {
+                var account = await ValidateLoginRequest(request.Email, request.Password);
+
+                var response = new LoginResponse()
+                {
+                    Email = account.Email,
+                    Token = JwtUtil.GenerateJwtToken(account),
+                    Role = account.Role.RoleName,
+                };
+
+                return Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Fail<LoginResponse>(ex.Message);
+            }
+        }
+
+
+        public async Task<Account> ValidateLoginRequest(string email, string password)
+        {
+            var account = await GetAccountByEmailAsync(email);
+
+            ArgumentNullException.ThrowIfNull(account);
+
+            if (!PasswordUtil.VerifyPassword(password, account.HashedPassword))
+            {
+                throw new Exception(MessageConstant.Login.Fail.PasswordIncorrect);
+            }
+
+            return account;
+        }
+
+        private async Task<Account> GetAccountByEmailAsync(string email)
+        {
+            return await _unitOfWork.GetRepository<Account>()
+                .SingleOrDefaultAsync(predicate: a => a.Email.Equals(email));
         }
     }
 }

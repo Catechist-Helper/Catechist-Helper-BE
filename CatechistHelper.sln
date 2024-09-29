@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatechistHelper.Domain", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatechistHelper.Application", "CatechistHelper.Application\CatechistHelper.Application.csproj", "{E4E21429-358F-448E-873C-DA4B8F653D9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatechistHelper.Infrastructure", "CatechistHelper.Infrastucture\CatechistHelper.Infrastructure.csproj", "{ADD9BCA6-BF69-4107-9977-BD00C5C0B43C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatechistHelper.Infrastructure", "CatechistHelper.Infrastucture\CatechistHelper.Infrastructure.csproj", "{ADD9BCA6-BF69-4107-9977-BD00C5C0B43C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatechistHelper.Testing", "CatechistHelper.Testing\CatechistHelper.Testing.csproj", "{4DDDE0A3-D013-46D4-9F74-E1B78B7244C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{ADD9BCA6-BF69-4107-9977-BD00C5C0B43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD9BCA6-BF69-4107-9977-BD00C5C0B43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD9BCA6-BF69-4107-9977-BD00C5C0B43C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DDDE0A3-D013-46D4-9F74-E1B78B7244C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DDDE0A3-D013-46D4-9F74-E1B78B7244C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DDDE0A3-D013-46D4-9F74-E1B78B7244C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DDDE0A3-D013-46D4-9F74-E1B78B7244C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
