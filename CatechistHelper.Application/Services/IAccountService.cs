@@ -3,6 +3,8 @@ using CatechistHelper.Domain.Entities;
 using System.Linq.Expressions;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.Authentication;
+using CatechistHelper.Domain.Dtos.Requests.Authentication;
 
 namespace CatechistHelper.Application.Services
 {
@@ -13,5 +15,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetAccountResponse>> Create(CreateAccountRequest request);
         Task<Result<bool>> Update(Guid id, UpdateAccountRequest request);
         Task<Result<bool>> Delete(Guid id);
+        Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
     }
 }

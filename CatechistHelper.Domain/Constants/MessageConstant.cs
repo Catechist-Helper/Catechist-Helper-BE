@@ -84,6 +84,13 @@ namespace CatechistHelper.Domain.Constants
                 public static string NotFoundRegistration = String.Format(NotFoundTemplate, RegistrationMessage);
             }
         }
+        public static class Login
+        {
+            public static class Fail
+            {
+                public static string PasswordIncorrect = "Password Incorrect";
+            }
+        }
         public static class Interview
         {
             #region Interview Field
