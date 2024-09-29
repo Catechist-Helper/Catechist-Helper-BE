@@ -1,4 +1,4 @@
-﻿using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
@@ -81,7 +81,7 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 Account account = request.Adapt<Account>();
-                account.HashedPassword = request.Password;
+                account.HashedPassword = PasswordUtil.HashPassword(request.Password);
 
                 Account result = await _unitOfWork.GetRepository<Account>().InsertAsync(account);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -104,8 +104,7 @@ namespace CatechistHelper.Infrastructure.Services
                 Account account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id));
 
-                // hash password later
-                account.HashedPassword = request.Password;
+                account.HashedPassword = PasswordUtil.HashPassword(request.Password);
 
                 _unitOfWork.GetRepository<Account>().UpdateAsync(account);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -182,7 +181,7 @@ namespace CatechistHelper.Infrastructure.Services
         private async Task<Account> GetAccountByEmailAsync(string email)
         {
             return await _unitOfWork.GetRepository<Account>()
-                .SingleOrDefaultAsync(predicate: a => a.Email.Equals(email));
+                .SingleOrDefaultAsync(predicate: a => a.Email.Equals(email), include: query => query.Include(a => a.Role));
         }
     }
 }
