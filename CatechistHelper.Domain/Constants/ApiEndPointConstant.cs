@@ -71,5 +71,11 @@
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
         }
+
+        public static class PastoralYear
+        {
+            public const string PastoralYearsEndpoint = ApiEndpoint + "/pastoral-years";
+            public const string PastoralYearEndpoint = PastoralYearsEndpoint + ByIdRoute;
+        }
     }
 }

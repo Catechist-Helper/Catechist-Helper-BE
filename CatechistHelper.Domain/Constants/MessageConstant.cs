@@ -1,6 +1,4 @@
-﻿using CatechistHelper.Domain.Entities;
-
-namespace CatechistHelper.Domain.Constants
+﻿namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
     {
@@ -151,6 +149,32 @@ namespace CatechistHelper.Domain.Constants
             {
                 public static string CreateCertificateOfCandidate = String.Format(CreateFailTemplate, CertificateOfCandidateMessage);
                 public static string DeleteCertificateOfCandidate = String.Format(DeleteFailTemplate, CertificateOfCandidateMessage);
+            }
+        }
+        public static class PastoralYear
+        {
+            #region PastoralYear Field
+            private const string PastoralYearMessage = "PastoralYear";
+            private const string Status = "Status";
+            private const string Name = "Name of PastoralYear";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+                public const string StatusRequired = Status + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreatePastoralYear = String.Format(CreateSuccessTemplate, PastoralYearMessage);
+                public static string UpdatePastoralYear = String.Format(UpdateSuccessTemplate, PastoralYearMessage);
+                public static string DeletePastoralYear = String.Format(UpdateSuccessTemplate, PastoralYearMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreatePastoralYear = String.Format(CreateFailTemplate, PastoralYearMessage);
+                public static string UpdatePastoralYear = String.Format(UpdateFailTemplate, PastoralYearMessage);
+                public static string DeletePastoralYear = String.Format(DeleteFailTemplate, PastoralYearMessage);
             }
         }
     }
