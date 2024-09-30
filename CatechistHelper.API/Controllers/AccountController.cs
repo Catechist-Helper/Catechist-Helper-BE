@@ -1,11 +1,11 @@
-﻿using CatechistHelper.Domain.Common;
+﻿using CatechistHelper.Application.Services;
+using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
-using CatechistHelper.Application.Services;
-using Microsoft.AspNetCore.Mvc;
 using CatechistHelper.Domain.Dtos.Requests.Account;
+using CatechistHelper.Domain.Dtos.Requests.Authentication;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
-using CatechistHelper.Domain.Dtos.Requests.Authentication;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
 {
