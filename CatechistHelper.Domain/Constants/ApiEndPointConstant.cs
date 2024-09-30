@@ -71,11 +71,19 @@
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
         }
-
         public static class PastoralYear
         {
+            /// <summary>"api/v1/pastoral-years"</summary>
             public const string PastoralYearsEndpoint = ApiEndpoint + "/pastoral-years";
+            /// <summary>"api/v1/pastoral-years/{id}"</summary>
             public const string PastoralYearEndpoint = PastoralYearsEndpoint + ByIdRoute;
+        }
+        public static class ChristianName
+        {
+            /// <summary>"api/v1/christian-names"</summary>
+            public const string ChristianNamesEndpoint = ApiEndpoint + "/christian-names";
+            /// <summary>"api/v1/christian-names/{id}"</summary>
+            public const string ChristianNameEndpoint = ChristianNamesEndpoint + ByIdRoute;
         }
     }
 }

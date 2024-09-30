@@ -11,7 +11,6 @@
         private const string DeleteFailTemplate = "Xóa {0} thất bại @.@";
         private const string NotFoundTemplate = "{0} không có trong hệ thống";
         private const string InvalidRoleTemplate = "{0} không phải là {1} !!!";
-
         private const string RequiredSuffix = " không được bỏ trống !!!";
         #endregion
 
@@ -175,6 +174,30 @@
                 public static string CreatePastoralYear = String.Format(CreateFailTemplate, PastoralYearMessage);
                 public static string UpdatePastoralYear = String.Format(UpdateFailTemplate, PastoralYearMessage);
                 public static string DeletePastoralYear = String.Format(DeleteFailTemplate, PastoralYearMessage);
+            }
+        }
+        public static class ChristianName
+        {
+            #region ChristianName Field
+            private const string ChristianNameMessage = "Christian name";
+            private const string Name = "Name";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateChristianName = String.Format(CreateSuccessTemplate, ChristianNameMessage);
+                public static string UpdateChristianName = String.Format(UpdateSuccessTemplate, ChristianNameMessage);
+                public static string DeleteChristianName = String.Format(UpdateSuccessTemplate, ChristianNameMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreateChristianName = String.Format(CreateFailTemplate, ChristianNameMessage);
+                public static string UpdateChristianName = String.Format(UpdateFailTemplate, ChristianNameMessage);
+                public static string DeleteChristianName = String.Format(DeleteFailTemplate, ChristianNameMessage);
             }
         }
     }
