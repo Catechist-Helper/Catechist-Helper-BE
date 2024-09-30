@@ -1,6 +1,4 @@
-﻿using CatechistHelper.Domain.Constants;
-using CatechistHelper.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Registration
 {

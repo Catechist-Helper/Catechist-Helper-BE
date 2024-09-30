@@ -26,8 +26,6 @@ namespace CatechistHelper.Infrastructure.Utils
                     client.Credentials = credential;
                     client.Send(msg);
                 }
-
-
             }
             catch (Exception e)
             {

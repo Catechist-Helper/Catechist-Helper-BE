@@ -24,6 +24,8 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Registration registraion = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
+                    predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
 
                 InterviewProcess interviewProcess = request.Adapt<InterviewProcess>();
 

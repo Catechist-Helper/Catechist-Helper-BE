@@ -72,6 +72,9 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Role role = await _unitOfWork.GetRepository<Role>().SingleOrDefaultAsync(
+                    predicate: r => r.Id.Equals(request.RoleId)) ?? throw new Exception(MessageConstant.Role.Fail.NotFoundRole); ;
+
                 Account accountFromDb = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                     predicate: a => a.Email.Equals(request.Email));
 
@@ -162,7 +165,6 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<LoginResponse>(ex.Message);
             }
         }
-
 
         public async Task<Account> ValidateLoginRequest(string email, string password)
         {

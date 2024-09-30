@@ -6,13 +6,14 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
     public class CreateAccountRequest
     {
         [Required(ErrorMessage = MessageConstant.Account.Require.EmailRequired)]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        [EmailAddress(ErrorMessage = "Không đúng định dạng email!")]
+        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự")]
+        public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = MessageConstant.Account.Require.PasswordRequired)]
-        public string Password { get; set; } = string.Empty;
+        [StringLength(50, ErrorMessage = "Tối thiểu {2} đến {1} kí tự", MinimumLength = 6)]
+        public string Password { get; set; } = null!;
 
-        [Required(ErrorMessage = MessageConstant.Account.Require.RoleRequired)]
         public Guid RoleId { get; set; }
     }
 }
