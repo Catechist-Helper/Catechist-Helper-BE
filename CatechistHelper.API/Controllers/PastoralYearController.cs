@@ -2,6 +2,7 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
+using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,14 @@ namespace CatechistHelper.API.Controllers
         public PastoralYearController(ILogger<PastoralYearController> logger, IPastoralYearService pastoralYearService) : base(logger)
         {
             _pastoralYearService = pastoralYearService;
+        }
+
+        [HttpGet(ApiEndPointConstant.PastoralYear.PastoralYearsEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetPastoralYearResponse> result = await _pastoralYearService.GetPagination(x => false, page, size);
+            return StatusCode((int)result.StatusCode, result);
         }
 
         [HttpGet(ApiEndPointConstant.PastoralYear.PastoralYearEndpoint)]

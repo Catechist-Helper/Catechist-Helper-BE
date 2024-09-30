@@ -200,5 +200,33 @@
                 public static string DeleteChristianName = String.Format(DeleteFailTemplate, ChristianNameMessage);
             }
         }
+
+        public static class PostCategory
+        {
+            #region PostCategory Field
+            private const string PostCategoryMessage = "PostCategory";
+            private const string Name = "PostCategory name";
+            private const string Description = "Description";
+
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+                public const string DescriptionRequired = Description + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreatePostCategory = String.Format(CreateSuccessTemplate, PostCategoryMessage);
+                public static string UpdatePostCategory = String.Format(UpdateSuccessTemplate, PostCategoryMessage);
+                public static string DeletePostCategory = String.Format(UpdateSuccessTemplate, PostCategoryMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreatePostCategory = String.Format(CreateFailTemplate, PostCategoryMessage);
+                public static string UpdatePostCategory = String.Format(UpdateFailTemplate, PostCategoryMessage);
+                public static string DeletePostCategory = String.Format(DeleteFailTemplate, PostCategoryMessage);
+            }
+        }
     }
 }
