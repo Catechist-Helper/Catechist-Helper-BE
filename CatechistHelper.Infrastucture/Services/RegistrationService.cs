@@ -15,8 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
-using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
-using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -35,7 +33,8 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id),
                     include: a => a.Include(a => a.CertificateOfCandidates)
                                    .Include(a => a.Interviews)
-                                   .Include(a => a.InterviewProcesses));
+                                   .Include(a => a.InterviewProcesses)
+                                   .Include(a => a.Accounts));
 
                 return Success(application.Adapt<GetRegistrationResponse>());
             }
@@ -57,7 +56,8 @@ namespace CatechistHelper.Infrastructure.Services
                             orderBy: a => a.OrderByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
                                            .Include(a => a.Interviews)
-                                           .Include(a => a.InterviewProcesses),
+                                           .Include(a => a.InterviewProcesses)
+                                           .Include(a => a.Accounts),
                             page: page,
                             size: size
                         );
@@ -114,11 +114,11 @@ namespace CatechistHelper.Infrastructure.Services
 
                 registration.Status = request.Status;
 
-                var listRecruiterOfRegistration = await _unitOfWork.GetRepository<Recruiter>().GetListAsync(predicate: r => r.RegistrationId == registration.Id);
-                if (listRecruiterOfRegistration.Any()) _unitOfWork.GetRepository<Recruiter>().DeleteRangeAsync(listRecruiterOfRegistration);
-
-                if (request.Accounts != null)
+                if (request.Accounts != null && request.Accounts.Count != 0)
                 {
+                    var listRecruiterOfRegistration = await _unitOfWork.GetRepository<Recruiter>().GetListAsync(predicate: r => r.RegistrationId == registration.Id);
+                    if (listRecruiterOfRegistration.Any()) _unitOfWork.GetRepository<Recruiter>().DeleteRangeAsync(listRecruiterOfRegistration);
+
                     foreach (Guid accountId in request.Accounts)
                     {
                         Account account = await _unitOfWork.GetRepository<Account>()

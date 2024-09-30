@@ -1,4 +1,6 @@
-﻿namespace CatechistHelper.Domain.Constants
+﻿using System.Numerics;
+
+namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
     {
@@ -20,13 +22,11 @@
             private const string AccountMessage = "Account";
             private const string Email = "Email";
             private const string Password = "Password";
-            private const string Role = "Role";
             #endregion
             public static class Require
             {
                 public const string EmailRequired = Email + RequiredSuffix;
                 public const string PasswordRequired = Password + RequiredSuffix;
-                public const string RoleRequired = Role + RequiredSuffix;
             }
             public static class Success
             {
@@ -50,22 +50,16 @@
             private const string FullName = "Full name";
             private const string Gender = "Gender";
             private const string Email = "Email";
-            private const string DateOfBirth = "Date of birth";
             private const string Address = "Adress";
             private const string Phone = "Phone";
-            private const string IsTeachingBefore = "Is teaching before";
-            private const string YearOfTeaching = "Year of teaching";
             #endregion
             public static class Require
             {
                 public const string EmailRequired = Email + RequiredSuffix;
                 public const string GenderRequired = Gender + RequiredSuffix;
                 public const string FullNameRequired = FullName + RequiredSuffix;
-                public const string DateOfBirthRequired = DateOfBirth + RequiredSuffix;
                 public const string AddresseRequired = Address + RequiredSuffix;
                 public const string PhoneRequired = Phone + RequiredSuffix;
-                public const string IsTeachingBeforeeRequired = IsTeachingBefore + RequiredSuffix;
-                public const string YearOfTeachingRequired = YearOfTeaching + RequiredSuffix;
             }
             public static class Success
             {
@@ -92,13 +86,9 @@
         {
             #region Interview Field
             private const string InterviewMessage = "Interview";
-            private const string RegistrationId = "Registration id";
-            private const string MeetingTime = "Meeting time";
             #endregion
             public static class Require
             {
-                public const string MeetingTimeRequired = MeetingTime + RequiredSuffix;
-                public const string RegistrationIdRequired = RegistrationId + RequiredSuffix;
             }
             public static class Success
             {
@@ -116,9 +106,11 @@
         {
             #region InterviewProcess Field
             private const string InterviewProcessMessage = "Interview process";
+            private const string Name = "Name";
             #endregion
             public static class Require
             {
+                public const string NameRequired = Name + RequiredSuffix;
             }
             public static class Success
             {
@@ -200,7 +192,6 @@
                 public static string DeleteChristianName = String.Format(DeleteFailTemplate, ChristianNameMessage);
             }
         }
-
         public static class PostCategory
         {
             #region PostCategory Field
@@ -226,6 +217,22 @@
                 public static string CreatePostCategory = String.Format(CreateFailTemplate, PostCategoryMessage);
                 public static string UpdatePostCategory = String.Format(UpdateFailTemplate, PostCategoryMessage);
                 public static string DeletePostCategory = String.Format(DeleteFailTemplate, PostCategoryMessage);
+            }
+        }
+        public static class Role
+        {
+            #region Role Field
+            private const string RoleMessage = "Role";
+            #endregion
+            public static class Require
+            {
+            }
+            public static class Success
+            {
+            }
+            public static class Fail
+            {
+                public static string NotFoundRole = String.Format(NotFoundTemplate, RoleMessage);
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CatechistHelper.Domain.Dtos.Requests.Interview
+﻿namespace CatechistHelper.Domain.Dtos.Requests.Interview
 {
     public class UpdateInterviewRequest
     {

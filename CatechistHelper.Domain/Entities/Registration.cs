@@ -33,7 +33,7 @@ namespace CatechistHelper.Domain.Entities
         public string Email { get; set; } = null!;
 
         [Column("phone")]
-        [StringLength(11)]
+        [StringLength(10)]
         [Required]
         public string Phone { get; set; } = null!;
 
