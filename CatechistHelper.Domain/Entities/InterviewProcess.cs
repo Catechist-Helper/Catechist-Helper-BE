@@ -1,5 +1,4 @@
-﻿using CatechistHelper.Domain.Common;
-using CatechistHelper.Domain.Enums;
+﻿using CatechistHelper.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
