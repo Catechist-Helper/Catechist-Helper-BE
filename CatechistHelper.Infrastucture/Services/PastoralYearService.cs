@@ -5,11 +5,13 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -75,6 +77,29 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return BadRequest<GetPastoralYearResponse>(ex.Message);
             }
+        }
+
+        public async Task<PagingResult<GetPastoralYearResponse>> GetPagination(Expression<Func<PastoralYear, bool>>? predicate, int page, int size)
+        {
+            try
+            {
+
+                IPaginate<PastoralYear> pastoralYears =
+                    await _unitOfWork.GetRepository<PastoralYear>()
+                    .GetPagingListAsync(
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        pastoralYears.Adapt<IPaginate<GetPastoralYearResponse>>(),
+                        page,
+                        size,
+                        pastoralYears.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
 
         public async Task<Result<bool>> Update(Guid id, UpdatePastoralYearRequest request)

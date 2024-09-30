@@ -85,5 +85,12 @@
             /// <summary>"api/v1/christian-names/{id}"</summary>
             public const string ChristianNameEndpoint = ChristianNamesEndpoint + ByIdRoute;
         }
+        public static class PostCategory
+        {
+            /// <summary>"api/v1/post-categorys"</summary>
+            public const string PostCategorysEndpoint = ApiEndpoint + "/post-categories";
+            /// <summary>"api/v1/post-categorys/{id}"</summary>
+            public const string PostCategoryEndpoint = PostCategorysEndpoint + ByIdRoute;
+        }
     }
 }
