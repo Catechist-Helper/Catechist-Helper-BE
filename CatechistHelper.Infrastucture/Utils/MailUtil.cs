@@ -10,22 +10,22 @@ namespace CatechistHelper.Infrastructure.Utils
         {
             try
             {
-                MailMessage msg = new MailMessage(AppConfig.MailSetting.EmailSender, to, subject, body);
-                msg.IsBodyHtml = true;
-
-                using (var client = new SmtpClient(AppConfig.MailSetting.HostEmail, AppConfig.MailSetting.PortEmail))
+                MailMessage msg = new(AppConfig.MailSetting.EmailSender, to, subject, body)
                 {
-                    client.EnableSsl = true;
-                    if (!string.IsNullOrEmpty(attachFile))
-                    {
-                        Attachment attachment = new Attachment(attachFile);
-                        msg.Attachments.Add(attachment);
-                    }
-                    NetworkCredential credential = new NetworkCredential(AppConfig.MailSetting.EmailSender, AppConfig.MailSetting.PasswordSender);
-                    client.UseDefaultCredentials = false;
-                    client.Credentials = credential;
-                    client.Send(msg);
+                    IsBodyHtml = true
+                };
+
+                using var client = new SmtpClient(AppConfig.MailSetting.HostEmail, AppConfig.MailSetting.PortEmail);
+                client.EnableSsl = true;
+                if (!string.IsNullOrEmpty(attachFile))
+                {
+                    Attachment attachment = new(attachFile);
+                    msg.Attachments.Add(attachment);
                 }
+                NetworkCredential credential = new(AppConfig.MailSetting.EmailSender, AppConfig.MailSetting.PasswordSender);
+                client.UseDefaultCredentials = false;
+                client.Credentials = credential;
+                client.Send(msg);
             }
             catch (Exception e)
             {
