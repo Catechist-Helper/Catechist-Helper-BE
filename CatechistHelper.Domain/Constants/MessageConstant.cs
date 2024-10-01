@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace CatechistHelper.Domain.Constants
+﻿namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
     {
@@ -217,6 +215,40 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreatePostCategory = String.Format(CreateFailTemplate, PostCategoryMessage);
                 public static string UpdatePostCategory = String.Format(UpdateFailTemplate, PostCategoryMessage);
                 public static string DeletePostCategory = String.Format(DeleteFailTemplate, PostCategoryMessage);
+                public static string NotFoundPostCategory = String.Format(NotFoundTemplate, PostCategoryMessage);
+
+            }
+        }
+        public static class Post
+        {
+            #region Post Field
+            private const string PostMessage = "Post";
+            private const string Title = "Title";
+            private const string Content = "Content";
+            private const string Module = "Module";
+            private const string PostCategory = "PostCategory";
+
+            #endregion
+            public static class Require
+            {
+                public const string TitleRequired = Title + RequiredSuffix;
+                public const string ContentRequired = Content + RequiredSuffix;
+                public const string ModuleRequired = Module + RequiredSuffix;
+                public const string PostCategoryRequired = PostCategory + RequiredSuffix;
+
+            }
+            public static class Success
+            {
+                public static string CreatePost = String.Format(CreateSuccessTemplate, PostMessage);
+                public static string UpdatePost = String.Format(UpdateSuccessTemplate, PostMessage);
+                public static string DeletePost = String.Format(UpdateSuccessTemplate, PostMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreatePost = String.Format(CreateFailTemplate, PostMessage);
+                public static string UpdatePost = String.Format(UpdateFailTemplate, PostMessage);
+                public static string DeletePost = String.Format(DeleteFailTemplate, PostMessage);
             }
         }
         public static class Role
