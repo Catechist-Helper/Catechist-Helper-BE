@@ -815,9 +815,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
 
-                    b.Property<bool>("IsPublic")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_public");
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("module");
 
                     b.Property<Guid>("PostCategoryId")
                         .HasColumnType("uniqueidentifier")
@@ -984,8 +985,8 @@ namespace CatechistHelper.Infrastructure.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
                         .HasColumnName("phone");
 
                     b.Property<byte>("Status")

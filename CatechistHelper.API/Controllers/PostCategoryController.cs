@@ -16,7 +16,7 @@ namespace CatechistHelper.API.Controllers
             _postCategoryService = postCategoryService;
         }
 
-        [HttpGet(ApiEndPointConstant.PostCategory.PostCategorysEndpoint)]
+        [HttpGet(ApiEndPointConstant.PostCategory.PostCategoriesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetPostCategoryResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
         {
@@ -33,7 +33,7 @@ namespace CatechistHelper.API.Controllers
         }
 
 
-        [HttpPost(ApiEndPointConstant.PostCategory.PostCategorysEndpoint)]
+        [HttpPost(ApiEndPointConstant.PostCategory.PostCategoriesEndpoint)]
         [ProducesResponseType(typeof(Result<GetPostCategoryResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreatePostCategoryRequest request)

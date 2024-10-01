@@ -1,11 +1,6 @@
 ﻿using CatechistHelper.Domain.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Domain.Entities
 {
@@ -21,9 +16,9 @@ namespace CatechistHelper.Domain.Entities
         [Required]
         public string Content { get; set; } = null!;
 
-        [Column("is_public")]
+        [Column("module")]
         [Required]
-        public bool IsPublic { get; set; }
+        public string Module { get; set; } = null!;
 
         [Column("account_id")]
         [ForeignKey(nameof(Account))]

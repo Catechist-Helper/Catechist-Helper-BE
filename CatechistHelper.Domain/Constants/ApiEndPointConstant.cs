@@ -87,10 +87,18 @@
         }
         public static class PostCategory
         {
-            /// <summary>"api/v1/post-categorys"</summary>
-            public const string PostCategorysEndpoint = ApiEndpoint + "/post-categories";
-            /// <summary>"api/v1/post-categorys/{id}"</summary>
-            public const string PostCategoryEndpoint = PostCategorysEndpoint + ByIdRoute;
+            /// <summary>"api/v1/post-categories"</summary>
+            public const string PostCategoriesEndpoint = ApiEndpoint + "/post-categories";
+            /// <summary>"api/v1/post-categories/{id}"</summary>
+            public const string PostCategoryEndpoint = PostCategoriesEndpoint + ByIdRoute;
+        }
+
+        public static class Post
+        {
+            /// <summary>"api/v1/posts"</summary>
+            public const string PostsEndpoint = ApiEndpoint + "/posts";
+            /// <summary>"api/v1/posts/{id}"</summary>
+            public const string PostEndpoint = PostsEndpoint + ByIdRoute;
         }
     }
 }
