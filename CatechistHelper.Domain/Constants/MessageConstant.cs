@@ -295,5 +295,28 @@
                 public static string NotFoundMajor = String.Format(NotFoundTemplate, MajorMessage);
             }
         }
+        public static class Catechist
+        {
+            #region Account Field
+            private const string CatechistMessage = "Catechist";
+            private const string Email = "Email";
+            private const string Password = "Password";
+            #endregion
+            public static class Success
+            {
+                public static string CreateCatechist = String.Format(CreateSuccessTemplate, CatechistMessage);
+                public static string UpdateCatechist = String.Format(UpdateSuccessTemplate, CatechistMessage);
+                public static string DeleteCatechist = String.Format(DeleteSuccessTemplate, CatechistMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateCatechist = String.Format(CreateFailTemplate, CatechistMessage);
+                public static string UpdateCatechist = String.Format(UpdateFailTemplate, CatechistMessage);
+                public static string DeleteCatechist = String.Format(DeleteFailTemplate, CatechistMessage);
+                public static string NotFoundCatechist = String.Format(NotFoundTemplate, CatechistMessage);
+                public static string EmailExisted = Email + " đã tồn tại !!!";
+
+            }
+        }
     }
 }
