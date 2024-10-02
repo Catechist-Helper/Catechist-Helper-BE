@@ -17,7 +17,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("status")]
         [EnumDataType(typeof(InterviewProcessStatus))]
-        public InterviewProcessStatus InterviewProcessStatus { get; set; }
+        public InterviewProcessStatus Status { get; set; }
 
         [Column("registration_id")]
         [ForeignKey(nameof(Registration))]

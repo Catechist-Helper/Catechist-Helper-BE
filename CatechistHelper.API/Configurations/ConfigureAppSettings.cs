@@ -6,7 +6,6 @@ namespace CatechistHelper.API.Configurations
     {
         public static void SettingsBinding(this IConfiguration configuration)
         {
-
             AppConfig.ConnectionString = new ConnectionString();
             AppConfig.JwtSetting = new JwtSetting();
             AppConfig.MailSetting = new MailSetting();

@@ -3,7 +3,6 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.ChristianName;
-using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.ChristianName;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
@@ -16,7 +15,7 @@ using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {
-    internal class ChristianNameService : BaseService<ChristianNameService>, IChristianNameService
+    public class ChristianNameService : BaseService<ChristianNameService>, IChristianNameService
     {
         public ChristianNameService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<ChristianNameService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
@@ -42,17 +41,17 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
 
-                IPaginate<ChristianName> christianName =
+                IPaginate<ChristianName> christianNames =
                     await _unitOfWork.GetRepository<ChristianName>()
                     .GetPagingListAsync(
                             page: page,
                             size: size
                         );
                 return SuccessWithPaging(
-                        christianName.Adapt<IPaginate<GetChristianNameResponse>>(),
+                        christianNames.Adapt<IPaginate<GetChristianNameResponse>>(),
                         page,
                         size,
-                        christianName.Total);
+                        christianNames.Total);
             }
             catch (Exception ex)
             {
@@ -84,12 +83,12 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                ChristianName account = await _unitOfWork.GetRepository<ChristianName>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                ChristianName christianName = await _unitOfWork.GetRepository<ChristianName>().SingleOrDefaultAsync(
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.ChristianName.Fail.NotFoundChristianName);
 
-                request.Adapt(account);
+                request.Adapt(christianName);
 
-                _unitOfWork.GetRepository<ChristianName>().UpdateAsync(account);
+                _unitOfWork.GetRepository<ChristianName>().UpdateAsync(christianName);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
@@ -108,7 +107,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 ChristianName christianName = await _unitOfWork.GetRepository<ChristianName>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.ChristianName.Fail.NotFoundChristianName);
                 _unitOfWork.GetRepository<ChristianName>().DeleteAsync(christianName);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
