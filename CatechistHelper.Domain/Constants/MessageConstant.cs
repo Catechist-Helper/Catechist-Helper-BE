@@ -318,5 +318,32 @@
 
             }
         }
+
+        public static class Room
+        {
+            #region Room Field
+            private const string RoomMessage = "Room";
+            private const string Name = "Name";
+
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+
+            }
+            public static class Success
+            {
+                public static string CreateRoom = String.Format(CreateSuccessTemplate, RoomMessage);
+                public static string UpdateRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
+                public static string DeleteRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
+                public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
+                public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
+            }
+        }
     }
 }
