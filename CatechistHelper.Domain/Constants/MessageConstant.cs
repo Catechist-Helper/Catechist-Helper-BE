@@ -98,6 +98,7 @@
                 public static string CreateInterview = String.Format(CreateFailTemplate, InterviewMessage);
                 public static string UpdateInterview = String.Format(UpdateFailTemplate, InterviewMessage);
                 public static string DeleteInterview = String.Format(DeleteFailTemplate, InterviewMessage);
+                public static string NotFoundInterview = String.Format(NotFoundTemplate, InterviewMessage);
             }
         }
         public static class InterviewProcess
@@ -120,6 +121,7 @@
                 public static string CreateInterviewProcess = String.Format(CreateFailTemplate, InterviewProcessMessage);
                 public static string UpdateInterviewProcess = String.Format(UpdateFailTemplate, InterviewProcessMessage);
                 public static string DeleteInterviewProcess = String.Format(DeleteFailTemplate, InterviewProcessMessage);
+                public static string NotFoundInterviewProcess = String.Format(NotFoundTemplate, InterviewProcessMessage);
             }
         }
         public static class CertificateOfCandidate
@@ -188,6 +190,7 @@
                 public static string CreateChristianName = String.Format(CreateFailTemplate, ChristianNameMessage);
                 public static string UpdateChristianName = String.Format(UpdateFailTemplate, ChristianNameMessage);
                 public static string DeleteChristianName = String.Format(DeleteFailTemplate, ChristianNameMessage);
+                public static string NotFoundChristianName = String.Format(NotFoundTemplate, ChristianNameMessage);
             }
         }
         public static class PostCategory
@@ -265,6 +268,31 @@
             public static class Fail
             {
                 public static string NotFoundRole = String.Format(NotFoundTemplate, RoleMessage);
+            }
+        }
+        public static class Major
+        {
+            #region Major Field
+            private const string MajorMessage = "Major";
+            private const string Name = "Name";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateMajor = String.Format(CreateSuccessTemplate, MajorMessage);
+                public static string UpdateMajor = String.Format(UpdateSuccessTemplate, MajorMessage);
+                public static string DeleteMajor = String.Format(UpdateSuccessTemplate, MajorMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreateMajor = String.Format(CreateFailTemplate, MajorMessage);
+                public static string UpdateMajor = String.Format(UpdateFailTemplate, MajorMessage);
+                public static string DeleteMajor = String.Format(DeleteFailTemplate, MajorMessage);
+                public static string NotFoundMajor = String.Format(NotFoundTemplate, MajorMessage);
             }
         }
     }

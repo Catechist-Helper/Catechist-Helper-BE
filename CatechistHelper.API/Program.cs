@@ -1,7 +1,5 @@
 using CatechistHelper.API.Configurations;
 using CatechistHelper.API.Middlewares;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Text.Json.Serialization;
 
 try

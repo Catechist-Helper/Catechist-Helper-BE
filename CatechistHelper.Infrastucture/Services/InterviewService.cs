@@ -48,7 +48,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
 
                 request.Adapt(interview);
 
@@ -71,7 +71,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
 
                 _unitOfWork.GetRepository<Interview>().DeleteAsync(interview);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

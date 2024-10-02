@@ -100,5 +100,12 @@
             /// <summary>"api/v1/posts/{id}"</summary>
             public const string PostEndpoint = PostsEndpoint + ByIdRoute;
         }
+        public static class Major
+        {
+            /// <summary>"api/v1/majors"</summary>
+            public const string MajorsEndpoint = ApiEndpoint + "/majors";
+            /// <summary>"api/v1/majors/{id}"</summary>
+            public const string MajorEndpoint = MajorsEndpoint + ByIdRoute;
+        }
     }
 }
