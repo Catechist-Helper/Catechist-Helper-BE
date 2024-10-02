@@ -6,10 +6,9 @@ namespace CatechistHelper.Domain.Dtos.Requests.PostCategory
     public class CreatePostCategoryRequest
     {
         [Required(ErrorMessage = MessageConstant.PostCategory.Require.NameRequired)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = null;
 
-        [Required(ErrorMessage = MessageConstant.PostCategory.Require.DescriptionRequired)]
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
 
     }
 }

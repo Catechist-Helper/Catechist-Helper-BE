@@ -17,7 +17,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Post
 
         public Guid AccountId { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.Post.Require.PostCategoryRequired)]
         public Guid PostCategoryId { get; set; }
 
     }

@@ -107,5 +107,13 @@
             /// <summary>"api/v1/majors/{id}"</summary>
             public const string MajorEndpoint = MajorsEndpoint + ByIdRoute;
         }
+
+        public static class Room
+        {
+            /// <summary>"api/v1/rooms"</summary>
+            public const string RoomsEndpoint = ApiEndpoint + "/rooms";
+            /// <summary>"api/v1/rooms/{id}"</summary>
+            public const string RoomEndpoint = RoomsEndpoint + ByIdRoute;
+        }
     }
 }
