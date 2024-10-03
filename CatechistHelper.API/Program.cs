@@ -17,6 +17,18 @@ try
     // Config builder
     builder.ConfigureAutofacContainer();
 
+    // Allow access
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", builder =>
+        {
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+    });
+
     // Add Configuration
     builder.Configuration.SettingsBinding();
 
@@ -27,11 +39,16 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+    //if (app.Environment.IsDevelopment())
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    });
+
+    app.UseCors("AllowAll");
+
     app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
     app.UseHttpsRedirection();

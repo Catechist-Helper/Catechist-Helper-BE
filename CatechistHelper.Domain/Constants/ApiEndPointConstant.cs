@@ -34,12 +34,12 @@
             // <summary>"api/v1/candidates/{id}/certificates"</summary>
             public const string CertificatesOfCandidateEndPoint = CandidateEndPoint + "/certificates";
         }
-        public static class CertificateOfCandidate
+        public static class Certificate
         {
             /// <summary>"api/v1/candidates"</summary>
-            public const string CertificatesOfCandidateEndPoint = ApiEndpoint + "/certificates-of-candidate";
+            public const string CertificatesEndPoint = ApiEndpoint + "/certificates";
             // <summary>"api/v1/candidates/{id}"</summary>
-            public const string CertificateOfCandidateEndPoint = CertificatesOfCandidateEndPoint + ByIdRoute;
+            public const string CertificateEndPoint = CertificatesEndPoint + ByIdRoute;
         }
         public static class Registration
         {

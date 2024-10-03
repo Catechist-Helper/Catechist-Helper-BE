@@ -124,22 +124,25 @@
                 public static string NotFoundInterviewProcess = String.Format(NotFoundTemplate, InterviewProcessMessage);
             }
         }
-        public static class CertificateOfCandidate
+        public static class Certificate
         {
-            #region CertificateOfCandidate Field
-            private const string CertificateOfCandidateMessage = "Interview process";
+            #region Certificate Field
+            private const string CertificateMessage = "Certificate";
+            private const string Name = "Name of Certificate";
+
             #endregion
             public static class Require
             {
+                public const string NameRequired = Name + RequiredSuffix;
             }
             public static class Success
             {
-                public static string CreateCertificateOfCandidate = String.Format(CreateSuccessTemplate, CertificateOfCandidateMessage);
+                public static string CreateCertificate = String.Format(CreateSuccessTemplate, CertificateMessage);
             }
             public static class Fail
             {
-                public static string CreateCertificateOfCandidate = String.Format(CreateFailTemplate, CertificateOfCandidateMessage);
-                public static string DeleteCertificateOfCandidate = String.Format(DeleteFailTemplate, CertificateOfCandidateMessage);
+                public static string CreateCertificate = String.Format(CreateFailTemplate, CertificateMessage);
+                public static string DeleteCertificate = String.Format(DeleteFailTemplate, CertificateMessage);
             }
         }
         public static class PastoralYear
