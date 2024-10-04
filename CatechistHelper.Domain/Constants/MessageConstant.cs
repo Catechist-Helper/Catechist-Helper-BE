@@ -78,6 +78,7 @@
             public static class Fail
             {
                 public static string PasswordIncorrect = "Password Incorrect";
+                public static string InvalidAccount = "Invalid Account";
             }
         }
         public static class Interview
