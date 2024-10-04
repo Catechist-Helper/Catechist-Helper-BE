@@ -151,8 +151,14 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 var account = await ValidateLoginRequest(request.Email, request.Password);
 
+                if (account.IsDeleted)
+                {
+                    throw new Exception(MessageConstant.Login.Fail.InvalidAccount);
+                }
+
                 var response = new LoginResponse()
                 {
+                    Id = account.Id,
                     Email = account.Email,
                     Token = JwtUtil.GenerateJwtToken(account),
                     Role = account.Role.RoleName,
