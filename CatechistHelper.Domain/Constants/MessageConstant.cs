@@ -318,5 +318,32 @@
 
             }
         }
+        public static class SystemConfiguration
+        {
+            #region System Configuration Field
+            private const string SystemConfigurationMessage = "System configuration";
+            private const string Key = "Key";
+            private const string Value = "Value";
+            #endregion
+            public static class Require
+            {
+                public const string KeyRequired = Key + RequiredSuffix;
+                public const string ValueRequired = Value + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateSystemConfiguration = String.Format(CreateSuccessTemplate, SystemConfigurationMessage);
+                public static string UpdateSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
+                public static string DeleteSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
+                public static string UpdateSystemConfiguration = String.Format(UpdateFailTemplate, SystemConfigurationMessage);
+                public static string DeleteSystemConfiguration = String.Format(DeleteFailTemplate, SystemConfigurationMessage);
+                public static string NotFoundSystemConfiguration = String.Format(NotFoundTemplate, SystemConfigurationMessage);
+            }
+        }
     }
 }

@@ -107,5 +107,12 @@
             /// <summary>"api/v1/majors/{id}"</summary>
             public const string MajorEndpoint = MajorsEndpoint + ByIdRoute;
         }
+        public static class SystemConfiguration
+        {
+            /// <summary>"api/v1/system-configurations"</summary>
+            public const string SystemConfigurationsEndpoint = ApiEndpoint + "/system-configurations";
+            /// <summary>"api/v1/system-configurations/{id}"</summary>
+            public const string SystemConfigurationEndpoint = SystemConfigurationsEndpoint + ByIdRoute;
+        }
     }
 }
