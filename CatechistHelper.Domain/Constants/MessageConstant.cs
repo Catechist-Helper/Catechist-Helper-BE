@@ -302,9 +302,7 @@ namespace CatechistHelper.Domain.Constants
         public static class Catechist
         {
             #region Account Field
-            private const string CatechistMessage = "Catechist";
-            private const string Email = "Email";
-            private const string Password = "Password";
+            private const string CatechistMessage = "Level";
             #endregion
             public static class Success
             {
@@ -318,7 +316,6 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateCatechist = String.Format(UpdateFailTemplate, CatechistMessage);
                 public static string DeleteCatechist = String.Format(DeleteFailTemplate, CatechistMessage);
                 public static string NotFoundCatechist = String.Format(NotFoundTemplate, CatechistMessage);
-                public static string EmailExisted = Email + " đã tồn tại !!!";
 
             }
         }
@@ -370,6 +367,29 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
                 public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
+            }
+
+            
+        }
+
+        public static class Level
+        {
+            #region
+            private const string LevelMessage = "Level";
+            #endregion
+            public static class Success
+            {
+                public static string CreateLevel = String.Format(CreateSuccessTemplate, LevelMessage);
+                public static string UpdateLevel = String.Format(UpdateSuccessTemplate, LevelMessage);
+                public static string DeleteLevel = String.Format(DeleteSuccessTemplate, LevelMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateLevel = String.Format(CreateFailTemplate, LevelMessage);
+                public static string UpdateLevel = String.Format(UpdateFailTemplate, LevelMessage);
+                public static string DeleteLevel = String.Format(DeleteFailTemplate, LevelMessage);
+                public static string NotFoundLevel = String.Format(NotFoundTemplate, LevelMessage);
+
             }
         }
     }
