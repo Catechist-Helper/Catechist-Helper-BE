@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Constants
+namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
     {
@@ -322,13 +322,37 @@
 
             }
         }
-
+        public static class SystemConfiguration
+        {
+            #region System Configuration Field
+            private const string SystemConfigurationMessage = "System configuration";
+            private const string Key = "Key";
+            private const string Value = "Value";
+            #endregion
+            public static class Require
+            {
+                public const string KeyRequired = Key + RequiredSuffix;
+                public const string ValueRequired = Value + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateSystemConfiguration = String.Format(CreateSuccessTemplate, SystemConfigurationMessage);
+                public static string UpdateSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
+                public static string DeleteSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
+            }
+             public static class Fail
+            {              
+                          public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
+                public static string UpdateSystemConfiguration = String.Format(UpdateFailTemplate, SystemConfigurationMessage);
+                public static string DeleteSystemConfiguration = String.Format(DeleteFailTemplate, SystemConfigurationMessage);
+                public static string NotFoundSystemConfiguration = String.Format(NotFoundTemplate, SystemConfigurationMessage);
+            }
+        }
         public static class Room
         {
             #region Room Field
             private const string RoomMessage = "Room";
             private const string Name = "Name";
-
             #endregion
             public static class Require
             {
@@ -340,10 +364,9 @@
                 public static string CreateRoom = String.Format(CreateSuccessTemplate, RoomMessage);
                 public static string UpdateRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
-
             }
             public static class Fail
-            {
+            {              
                 public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
                 public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);

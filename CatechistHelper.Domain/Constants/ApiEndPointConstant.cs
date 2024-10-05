@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Constants
+namespace CatechistHelper.Domain.Constants
 {
     public static class ApiEndPointConstant
     {
@@ -107,7 +107,13 @@
             /// <summary>"api/v1/majors/{id}"</summary>
             public const string MajorEndpoint = MajorsEndpoint + ByIdRoute;
         }
-
+        public static class SystemConfiguration
+        {
+            /// <summary>"api/v1/system-configurations"</summary>
+            public const string SystemConfigurationsEndpoint = ApiEndpoint + "/system-configurations";
+            /// <summary>"api/v1/system-configurations/{id}"</summary>
+            public const string SystemConfigurationEndpoint = SystemConfigurationsEndpoint + ByIdRoute;
+        }
         public static class Room
         {
             /// <summary>"api/v1/rooms"</summary>
