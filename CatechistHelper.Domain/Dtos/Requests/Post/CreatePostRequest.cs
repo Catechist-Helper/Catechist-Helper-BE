@@ -1,4 +1,4 @@
-﻿using CatechistHelper.Domain.Constants;
+using CatechistHelper.Domain.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Post
@@ -16,7 +16,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Post
         public string Module { get; set; } = null!;
 
         public Guid AccountId { get; set; }
-        public Guid PostCategoryId { get; set; }
 
+        public Guid PostCategoryId { get; set; }
     }
 }

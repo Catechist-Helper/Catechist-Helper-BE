@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Constants
+namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
     {
@@ -78,6 +78,7 @@
             public static class Fail
             {
                 public static string PasswordIncorrect = "Password Incorrect";
+                public static string InvalidAccount = "Invalid Account";
             }
         }
         public static class Interview
@@ -124,22 +125,25 @@
                 public static string NotFoundInterviewProcess = String.Format(NotFoundTemplate, InterviewProcessMessage);
             }
         }
-        public static class CertificateOfCandidate
+        public static class Certificate
         {
-            #region CertificateOfCandidate Field
-            private const string CertificateOfCandidateMessage = "Interview process";
+            #region Certificate Field
+            private const string CertificateMessage = "Certificate";
+            private const string Name = "Name of Certificate";
+
             #endregion
             public static class Require
             {
+                public const string NameRequired = Name + RequiredSuffix;
             }
             public static class Success
             {
-                public static string CreateCertificateOfCandidate = String.Format(CreateSuccessTemplate, CertificateOfCandidateMessage);
+                public static string CreateCertificate = String.Format(CreateSuccessTemplate, CertificateMessage);
             }
             public static class Fail
             {
-                public static string CreateCertificateOfCandidate = String.Format(CreateFailTemplate, CertificateOfCandidateMessage);
-                public static string DeleteCertificateOfCandidate = String.Format(DeleteFailTemplate, CertificateOfCandidateMessage);
+                public static string CreateCertificate = String.Format(CreateFailTemplate, CertificateMessage);
+                public static string DeleteCertificate = String.Format(DeleteFailTemplate, CertificateMessage);
             }
         }
         public static class PastoralYear
@@ -335,14 +339,37 @@
                 public static string CreateSystemConfiguration = String.Format(CreateSuccessTemplate, SystemConfigurationMessage);
                 public static string UpdateSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
                 public static string DeleteSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
-
             }
-            public static class Fail
-            {
-                public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
+             public static class Fail
+            {              
+                          public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
                 public static string UpdateSystemConfiguration = String.Format(UpdateFailTemplate, SystemConfigurationMessage);
                 public static string DeleteSystemConfiguration = String.Format(DeleteFailTemplate, SystemConfigurationMessage);
                 public static string NotFoundSystemConfiguration = String.Format(NotFoundTemplate, SystemConfigurationMessage);
+            }
+        }
+        public static class Room
+        {
+            #region Room Field
+            private const string RoomMessage = "Room";
+            private const string Name = "Name";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+
+            }
+            public static class Success
+            {
+                public static string CreateRoom = String.Format(CreateSuccessTemplate, RoomMessage);
+                public static string UpdateRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
+                public static string DeleteRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
+            }
+            public static class Fail
+            {              
+                public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
+                public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
+                public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Constants
+namespace CatechistHelper.Domain.Constants
 {
     public static class ApiEndPointConstant
     {
@@ -34,12 +34,12 @@
             // <summary>"api/v1/candidates/{id}/certificates"</summary>
             public const string CertificatesOfCandidateEndPoint = CandidateEndPoint + "/certificates";
         }
-        public static class CertificateOfCandidate
+        public static class Certificate
         {
             /// <summary>"api/v1/candidates"</summary>
-            public const string CertificatesOfCandidateEndPoint = ApiEndpoint + "/certificates-of-candidate";
+            public const string CertificatesEndPoint = ApiEndpoint + "/certificates";
             // <summary>"api/v1/candidates/{id}"</summary>
-            public const string CertificateOfCandidateEndPoint = CertificatesOfCandidateEndPoint + ByIdRoute;
+            public const string CertificateEndPoint = CertificatesEndPoint + ByIdRoute;
         }
         public static class Registration
         {
@@ -113,6 +113,13 @@
             public const string SystemConfigurationsEndpoint = ApiEndpoint + "/system-configurations";
             /// <summary>"api/v1/system-configurations/{id}"</summary>
             public const string SystemConfigurationEndpoint = SystemConfigurationsEndpoint + ByIdRoute;
+        }
+        public static class Room
+        {
+            /// <summary>"api/v1/rooms"</summary>
+            public const string RoomsEndpoint = ApiEndpoint + "/rooms";
+            /// <summary>"api/v1/rooms/{id}"</summary>
+            public const string RoomEndpoint = RoomsEndpoint + ByIdRoute;
         }
     }
 }
