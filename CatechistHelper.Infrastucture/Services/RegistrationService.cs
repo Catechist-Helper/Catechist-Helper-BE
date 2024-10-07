@@ -15,14 +15,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
+using CatechistHelper.Domain.Enums;
+using CatechistHelper.Application.Extensions;
+using CatechistHelper.Application.GoogleServices;
 
 namespace CatechistHelper.Infrastructure.Services
 {
     public class RegistrationService : BaseService<RegistrationService>, IRegistrationService
     {
+        private readonly IFirebaseService _firebaseService;
+
         public RegistrationService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<RegistrationService> logger, IMapper mapper,
-           IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+           IHttpContextAccessor httpContextAccessor, IFirebaseService firebaseService) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<GetRegistrationResponse>> Get(Guid id)
@@ -44,7 +50,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<GetRegistrationResponse>> GetPagination(Expression<Func<Registration, bool>>? predicate, int page, int size)
+        public async Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationStatus? status, int page, int size)
         {
             try
             {
@@ -52,8 +58,8 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Registration> applications =
                     await _unitOfWork.GetRepository<Registration>()
                     .GetPagingListAsync(
-                            predicate: a => a.IsDeleted == false,
-                            orderBy: a => a.OrderByDescending(x => x.CreatedAt),
+                            predicate: BuildGetPaginationQuery(status),
+                            orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
                                            .Include(a => a.Interviews)
                                            .Include(a => a.InterviewProcesses)
@@ -73,6 +79,17 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
+        private Expression<Func<Registration, bool>> BuildGetPaginationQuery(RegistrationStatus? status)
+        {
+            Expression<Func<Registration, bool>> filterQuery = x => x.IsDeleted == false;
+            if (status != null)
+            {
+                filterQuery = filterQuery.AndAlso(x => x.Status.Equals(status));
+            }
+
+            return filterQuery;
+        }
+
         public async Task<Result<GetRegistrationResponse>> Create(CreateRegistrationRequest request)
         {
             try
@@ -81,7 +98,9 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (request.Images != null)
                 {
-                    foreach (string image in request.Images)
+                    string[] images = await _firebaseService.UploadImagesAsync(request.Images, $"registration/{request.FullName}");
+
+                    foreach (string image in images)
                     {
                         await _unitOfWork.GetRepository<CertificateOfCandidate>().InsertAsync(new CertificateOfCandidate
                         {

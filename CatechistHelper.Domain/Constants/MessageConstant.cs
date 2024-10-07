@@ -368,10 +368,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
             }
-
-            
         }
-
         public static class Level
         {
             #region

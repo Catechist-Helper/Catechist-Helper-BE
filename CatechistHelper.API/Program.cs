@@ -36,6 +36,7 @@ try
     builder.Services.AddDbContext();
     builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    ConfigFirebase.ConfigureFirebase();
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
