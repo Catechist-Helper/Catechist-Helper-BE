@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Constants;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Registration
@@ -33,6 +34,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Registration
         public int YearOfTeaching { get; set; }
 
         public string? Note { get; set; }
-        public List<string>? Images { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 }
