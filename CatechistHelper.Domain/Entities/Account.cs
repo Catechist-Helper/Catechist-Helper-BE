@@ -17,6 +17,20 @@ namespace CatechistHelper.Domain.Entities
         [Required]
         public string HashedPassword { get; set; } = null!;
 
+        [Column("fullname")]
+        [StringLength(50)]
+        [Required]
+        public string FullName { get; set; } = null!;
+
+        [Column("gender")]
+        [StringLength(10)]
+        [Required]
+        public string Gender { get; set; } = null!;
+
+        [Column("phone")]
+        [StringLength(10)]
+        public string? Phone { get; set; }
+
         [Column("role_id")]
         [ForeignKey(nameof(Role))]
         public Guid RoleId { get; set; }
