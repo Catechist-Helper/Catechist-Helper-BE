@@ -50,11 +50,8 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                var catechist = await GetById(id);
-
-                catechist.IsDeleted = true;
-
-                _unitOfWork.GetRepository<Level>().UpdateAsync(catechist);
+                var level = await GetById(id);
+                _unitOfWork.GetRepository<Level>().UpdateAsync(level);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
@@ -81,7 +78,6 @@ namespace CatechistHelper.Infrastructure.Services
         {
             return await _unitOfWork.GetRepository<Level>()
                      .GetPagingListAsync(
-                            predicate: a => !a.IsDeleted,
                             orderBy: a => a.OrderBy(x => x.CatechismLevel)
                      );
         }

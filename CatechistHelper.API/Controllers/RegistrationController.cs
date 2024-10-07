@@ -7,6 +7,7 @@ using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Dtos.Responses.InterviewProcess;
 using Microsoft.AspNetCore.Mvc;
+using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.API.Controllers
 {
@@ -21,9 +22,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Registration.RegistrationsEndPoint)]
         [ProducesResponseType(typeof(PagingResult<GetRegistrationResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetAllPagination([FromQuery] RegistrationStatus? status, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetRegistrationResponse> result = await _registrationService.GetPagination(x => false, page, size);
+            PagingResult<GetRegistrationResponse> result = await _registrationService.GetPagination(status, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -54,7 +55,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Registration.RegistrationsEndPoint)]
         [ProducesResponseType(typeof(Result<GetAccountResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateRegistrationRequest request)
+        public async Task<IActionResult> Create([FromForm] CreateRegistrationRequest request)
         {
             Result<GetRegistrationResponse> result = await _registrationService.Create(request);
             return StatusCode((int)result.StatusCode, result);

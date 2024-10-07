@@ -52,7 +52,7 @@ namespace CatechistHelper.Domain.Entities
         public string? Address { get; set; }
 
         [Column("phone")]
-        [StringLength(11)]
+        [StringLength(10)]
         public string? Phone { get; set; }
 
         [Column("qualification")]

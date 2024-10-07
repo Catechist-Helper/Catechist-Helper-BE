@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>2c18c908-4c0b-47e7-9a60-95359ad72347</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="CustomAttribute\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
