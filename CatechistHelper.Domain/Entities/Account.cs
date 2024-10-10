@@ -24,12 +24,14 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("gender")]
         [StringLength(10)]
-        [Required]
-        public string Gender { get; set; } = null!;
+        public string? Gender { get; set; }
 
         [Column("phone")]
         [StringLength(10)]
-        public string? Phone { get; set; }
+        public string Phone { get; set; } = null!;
+
+        [Column("avatar")]
+        public string? Avatar { get; set; }
 
         [Column("role_id")]
         [ForeignKey(nameof(Role))]

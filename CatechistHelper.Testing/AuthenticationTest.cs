@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using CatechistHelper.Infrastructure.Utils;
 using CatechistHelper.Infrastructure.Repositories;
+using CatechistHelper.Application.GoogleServices;
 
 namespace CatechistHelper.Testing
 {
@@ -16,6 +17,7 @@ namespace CatechistHelper.Testing
         private readonly DbContextOptions<ApplicationDbContext> _contextOptions;
         private readonly AccountService _accountService;
         private readonly ApplicationDbContext _testDbContext;
+        private readonly IFirebaseService _firebaseService;
 
         public AuthenticationTest()
         {
@@ -26,7 +28,7 @@ namespace CatechistHelper.Testing
             _testDbContext = new ApplicationDbContext(_contextOptions);
 
             // Create the AccountService with the in-memory database context
-            _accountService = new AccountService(new UnitOfWork<ApplicationDbContext>(_testDbContext), Mock.Of<ILogger<AccountService>>(), Mock.Of<IMapper>(), Mock.Of<IHttpContextAccessor>());
+            _accountService = new AccountService(Mock.Of<IFirebaseService>(), new UnitOfWork<ApplicationDbContext>(_testDbContext), Mock.Of<ILogger<AccountService>>(), Mock.Of<IMapper>(), Mock.Of<IHttpContextAccessor>());
 
             // Seed the database with users
             SeedDatabase();

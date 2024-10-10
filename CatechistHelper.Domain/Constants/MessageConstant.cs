@@ -20,11 +20,17 @@ namespace CatechistHelper.Domain.Constants
             private const string AccountMessage = "Account";
             private const string Email = "Email";
             private const string Password = "Password";
+            private const string FullName = "Full name";
+            private const string Gender = "Gender";
+            private const string Phone = "Phone";
             #endregion
             public static class Require
             {
                 public const string EmailRequired = Email + RequiredSuffix;
                 public const string PasswordRequired = Password + RequiredSuffix;
+                public const string FullNameRequired = FullName + RequiredSuffix;
+                public const string GenderRequired = Gender + RequiredSuffix;
+                public const string PhoneRequired = Phone + RequiredSuffix;
             }
             public static class Success
             {

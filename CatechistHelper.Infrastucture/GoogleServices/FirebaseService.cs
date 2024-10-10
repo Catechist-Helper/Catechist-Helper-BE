@@ -2,6 +2,7 @@
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using static CatechistHelper.Infrastructure.Utils.ImageUtil;
 
 namespace CatechistHelper.Infrastructure.GoogleServices
 {
@@ -68,11 +69,19 @@ namespace CatechistHelper.Infrastructure.GoogleServices
 
         public async Task<string> UploadImageAsync(IFormFile imageFile, string imagePath)
         {
+            // Đặt giới hạn kích thước file (ví dụ 5MB = 5 * 1024 * 1024 bytes)
+            long fileSizeLimit = 5 * 1024 * 1024;
+
+            if (imageFile.Length > fileSizeLimit)
+            {
+                throw new Exception("Kích thước file vượt quá giới hạn cho phép (5MB).");
+            }
+
             using var stream = new MemoryStream();
             await imageFile.CopyToAsync(stream);
             stream.Position = 0;
-
-            var blob = await _storageClient.UploadObjectAsync(_bucketName, imagePath, imageFile.ContentType, stream, cancellationToken: CancellationToken.None);
+            var imageName =  Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+            var blob = await _storageClient.UploadObjectAsync(_bucketName, imagePath + imageName, imageFile.ContentType, stream, cancellationToken: CancellationToken.None);
 
             if (blob is null)
             {
@@ -80,28 +89,17 @@ namespace CatechistHelper.Infrastructure.GoogleServices
             }
 
             var folderName = Path.GetDirectoryName(imagePath)?.Replace("\\", "/") ?? string.Empty;
-            var imageName = Path.GetFileName(imagePath);
 
             return GetImageUrl(folderName, imageName);
         }
 
-        public async Task<string> UpdateImageAsync(IFormFile imageFile, string imagePath)
+        public async Task<IFormFile> DownloadImageFromUrl(string imageUrl, string fileName, string contentType)
         {
-            using var stream = new MemoryStream();
-            await imageFile.CopyToAsync(stream);
-            stream.Position = 0;
-
-            var blob = await _storageClient.UploadObjectAsync(_bucketName, imagePath, imageFile.ContentType, stream, cancellationToken: CancellationToken.None);
-
-            if (blob is null)
-            {
-                throw new Exception("Upload failed");
-            }
-
-            var folderName = Path.GetDirectoryName(imagePath)?.Replace("\\", "/") ?? string.Empty;
-            var imageName = Path.GetFileName(imagePath);
-
-            return GetImageUrl(folderName, imageName);
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(imageUrl);
+            if (!response.IsSuccessStatusCode) throw new Exception($"Failed to download image from URL: {imageUrl}");
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            return FormFileHelper.ToFormFile(fileBytes, fileName, contentType);
         }
     }
 }

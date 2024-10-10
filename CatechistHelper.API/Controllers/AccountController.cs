@@ -37,7 +37,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Account.AccountsEndPoint)]
         [ProducesResponseType(typeof(Result<GetAccountResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateAccountRequest request)
+        public async Task<IActionResult> Create([FromForm] CreateAccountRequest request)
         {
             Result<GetAccountResponse> result = await _accountService.Create(request);
             return StatusCode((int)result.StatusCode, result);
@@ -46,7 +46,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPut(ApiEndPointConstant.Account.AccountEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateAccountRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateAccountRequest request)
         {
             Result<bool> result = await _accountService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);

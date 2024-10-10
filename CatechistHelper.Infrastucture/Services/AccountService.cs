@@ -1,3 +1,4 @@
+using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
@@ -21,9 +22,12 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class AccountService : BaseService<AccountService>, IAccountService
     {
-        public AccountService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<AccountService> logger, IMapper mapper,
+        private readonly IFirebaseService _firebaseService;
+
+        public AccountService(IFirebaseService firebaseService, IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<AccountService> logger, IMapper mapper,
            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<GetAccountResponse>> Get(Guid id)
@@ -86,6 +90,12 @@ namespace CatechistHelper.Infrastructure.Services
                 Account account = request.Adapt<Account>();
                 account.HashedPassword = PasswordUtil.HashPassword(request.Password);
 
+                if (request.Avatar != null)
+                {
+                    string avatar = await _firebaseService.UploadImageAsync(request.Avatar, $"account/");
+                    account.Avatar = avatar;
+                }
+
                 Account result = await _unitOfWork.GetRepository<Account>().InsertAsync(account);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -107,7 +117,34 @@ namespace CatechistHelper.Infrastructure.Services
                 Account account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id));
 
+                request.Adapt(account);
+
                 account.HashedPassword = PasswordUtil.HashPassword(request.Password);
+
+                IFormFile formFile = null;
+
+                if (request.OldAvatar != null)
+                {
+                    formFile = await _firebaseService.DownloadImageFromUrl(request.OldAvatar, "account.jpg", "image/jpg");               
+                }
+
+                if (account.Avatar != null)
+                {
+                    await _firebaseService.DeleteImageAsync(account.Avatar);
+                    account.Avatar = null;
+                }
+
+                if (formFile != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(formFile, "account/");
+                    account.Avatar = image;
+                }
+
+                if (request.Avatar != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(request.Avatar, "account/");
+                    account.Avatar = image;
+                }
 
                 _unitOfWork.GetRepository<Account>().UpdateAsync(account);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
-using CatechistHelper.Domain.Enums;
 using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.GoogleServices;
 
@@ -50,7 +49,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationStatus? status, int page, int size)
+        public async Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationFilter? filter, int page, int size)
         {
             try
             {
@@ -58,7 +57,7 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Registration> applications =
                     await _unitOfWork.GetRepository<Registration>()
                     .GetPagingListAsync(
-                            predicate: BuildGetPaginationQuery(status),
+                            predicate: BuildGetPaginationQuery(filter),
                             orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
                                            .Include(a => a.Interviews)
@@ -79,12 +78,25 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        private Expression<Func<Registration, bool>> BuildGetPaginationQuery(RegistrationStatus? status)
+        private Expression<Func<Registration, bool>> BuildGetPaginationQuery(RegistrationFilter? filter)
         {
             Expression<Func<Registration, bool>> filterQuery = x => x.IsDeleted == false;
-            if (status != null)
+            if (filter.StartDate != null && filter.EndDate == null)
             {
-                filterQuery = filterQuery.AndAlso(x => x.Status.Equals(status));
+                filterQuery = filterQuery.AndAlso(p =>
+                    p.CreatedAt >= filter.StartDate && p.CreatedAt <= filter.StartDate.Value.AddDays(1));
+            }
+            else if (filter.StartDate != null)
+            {
+                filterQuery = filterQuery.AndAlso(p => p.CreatedAt >= filter.StartDate);
+            }
+            if (filter.EndDate != null)
+            {
+                filterQuery = filterQuery.AndAlso(p => p.CreatedAt <= filter.EndDate);
+            }
+            if (filter.Status != null)
+            {
+                filterQuery = filterQuery.AndAlso(x => x.Status.Equals(filter.Status));
             }
 
             return filterQuery;
@@ -96,16 +108,18 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = request.Adapt<Registration>();
 
-                if (request.Images != null)
-                {
-                    string[] images = await _firebaseService.UploadImagesAsync(request.Images, $"registration/{request.FullName}");
+                string folderCandidateName = ToLowerCaseAndDashed(request.FullName);
 
-                    foreach (string image in images)
+                if (request.CertificateOfCandidates != null)
+                {
+                    string[] certificateOfCandidates = await _firebaseService.UploadImagesAsync(request.CertificateOfCandidates, $"registration/{folderCandidateName}");
+
+                    foreach (string certificateOfCandidate in certificateOfCandidates)
                     {
                         await _unitOfWork.GetRepository<CertificateOfCandidate>().InsertAsync(new CertificateOfCandidate
                         {
                             Registration = registration,
-                            ImageUrl = image,
+                            ImageUrl = certificateOfCandidate,
                         });
                     }
                 }
@@ -122,6 +136,19 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return Fail<GetRegistrationResponse>(ex.Message);
             }
+        }
+
+        private string ToLowerCaseAndDashed(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+
+            name = name.ToLowerInvariant();
+            name = name.Replace(' ', '-');
+
+            return name;
         }
 
         public async Task<Result<bool>> Update(Guid id, UpdateRegistrationRequest request)
