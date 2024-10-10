@@ -9,7 +9,7 @@ namespace CatechistHelper.Application.Services
 {
     public interface IRegistrationService
     {
-        Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationStatus? status, int page, int size);
+        Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationFilter? filter, int page, int size);
         Task<Result<GetRegistrationResponse>> Get(Guid id);
         Task<Result<IEnumerable<GetInterviewResponse>>> GetInterviewOfApplication(Guid id);
         Task<Result<IEnumerable<GetInterviewProcessResponse>>> GetInterviewProcessOfApplication(Guid id);

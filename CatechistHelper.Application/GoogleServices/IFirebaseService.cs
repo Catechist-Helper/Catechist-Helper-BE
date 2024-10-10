@@ -8,12 +8,12 @@ namespace CatechistHelper.Application.GoogleServices
 
         string GetImageUrl(string folderName, string imageName);
 
-        Task<string> UpdateImageAsync(IFormFile imageFile, string imagePath);
-
         Task DeleteImageAsync(string imageName);
 
         Task DeleteImagesAsync(List<string> imageUrls);
 
         Task<string[]> UploadImagesAsync(List<IFormFile> imageFiles, string folderPath);
+
+        Task<IFormFile> DownloadImageFromUrl(string imageUrl, string fileName, string contentType);
     }
 }

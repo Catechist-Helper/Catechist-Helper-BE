@@ -29,6 +29,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("avatar");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
@@ -39,6 +43,17 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("email");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("fullname");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("gender");
+
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -48,6 +63,12 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("phone");
 
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier")
@@ -184,8 +205,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnName("note");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
                         .HasColumnName("phone");
 
                     b.Property<string>("Qualification")
@@ -592,10 +613,6 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.Property<int>("InterviewProcessStatus")
-                        .HasColumnType("int")
-                        .HasColumnName("status");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -605,6 +622,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Property<Guid>("RegistrationId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("registration_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 

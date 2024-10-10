@@ -22,9 +22,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Registration.RegistrationsEndPoint)]
         [ProducesResponseType(typeof(PagingResult<GetRegistrationResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] RegistrationStatus? status, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetAllPagination([FromQuery] RegistrationFilter filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetRegistrationResponse> result = await _registrationService.GetPagination(status, page, size);
+            PagingResult<GetRegistrationResponse> result = await _registrationService.GetPagination(filter, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 

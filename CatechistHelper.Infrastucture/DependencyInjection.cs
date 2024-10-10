@@ -6,6 +6,9 @@ using Mapster;
 using MapsterMapper;
 using System.Reflection;
 using Google.Cloud.Storage.V1;
+using CatechistHelper.Domain.Dtos.Requests.Registration;
+using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Dtos.Requests.Account;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -57,6 +60,12 @@ namespace CatechistHelper.Infrastructure.Extensions
         }
         private static TypeAdapterConfig ConfigCustomMapper(this TypeAdapterConfig config)
         {
+            config.NewConfig<CreateRegistrationRequest, Registration>()
+                .Ignore(x => x.CertificateOfCandidates);
+            config.NewConfig<CreateAccountRequest, Account>()
+                .Ignore(x => x.Avatar);
+            config.NewConfig<UpdateAccountRequest, Account>()
+                .Ignore(x => x.Avatar);
             return config;
         }
     }
