@@ -44,11 +44,8 @@ namespace CatechistHelper.Infrastructure.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=(local);database=CatechistHelperDb;Uid=sa;Pwd=123456;TrustServerCertificate=True;Trusted_Connection=true;MultipleActiveResultSets=True");
-            }
-
+            optionsBuilder
+                .UseSqlServer(AppConfig.ConnectionString.DefaultConnection);
             base.OnConfiguring(optionsBuilder);
         }
 
