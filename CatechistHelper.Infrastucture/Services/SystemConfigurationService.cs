@@ -121,5 +121,11 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
+        public async Task<SystemConfiguration> GetConfigByKey(string key)
+        {
+            return await _unitOfWork.GetRepository<SystemConfiguration>()
+                .SingleOrDefaultAsync(predicate: a => a.Key == key);
+        }
     }
 }

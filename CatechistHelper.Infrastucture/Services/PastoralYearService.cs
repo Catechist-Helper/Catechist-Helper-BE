@@ -2,6 +2,7 @@
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
+using CatechistHelper.Domain.Dtos;
 using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
@@ -123,6 +124,17 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return Fail<bool>(ex.Message);
             }
+        }
+
+        public async Task<PastoralYear> Create(PastoralYearDto dto)
+        {
+            var pastoralYear = dto.Adapt<PastoralYear>();
+
+            pastoralYear.PastoralYearStatus = Domain.Enums.PastoralYearStatus.Active;
+
+            var result = await _unitOfWork.GetRepository<PastoralYear>().InsertAsync(pastoralYear);
+
+            return result;
         }
     }
 }
