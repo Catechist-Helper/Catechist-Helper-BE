@@ -13,5 +13,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetSystemConfigurationResponse>> Create(CreateSystemConfigurationRequest request);
         Task<Result<bool>> Update(Guid id, UpdateSystemConfigurationRequest request);
         Task<Result<bool>> Delete(Guid id);
+        Task<SystemConfiguration> GetConfigByKey(string key);
     }
 }
