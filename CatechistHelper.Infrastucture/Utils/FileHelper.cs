@@ -1,4 +1,4 @@
-﻿using CatechistHelper.Domain.Dtos;
+﻿using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 

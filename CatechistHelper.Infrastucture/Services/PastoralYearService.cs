@@ -2,9 +2,9 @@
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
-using CatechistHelper.Domain.Dtos;
 using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;

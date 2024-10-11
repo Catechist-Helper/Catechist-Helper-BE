@@ -123,10 +123,10 @@ namespace CatechistHelper.Infrastructure.Services
 
                 IFormFile formFile = null;
 
-                if (request.OldAvatar != null)
-                {
-                    formFile = await _firebaseService.DownloadImageFromUrl(request.OldAvatar, "account.jpg", "image/jpg");               
-                }
+                //if (request.OldAvatar != null)
+                //{
+                //    formFile = await _firebaseService.DownloadImageFromUrl(request.OldAvatar, "account.jpg", "image/jpg");               
+                //}
 
                 if (account.Avatar != null)
                 {

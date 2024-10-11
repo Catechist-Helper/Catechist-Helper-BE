@@ -1,6 +1,8 @@
 ﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
-using CatechistHelper.Domain.Dtos;
+using CatechistHelper.Domain.Common;
+using CatechistHelper.Domain.Dtos.Requests.Timetable;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Infrastructure.Utils;
@@ -12,11 +14,12 @@ using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services
 {
-    public class TimeTableService : BaseService<TimeTableService>
+    public class TimeTableService : BaseService<TimeTableService>, ITimetableService
     {
         private readonly IPastoralYearService _pastoralYearService;
 
         private readonly ISystemConfiguration _systemConfiguration;
+
         public TimeTableService(
             IUnitOfWork<ApplicationDbContext> unitOfWork,
             ILogger<TimeTableService> logger,
@@ -30,16 +33,42 @@ namespace CatechistHelper.Infrastructure.Services
             _systemConfiguration = systemConfiguration;
         }
 
+        public async Task<Result<List<SlotResponse>>> CreateSlots(CreateSlotsRequest request)
+        {
+            try
+            {
+                var result = await CreateSlot(request);
+                return Success(result.Adapt<List<SlotResponse>>());
+            }
+            catch (Exception ex)
+            {
+                return Fail<List<SlotResponse>>(ex.Message);
+            }
+        }
 
 
-        public async Task<List<Class>> CreateTimetable(IFormFile file)
+        public async Task<Result<ClassResponse>> CreateTimeTable(CreateTimetableRequest request)
+        {
+            try
+            {
+                var result = await CreateClasses(request.File);
+                return Success(result.Adapt<ClassResponse>());
+            }
+            catch (Exception ex)
+            {
+                return Fail<ClassResponse>(ex.Message);
+            }
+        }
+
+
+        public async Task<List<Class>> CreateClasses(IFormFile file)
         {
             var pastoralYearDto = FileHelper.ReadFile(file);
             var pastoralYear = await _pastoralYearService.Create(pastoralYearDto);
 
             string[] years = pastoralYear.Name.Split('-');
-            var startDate = await GetStartDay(years[0]);
-            var endDate = await GetEndDay(years[1]);
+            var startDate = await GetStartDate(years[0]);
+            var endDate = await GetEndDate(years[1]);
 
             var createdClasses = new List<Class>();
 
@@ -47,6 +76,8 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 var major = await _unitOfWork.GetRepository<Major>()
                     .SingleOrDefaultAsync(predicate: m => m.Name == majorDto.Name);
+
+                Validator.EnsureNonNull(major);
 
                 foreach (var gradeDto in majorDto.Grades)
                 {
@@ -57,6 +88,7 @@ namespace CatechistHelper.Infrastructure.Services
                         classDto.StartDate = startDate;
                         classDto.EndDate = endDate;
                         var classEntity = await CreateClass(classDto, grade.Id, pastoralYear.Id);
+
                         createdClasses.Add(classEntity);
                     }
                 }
@@ -67,7 +99,6 @@ namespace CatechistHelper.Infrastructure.Services
             return createdClasses;
 
         }
-
 
         private async Task<Grade> CreateGrade(GradeDto gradeDto, Guid pastoralYearId, Guid majorId)
         {
@@ -105,14 +136,73 @@ namespace CatechistHelper.Infrastructure.Services
             return classEntity;
         }
 
+        public async Task<List<Slot>> CreateSlot(CreateSlotsRequest request)
+        {
+            var classDto = await GetClassById(request.ClassId);
 
-        public async Task<DateTime> GetStartDay(string year)
+            var currentDate = classDto.StartDate;
+            var endDate = classDto.EndDate;
+
+            var fixedDay = await GetWeekDay();
+
+            var holidays = await HolidayService.GetHolidaysInRange(currentDate, endDate);
+
+            var holidayDates = holidays.Select(h => HolidayService.ParseDate(h.Start.Date, "yyyy-MM-dd")).ToList();
+
+            while (currentDate.DayOfWeek != fixedDay)
+            {
+                currentDate = currentDate.AddDays(1);
+            }
+
+            var slots = new List<Slot>();
+
+            while (currentDate <= endDate)
+            {
+                if (!holidayDates.Contains(currentDate))
+                {
+                    var slot = new Slot
+                    {
+                        ClassId = classDto.Id,
+                        RoomId = request.RoomId,
+                        Date = currentDate,
+                        StartTime = currentDate,
+                        EndTime = currentDate.AddHours(request.Hour)
+                    };
+
+                    // Insert the slot into the repository
+                    await _unitOfWork.GetRepository<Slot>().InsertAsync(slot);
+                    slots.Add(slot);
+                }
+
+                currentDate = currentDate.AddDays(7);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return slots;
+        }
+
+        public async Task<DayOfWeek> GetWeekDay()
+        {
+            var config = await _systemConfiguration.GetConfigByKey("weekday");
+
+            string value = config.Value.Trim();
+
+            if (Enum.TryParse(value, true, out DayOfWeek weekDay))
+            {
+                return weekDay;
+            }
+            throw new Exception($"Invalid weekday configuration value: {value}");
+        }
+
+
+        public async Task<DateTime> GetStartDate(string year)
         {
             var startDate = await _systemConfiguration.GetConfigByKey("startdate");
             return ConvertToDateTime(startDate.Value + "/" + year);
         }
 
-        public async Task<DateTime> GetEndDay(string year)
+        public async Task<DateTime> GetEndDate(string year)
         {
             var endDate = await _systemConfiguration.GetConfigByKey("enddate");
             return ConvertToDateTime(endDate.Value + "/" + year);
@@ -120,9 +210,15 @@ namespace CatechistHelper.Infrastructure.Services
 
         public static DateTime ConvertToDateTime(string date)
         {
-            return DateTime.ParseExact(date, "dd/MM/yyyy",
-                        CultureInfo.InvariantCulture
-                    );
+            return DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
+
+        public async Task<Class> GetClassById(Guid id)
+        {
+            return await _unitOfWork.GetRepository<Class>()
+                .SingleOrDefaultAsync(predicate: c => c.Id == id);
+        }
+
+        
     }
 }
