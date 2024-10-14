@@ -121,5 +121,12 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/rooms/{id}"</summary>
             public const string RoomEndpoint = RoomsEndpoint + ByIdRoute;
         }
+
+        public static class Timetable
+        {
+            /// <summary>"api/v1/rooms"</summary>
+            public const string TimetableEndpoint = ApiEndpoint + "/timetable";
+            public const string SlotsEndpoint = ApiEndpoint + "/slots";
+        }
     }
 }

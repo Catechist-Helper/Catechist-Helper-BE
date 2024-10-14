@@ -1,7 +1,7 @@
 ﻿using CatechistHelper.Domain.Common;
-using CatechistHelper.Domain.Dtos;
 using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
 using System.Linq.Expressions;
 

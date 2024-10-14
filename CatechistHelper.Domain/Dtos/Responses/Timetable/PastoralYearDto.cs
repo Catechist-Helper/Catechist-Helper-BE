@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Dtos
+﻿namespace CatechistHelper.Domain.Dtos.Responses.Timetable
 {
     public class PastoralYearDto
     {
