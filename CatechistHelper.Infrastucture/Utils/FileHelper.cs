@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 
@@ -100,6 +101,43 @@ namespace CatechistHelper.Infrastructure.Utils
                 Console.WriteLine($"Error reading file to IFormFile: {ex.Message}");
                 throw;
             }
+        }
+
+        public static byte[] ExportToExcel(Class classDto)
+        {
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Slots");
+
+            // Set the headers
+            worksheet.Cells[1, 1].Value = "SlotId";
+            worksheet.Cells[1, 2].Value = "StartTime";
+            worksheet.Cells[1, 3].Value = "EndTime";
+            worksheet.Cells[1, 4].Value = "Date";
+            worksheet.Cells[1, 5].Value = "Note";
+            worksheet.Cells[1, 6].Value = "RoomName";
+            worksheet.Cells[1, 7].Value = "ClassName";
+            worksheet.Cells[1, 8].Value = "Catechists";
+
+            int row = 2;
+            foreach (var slot in classDto.Slots)
+            {
+                worksheet.Cells[row, 1].Value = slot.Id;
+                worksheet.Cells[row, 2].Value = slot.StartTime.ToString("HH:mm");
+                worksheet.Cells[row, 3].Value = slot.EndTime.ToString("HH:mm");
+                worksheet.Cells[row, 4].Value = slot.Date.ToString("yyyy-MM-dd");
+                worksheet.Cells[row, 5].Value = slot.Note ?? string.Empty;
+                worksheet.Cells[row, 6].Value = slot.Room.Name;
+                worksheet.Cells[row, 7].Value = slot.Class.Name;
+
+                // Join catechist names into a single string
+                var catechists = string.Join(", ", slot.CatechistInSlots.Select(c => c.Catechist.Account.FullName));
+                worksheet.Cells[row, 8].Value = catechists;
+
+                row++;
+            }
+            worksheet.Cells.AutoFitColumns();
+
+            return package.GetAsByteArray();
         }
     }
 }

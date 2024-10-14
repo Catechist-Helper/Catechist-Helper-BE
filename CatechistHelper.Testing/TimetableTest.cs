@@ -1,5 +1,4 @@
-﻿using CatechistHelper.Application.Services;
-using CatechistHelper.Domain.Dtos.Requests.Timetable;
+﻿using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Infrastructure.Repositories;

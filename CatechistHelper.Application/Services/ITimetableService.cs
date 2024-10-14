@@ -8,5 +8,6 @@ namespace CatechistHelper.Application.Services
     {
         Task<Result<List<SlotResponse>>> CreateSlots(CreateSlotsRequest request);
         Task<Result<ClassResponse>> CreateTimeTable(CreateTimetableRequest request);
+        Task<byte[]> ExportSlotsToExcel(Guid classId);
     }
 }

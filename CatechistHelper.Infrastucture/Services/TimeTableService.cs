@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using Azure.Core;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
@@ -9,7 +10,9 @@ using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
 using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -140,46 +143,100 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var classDto = await GetClassById(request.ClassId);
 
-            var currentDate = classDto.StartDate;
-            var endDate = classDto.EndDate;
+            AddCatechistsToClass(request.Catechists, classDto);
 
             var fixedDay = await GetWeekDay();
+            var holidayDates = await GetHolidayDates(classDto.StartDate, classDto.EndDate);
 
-            var holidays = await HolidayService.GetHolidaysInRange(currentDate, endDate);
-
-            var holidayDates = holidays.Select(h => HolidayService.ParseDate(h.Start.Date, "yyyy-MM-dd")).ToList();
-
-            while (currentDate.DayOfWeek != fixedDay)
-            {
-                currentDate = currentDate.AddDays(1);
-            }
-
-            var slots = new List<Slot>();
-
-            while (currentDate <= endDate)
-            {
-                if (!holidayDates.Contains(currentDate))
-                {
-                    var slot = new Slot
-                    {
-                        ClassId = classDto.Id,
-                        RoomId = request.RoomId,
-                        Date = currentDate,
-                        StartTime = currentDate,
-                        EndTime = currentDate.AddHours(request.Hour)
-                    };
-
-                    // Insert the slot into the repository
-                    await _unitOfWork.GetRepository<Slot>().InsertAsync(slot);
-                    slots.Add(slot);
-                }
-
-                currentDate = currentDate.AddDays(7);
-            }
+            var slots = await CreateSlotsForClass(classDto, request, fixedDay, holidayDates);
 
             await _unitOfWork.CommitAsync();
 
             return slots;
+        }
+
+        // Add Catechists to the Class
+        private static void AddCatechistsToClass(List<CatechistSlot> catechists, Class classDto)
+        {
+            foreach (var catechistSlot in catechists)
+            {
+                var catechistInClass = new CatechistInClass
+                {
+                    ClassId = classDto.Id,
+                    CatechistId = catechistSlot.CatechistId,
+                    IsMain = catechistSlot.IsMain
+                };
+
+                classDto.CatechistInClasses.Add(catechistInClass);
+            }
+        }
+
+        // Get list of holidays as DateTime
+        private static async Task<List<DateTime>> GetHolidayDates(DateTime startDate, DateTime? endDate)
+        {
+            var holidays = await HolidayService.GetHolidaysInRange(startDate, endDate);
+            return holidays.Select(h => HolidayService.ParseDate(h.Start.Date, "yyyy-MM-dd")).ToList();
+        }
+
+        // Create Slots for the Class
+        private async Task<List<Slot>> CreateSlotsForClass(Class classDto, CreateSlotsRequest request, DayOfWeek fixedDay, List<DateTime> holidayDates)
+        {
+            var slots = new List<Slot>();
+            var currentDate = AdjustToFixedWeekDay(classDto.StartDate, fixedDay);
+
+            while (currentDate <= classDto.EndDate)
+            {
+                if (!holidayDates.Contains(currentDate))
+                {
+                    var slot = CreateSlotInstance(classDto, request, currentDate);
+                    AddCatechistsToSlot(slot, classDto.CatechistInClasses);
+                    await _unitOfWork.GetRepository<Slot>().InsertAsync(slot);
+                    slots.Add(slot);
+                }
+
+                currentDate = currentDate.AddDays(7); // Move to the next week
+            }
+
+            return slots;
+        }
+
+        // Adjust start date to the fixed day of the week
+        private static DateTime AdjustToFixedWeekDay(DateTime startDate, DayOfWeek fixedDay)
+        {
+            while (startDate.DayOfWeek != fixedDay)
+            {
+                startDate = startDate.AddDays(1);
+            }
+            return startDate;
+        }
+
+        // Create a new Slot instance
+        private static Slot CreateSlotInstance(Class classDto, CreateSlotsRequest request, DateTime currentDate)
+        {
+            return new Slot
+            {
+                ClassId = classDto.Id,
+                RoomId = request.RoomId,
+                Date = currentDate,
+                StartTime = currentDate,
+                EndTime = currentDate.AddHours(request.Hour)
+            };
+        }
+
+        // Add Catechists to the Slot
+        private static void AddCatechistsToSlot(Slot slot, ICollection<CatechistInClass> catechistInClasses)
+        {
+            foreach (var catechistInClass in catechistInClasses)
+            {
+                var catechistInSlot = new CatechistInSlot
+                {
+                    SlotId = slot.Id,
+                    CatechistId = catechistInClass.CatechistId,
+                    IsMain = catechistInClass.IsMain
+                };
+
+                slot.CatechistInSlots.Add(catechistInSlot);
+            }
         }
 
         public async Task<DayOfWeek> GetWeekDay()
@@ -219,6 +276,11 @@ namespace CatechistHelper.Infrastructure.Services
                 .SingleOrDefaultAsync(predicate: c => c.Id == id);
         }
 
-        
+        public async Task<byte[]> ExportSlotsToExcel(Guid classId)
+        {
+            var classDto = await GetClassById(classId);
+            return FileHelper.ExportToExcel(classDto);
+        }
+
     }
 }
