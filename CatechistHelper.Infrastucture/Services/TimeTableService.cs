@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
@@ -10,9 +9,8 @@ using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml;
 using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -276,9 +274,22 @@ namespace CatechistHelper.Infrastructure.Services
                 .SingleOrDefaultAsync(predicate: c => c.Id == id);
         }
 
+        public async Task<Class> GetClassByIdIncludeSlots(Guid id)
+        {
+            return await _unitOfWork.GetRepository<Class>()
+                .SingleOrDefaultAsync(
+                    predicate: c => c.Id == id,
+                    include: q => q.Include(c => c.Slots)
+                                    .ThenInclude(s => s.Room)
+                                   .Include(c => c.CatechistInClasses)
+                                    .ThenInclude(s => s.Catechist)
+                );
+        }
+
+
         public async Task<byte[]> ExportSlotsToExcel(Guid classId)
         {
-            var classDto = await GetClassById(classId);
+            var classDto = await GetClassByIdIncludeSlots(classId);
             return FileHelper.ExportToExcel(classDto);
         }
 
