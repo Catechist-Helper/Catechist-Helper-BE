@@ -124,10 +124,12 @@ namespace CatechistHelper.Domain.Constants
 
         public static class Timetable
         {
+            public const string YearsEndpoint = ApiEndpoint + "/pastoral-years";
             public const string TimetableEndpoint = ApiEndpoint + "/timetable";
             public const string SlotsEndpoint = ApiEndpoint + "/slots";
             public const string ClassesEndpoint = ApiEndpoint + "/classes";
             public const string ExportEndpoint = ClassesEndpoint + "/export" + ByIdRoute;
+            public const string ExportYearEndpoint = YearsEndpoint + "/export";
         }
     }
 }
