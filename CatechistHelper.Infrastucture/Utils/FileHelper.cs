@@ -105,6 +105,7 @@ namespace CatechistHelper.Infrastructure.Utils
 
         public static byte[] ExportToExcel(Class classDto)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("Slots");
 

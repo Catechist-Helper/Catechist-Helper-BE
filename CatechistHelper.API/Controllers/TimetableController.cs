@@ -2,9 +2,7 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
-using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
-using CatechistHelper.Infrastructure.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
