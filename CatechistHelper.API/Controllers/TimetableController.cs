@@ -52,5 +52,22 @@ namespace CatechistHelper.API.Controllers
                 return BadRequest(new { message = "An error occurred while exporting the class slots." });
             }
         }
+
+        [HttpGet(ApiEndPointConstant.Timetable.ExportYearEndpoint)]
+        [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExportClassSlotsByYear([FromQuery] string year)
+        {
+            try
+            {
+                var result = await _timetableService.ExportPastoralYearToExcel(year);
+                return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ClassSlots.xlsx");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while exporting class slots to Excel for year {year}", year);
+                return BadRequest(new { message = "An error occurred while exporting the class slots." });
+            }
+        }
     }
 }

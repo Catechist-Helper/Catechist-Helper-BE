@@ -11,6 +11,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
 using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -216,8 +217,8 @@ namespace CatechistHelper.Infrastructure.Services
                 ClassId = classDto.Id,
                 RoomId = request.RoomId,
                 Date = currentDate,
-                StartTime = currentDate,
-                EndTime = currentDate.AddHours(request.Hour)
+                StartTime = currentDate.Date + request.StartTime,
+                EndTime = currentDate.Date + request.EndTime
             };
         }
 
@@ -291,6 +292,26 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var classDto = await GetClassByIdIncludeSlots(classId);
             return FileHelper.ExportToExcel(classDto);
+        }
+
+        public async Task<byte[]> ExportPastoralYearToExcel(string pastoralYear)
+        {
+            var year = await _unitOfWork.GetRepository<PastoralYear>()
+                                .SingleOrDefaultAsync(
+                                    predicate: y => y.Name == pastoralYear,
+                                    include: y => y.Include(c => c.Classes)
+                                                     .ThenInclude(s => s.Slots)
+                                                        .ThenInclude(r => r.Room)
+                                                     .Include(c => c.Classes)
+                                                        .ThenInclude(s => s.Slots)
+                                                        .ThenInclude(s => s.CatechistInSlots)
+                                                        .ThenInclude(s => s.Catechist)
+                                                        .ThenInclude(s => s.Account)
+                                                     .Include(g => g.Classes)
+                                                        .ThenInclude(g => g.Grade)
+                                );
+
+            return FileHelper.ExportPastoralYearToExcel(year);
         }
 
     }
