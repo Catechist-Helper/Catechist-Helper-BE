@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -17,8 +18,10 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class RoomService : BaseService<RoomService>, IRoomService
     {
-        public RoomService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<RoomService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly IFirebaseService _firebaseService;
+        public RoomService(IFirebaseService firebaseService, IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<RoomService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<GetRoomResponse>> Create(CreateRoomRequest request)
@@ -27,6 +30,12 @@ namespace CatechistHelper.Infrastructure.Services
             {
 
                 Room room = request.Adapt<Room>();
+
+                if (request.Image != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(request.Image, $"room/");
+                    room.Image = image;
+                }
 
                 Room result = await _unitOfWork.GetRepository<Room>().InsertAsync(room);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -109,6 +118,18 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id));
 
                 request.Adapt(room);
+
+                if (room.Image != null)
+                {
+                    await _firebaseService.DeleteImageAsync(room.Image);
+                    room.Image = null;
+                }
+
+                if (request.Image != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(request.Image, "room/");
+                    room.Image = image;
+                }
 
                 _unitOfWork.GetRepository<Room>().UpdateAsync(room);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

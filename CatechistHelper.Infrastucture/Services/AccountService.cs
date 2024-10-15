@@ -119,25 +119,10 @@ namespace CatechistHelper.Infrastructure.Services
 
                 request.Adapt(account);
 
-                account.HashedPassword = PasswordUtil.HashPassword(request.Password);
-
-                IFormFile formFile = null;
-
-                //if (request.OldAvatar != null)
-                //{
-                //    formFile = await _firebaseService.DownloadImageFromUrl(request.OldAvatar, "account.jpg", "image/jpg");               
-                //}
-
                 if (account.Avatar != null)
                 {
                     await _firebaseService.DeleteImageAsync(account.Avatar);
                     account.Avatar = null;
-                }
-
-                if (formFile != null)
-                {
-                    string image = await _firebaseService.UploadImageAsync(formFile, "account/");
-                    account.Avatar = image;
                 }
 
                 if (request.Avatar != null)
