@@ -9,6 +9,7 @@ using Google.Cloud.Storage.V1;
 using CatechistHelper.Domain.Dtos.Requests.Registration;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Dtos.Requests.Account;
+using CatechistHelper.Domain.Dtos.Requests.Room;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -66,6 +67,10 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Avatar);
             config.NewConfig<UpdateAccountRequest, Account>()
                 .Ignore(x => x.Avatar);
+            config.NewConfig<CreateRoomRequest, Room>()
+                .Ignore(x => x.Image);
+            config.NewConfig<UpdateRoomRequest, Room>()
+                .Ignore(x => x.Image);
             return config;
         }
     }

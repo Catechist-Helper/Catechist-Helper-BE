@@ -35,7 +35,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Room.RoomsEndpoint)]
         [ProducesResponseType(typeof(Result<GetRoomResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateRoomRequest request)
+        public async Task<IActionResult> Create([FromForm] CreateRoomRequest request)
         {
             Result<GetRoomResponse> result = await _roomService.Create(request);
             return StatusCode((int)result.StatusCode, result);
@@ -45,7 +45,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPut(ApiEndPointConstant.Room.RoomEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRoomRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateRoomRequest request)
         {
             Result<bool> result = await _roomService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
