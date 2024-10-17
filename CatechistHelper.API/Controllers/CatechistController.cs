@@ -46,12 +46,12 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpPut(ApiEndPointConstant.Catechist.CatechistEndpoint)]
+        [HttpPut(ApiEndPointConstant.Catechist.CatechistsEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateCatechistRequest request)
+        public async Task<IActionResult> Update([FromForm] UpdateCatechistRequest request)
         {
-            Result<bool> result = await _catechistService.Update(id, request);
+            Result<bool> result = await _catechistService.Update(request);
             return StatusCode((int)result.StatusCode, result);
         }
 

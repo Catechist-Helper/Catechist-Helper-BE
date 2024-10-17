@@ -114,11 +114,11 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        public async Task<Result<bool>> Update(Guid id, UpdateCatechistRequest request)
+        public async Task<Result<bool>> Update(UpdateCatechistRequest request)
         {
             try
             {
-                var catechist = await GetById(id);
+                var catechist = await GetById(request.Id);
 
                 request.Adapt(catechist);
                 _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
@@ -127,7 +127,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Catechist.Fail.UpdateCatechist);
+                    throw new Exception(MessageConstant.Catechist.Fail.CreateCatechist);
                 }
                 return Success(isSuccessful);
             }

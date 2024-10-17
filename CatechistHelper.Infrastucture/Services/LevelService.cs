@@ -11,7 +11,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
+using System.Drawing;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -80,52 +80,6 @@ namespace CatechistHelper.Infrastructure.Services
                      .GetPagingListAsync(
                             orderBy: a => a.OrderBy(x => x.CatechismLevel)
                      );
-        }
-
-        public async Task<PagingResult<GetLevelResponse>> GetPagination(Expression<Func<Level, bool>>? predicate, int page, int size)
-        {
-            try
-            {
-
-                IPaginate<Level> accounts =
-                    await _unitOfWork.GetRepository<Level>()
-                    .GetPagingListAsync(
-                            orderBy: a => a.OrderByDescending(x => x.CatechismLevel),
-                            page: page,
-                            size: size
-                        );
-                return SuccessWithPaging(
-                        accounts.Adapt<IPaginate<GetLevelResponse>>(),
-                        page,
-                        size,
-                        accounts.Total);
-            }
-            catch (Exception ex)
-            {
-            }
-            return null!;
-        }
-
-        public async Task<Result<bool>> Update(Guid id, UpdateLevelRequest request)
-        {
-            try
-            {
-                Level level = await GetById(id);
-
-                request.Adapt(level);
-
-                _unitOfWork.GetRepository<Level>().UpdateAsync(level);
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.Level.Fail.UpdateLevel);
-                }
-                return Success(isSuccessful);
-            }
-            catch (Exception ex)
-            {
-                return Fail<bool>(ex.Message);
-            }
         }
     }
 }

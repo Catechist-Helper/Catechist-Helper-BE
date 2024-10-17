@@ -183,14 +183,11 @@ namespace CatechistHelper.Infrastructure.Services
             var slots = new List<Slot>();
             var currentDate = AdjustToFixedWeekDay(classDto.StartDate, fixedDay);
 
-            var startTime = await GetStartTime();
-            var endTime = await GetEndTime();
-
             while (currentDate <= classDto.EndDate)
             {
                 if (!holidayDates.Contains(currentDate))
                 {
-                    var slot = CreateSlotInstance(classDto, request, currentDate, startTime, endTime);
+                    var slot = CreateSlotInstance(classDto, request, currentDate);
                     AddCatechistsToSlot(slot, classDto.CatechistInClasses);
                     await _unitOfWork.GetRepository<Slot>().InsertAsync(slot);
                     slots.Add(slot);
@@ -213,15 +210,15 @@ namespace CatechistHelper.Infrastructure.Services
         }
 
         // Create a new Slot instance
-        private static Slot CreateSlotInstance(Class classDto, CreateSlotsRequest request, DateTime currentDate, DateTime startTime, DateTime endTime)
+        private static Slot CreateSlotInstance(Class classDto, CreateSlotsRequest request, DateTime currentDate)
         {
             return new Slot
             {
                 ClassId = classDto.Id,
                 RoomId = request.RoomId,
                 Date = currentDate,
-                StartTime = startTime,
-                EndTime = endTime
+                StartTime = currentDate.Date + request.StartTime,
+                EndTime = currentDate.Date + request.EndTime
             };
         }
 
@@ -239,25 +236,6 @@ namespace CatechistHelper.Infrastructure.Services
 
                 slot.CatechistInSlots.Add(catechistInSlot);
             }
-        }
-
-        public async Task<DateTime> GetStartTime()
-        {
-            var config = await _systemConfiguration.GetConfigByKey("starttime");
-
-            return ConvertTime(config.Value);
-        }
-
-        public async Task<DateTime> GetEndTime()
-        {
-            var config = await _systemConfiguration.GetConfigByKey("endtime");
-
-            return ConvertTime(config.Value);
-        }
-
-        public static DateTime ConvertTime(string timeString)
-        {
-            return DateTime.ParseExact(timeString, "HH:mm", null);
         }
 
         public async Task<DayOfWeek> GetWeekDay()

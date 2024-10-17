@@ -134,12 +134,5 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
         }
-        public static class Level
-        {
-            /// <summary>"api/v1/rooms"</summary>
-            public const string LevelsEndpoint = ApiEndpoint + "/levels";
-            /// <summary>"api/v1/rooms/{id}"</summary>
-            public const string LevelEndpoint = LevelsEndpoint + ByIdRoute;
-        }
     }
 }
