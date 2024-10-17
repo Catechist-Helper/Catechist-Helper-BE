@@ -1,3 +1,5 @@
+using System.Xml.Linq;
+
 namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
@@ -150,6 +152,7 @@ namespace CatechistHelper.Domain.Constants
             {
                 public static string CreateCertificate = String.Format(CreateFailTemplate, CertificateMessage);
                 public static string DeleteCertificate = String.Format(DeleteFailTemplate, CertificateMessage);
+                public static string NotFoundCertificate = String.Format(NotFoundTemplate, CertificateMessage);
             }
         }
         public static class PastoralYear
@@ -176,6 +179,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreatePastoralYear = String.Format(CreateFailTemplate, PastoralYearMessage);
                 public static string UpdatePastoralYear = String.Format(UpdateFailTemplate, PastoralYearMessage);
                 public static string DeletePastoralYear = String.Format(DeleteFailTemplate, PastoralYearMessage);
+                public static string NotFoundPastoralYear = String.Format(NotFoundTemplate, PastoralYearMessage);
             }
         }
         public static class ChristianName
@@ -360,7 +364,6 @@ namespace CatechistHelper.Domain.Constants
             public static class Require
             {
                 public const string NameRequired = Name + RequiredSuffix;
-
             }
             public static class Success
             {
@@ -392,6 +395,29 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateLevel = String.Format(UpdateFailTemplate, LevelMessage);
                 public static string DeleteLevel = String.Format(DeleteFailTemplate, LevelMessage);
                 public static string NotFoundLevel = String.Format(NotFoundTemplate, LevelMessage);
+
+            }
+        }
+        public static class Grade
+        {
+            #region
+            private const string GradeMessage = "Grade";
+            private const string Name = "Name";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateGrade = String.Format(CreateSuccessTemplate, GradeMessage);
+                public static string DeleteGrade = String.Format(DeleteSuccessTemplate, GradeMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateGrade = String.Format(CreateFailTemplate, GradeMessage);
+                public static string DeleteGrade = String.Format(DeleteFailTemplate, GradeMessage);
+                public static string NotFoundGrade = String.Format(NotFoundTemplate, GradeMessage);
 
             }
         }

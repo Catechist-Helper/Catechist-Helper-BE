@@ -8,7 +8,7 @@ namespace CatechistHelper.Domain.Entities
     {
         [Key]
         [Column("id")]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Column("name")]
         [StringLength(50)]

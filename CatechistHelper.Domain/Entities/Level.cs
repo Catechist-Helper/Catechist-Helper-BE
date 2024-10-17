@@ -10,6 +10,10 @@ namespace CatechistHelper.Domain.Entities
         [Column("id")]
         public Guid Id { get; set; } = Guid.NewGuid();
 
+        [Column("name")]
+        [StringLength(10)]
+        public string Name { get; set; } = null!;
+
         [Column("description")]
         [StringLength(100)]
         public string? Description { get; set; }

@@ -2,6 +2,7 @@
 using CatechistHelper.Domain.Dtos.Requests.Certificate;
 using CatechistHelper.Domain.Dtos.Responses.Certificate;
 using CatechistHelper.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Application.Services

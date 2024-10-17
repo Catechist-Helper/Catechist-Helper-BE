@@ -40,7 +40,6 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-
                 IPaginate<ChristianName> christianNames =
                     await _unitOfWork.GetRepository<ChristianName>()
                     .GetPagingListAsync(
