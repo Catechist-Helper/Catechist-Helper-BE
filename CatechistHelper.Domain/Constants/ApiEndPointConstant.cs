@@ -122,7 +122,6 @@ namespace CatechistHelper.Domain.Constants
             public const string ExportEndpoint = ClassesEndpoint + "/export" + ByIdRoute;
             public const string ExportYearEndpoint = YearsEndpoint + "/export";
         }
-<<<<<<< HEAD
         public static class Level
         {
             /// <summary>"api/v1/rooms"</summary>
@@ -130,8 +129,6 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/rooms/{id}"</summary>
             public const string LevelEndpoint = LevelsEndpoint + ByIdRoute;
         }
-
-=======
         public static class CertificateOfCatechist
         {
             /// <summary>"api/v1/certificate-of-catechists"</summary>
@@ -144,6 +141,5 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
         }
->>>>>>> 30b3140 (manage grade)
     }
 }
