@@ -15,6 +15,9 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(20)]
         public string Name { get; set; } = null!;
 
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         [Column("status")]
         [EnumDataType(typeof(InterviewProcessStatus))]
         public InterviewProcessStatus Status { get; set; }

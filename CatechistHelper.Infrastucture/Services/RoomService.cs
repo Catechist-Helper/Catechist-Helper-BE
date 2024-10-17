@@ -28,6 +28,13 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Room roomFromDb = await _unitOfWork.GetRepository<Room>().SingleOrDefaultAsync(
+                    predicate: r => r.Name.Equals(request.Name));
+
+                if (roomFromDb != null)
+                {
+                    throw new Exception("Tên đã tồn tại!");
+                }
 
                 Room room = request.Adapt<Room>();
 

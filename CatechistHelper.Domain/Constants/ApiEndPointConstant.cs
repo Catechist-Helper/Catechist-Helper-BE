@@ -25,15 +25,6 @@ namespace CatechistHelper.Domain.Constants
             // <summary>"api/v1/accounts/{id}"</summary>
             public const string AccountEndPoint = AccountsEndPoint + ByIdRoute;
         }
-        public static class Candidate
-        {
-            /// <summary>"api/v1/candidates"</summary>
-            public const string CandidatesEndPoint = ApiEndpoint + "/candidates";
-            // <summary>"api/v1/candidates/{id}"</summary>
-            public const string CandidateEndPoint = CandidatesEndPoint + ByIdRoute;
-            // <summary>"api/v1/candidates/{id}/certificates"</summary>
-            public const string CertificatesOfCandidateEndPoint = CandidateEndPoint + "/certificates";
-        }
         public static class Certificate
         {
             /// <summary>"api/v1/candidates"</summary>
@@ -70,6 +61,7 @@ namespace CatechistHelper.Domain.Constants
         {
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
+            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + Certificate.CertificateEndPoint;
         }
         public static class PastoralYear
         {
@@ -121,7 +113,6 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/rooms/{id}"</summary>
             public const string RoomEndpoint = RoomsEndpoint + ByIdRoute;
         }
-
         public static class Timetable
         {
             public const string YearsEndpoint = ApiEndpoint + "/pastoral-years";
@@ -131,6 +122,7 @@ namespace CatechistHelper.Domain.Constants
             public const string ExportEndpoint = ClassesEndpoint + "/export" + ByIdRoute;
             public const string ExportYearEndpoint = YearsEndpoint + "/export";
         }
+<<<<<<< HEAD
         public static class Level
         {
             /// <summary>"api/v1/rooms"</summary>
@@ -139,5 +131,19 @@ namespace CatechistHelper.Domain.Constants
             public const string LevelEndpoint = LevelsEndpoint + ByIdRoute;
         }
 
+=======
+        public static class CertificateOfCatechist
+        {
+            /// <summary>"api/v1/certificate-of-catechists"</summary>
+            public const string CertificateOfCatechistsEndpoint = ApiEndpoint + "/certificate-of-catechists";
+        }
+        public static class Grade
+        {
+            /// <summary>"api/v1/grades"</summary>
+            public const string GradesEndpoint = ApiEndpoint + "/grades";
+            /// <summary>"api/v1/grades/{id}"</summary>
+            public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
+        }
+>>>>>>> 30b3140 (manage grade)
     }
 }

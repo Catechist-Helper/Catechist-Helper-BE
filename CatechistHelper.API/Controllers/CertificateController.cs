@@ -33,7 +33,5 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _certificateService.Delete(id);
             return StatusCode((int)result.StatusCode, result);
         }
-
-
     }
 }
