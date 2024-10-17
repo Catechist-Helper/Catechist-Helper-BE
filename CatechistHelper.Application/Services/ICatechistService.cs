@@ -11,7 +11,7 @@ namespace CatechistHelper.Application.Services
         Task<PagingResult<GetCatechistResponse>> GetPagination(Expression<Func<Catechist, bool>>? predicate, int page, int size);
         Task<Result<GetCatechistResponse>> Get(Guid id);
         Task<Result<GetCatechistResponse>> Create(CreateCatechistRequest request);
-        Task<Result<bool>> Update(UpdateCatechistRequest request);
+        Task<Result<bool>> Update(Guid id, UpdateCatechistRequest request);
         Task<Result<bool>> Delete(Guid id);
     }
 }
