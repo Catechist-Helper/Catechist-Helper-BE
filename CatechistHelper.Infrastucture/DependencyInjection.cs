@@ -10,6 +10,7 @@ using CatechistHelper.Domain.Dtos.Requests.Registration;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Requests.Room;
+using CatechistHelper.Domain.Dtos.Responses.Class;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -71,6 +72,10 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Image);
             config.NewConfig<UpdateRoomRequest, Room>()
                 .Ignore(x => x.Image);
+
+            config.NewConfig<Class, GetClassResponse>()
+                .Map(dest => dest.PastoralYearName, src => src.PastoralYear.Name)  // Map PastoralYear's name
+                .Map(dest => dest.GradeName, src => src.Grade.Name);
             return config;
         }
     }
