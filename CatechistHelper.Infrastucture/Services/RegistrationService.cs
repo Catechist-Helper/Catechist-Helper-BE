@@ -187,8 +187,7 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }             
       
-                if (registration.Status == Domain.Enums.RegistrationStatus.Pending 
-                    && request.Status == Domain.Enums.RegistrationStatus.Rejected_Duyet_Don)
+                if (request.Status == Domain.Enums.RegistrationStatus.Rejected_Duyet_Don)
                 {
                     MailUtil.SendEmail(registration.Email, ContentMailUtil.Title_AnnounceRejectRegistration,
                         ContentMailUtil.AnnounceRejectRegistration(registration.FullName, request.Reason ?? ""), "");
