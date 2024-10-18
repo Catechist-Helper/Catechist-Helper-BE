@@ -5,5 +5,6 @@
         public DateTime MeetingTime { get; set; }
         public string? Note { get; set; }
         public bool IsPassed { get; set; }
+        public string? Reason { get; set; }
     }
 }

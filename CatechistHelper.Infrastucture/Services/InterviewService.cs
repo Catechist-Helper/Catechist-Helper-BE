@@ -6,9 +6,11 @@ using CatechistHelper.Domain.Dtos.Requests.Interview;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -24,12 +26,25 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                Registration registraion = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
+                Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
 
                 Interview interview = request.Adapt<Interview>();
 
                 Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);
+                
+                string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
+                MailUtil.SendEmail(
+                    registration.Email,
+                    ContentMailUtil.Title_AnnounceInterviewSchedule,
+                    ContentMailUtil.AnnounceInterviewSchedule(
+                        registration.FullName,
+                        formattedMeetingTime,
+                        ContentMailUtil.INTERVIEW_ADDRESS
+                    ),
+                    ""
+                );
+
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
@@ -48,11 +63,57 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
+                    predicate: a => a.Id.Equals(id)
+                    , include: a => a.Include(x => x.Registration)) 
+                    ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
+
+                if(interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Duyet_Don
+                    && !interview.IsPassed
+                    && request.MeetingTime != interview.MeetingTime)
+                {
+                    string formattedMeetingTime = request.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
+                    MailUtil.SendEmail(
+                        interview.Registration.Email,
+                        ContentMailUtil.Title_AnnounceUpdateInterviewSchedule,
+                        ContentMailUtil.AnnounceUpdateInterviewSchedule(
+                            interview.Registration.FullName,
+                            request.Reason ?? "",
+                            formattedMeetingTime,
+                            ContentMailUtil.INTERVIEW_ADDRESS
+                        ),
+                        ""
+                    );
+                }
+
+                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Phong_Van
+                    && request.IsPassed)
+                {
+                    MailUtil.SendEmail(
+                        interview.Registration.Email,
+                        ContentMailUtil.Title_AnnounceApproveInterview,
+                        ContentMailUtil.AnnounceApproveInterview(
+                            interview.Registration.FullName
+                        ),
+                        ""
+                    );
+                }
+
+                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Rejected_Phong_Van
+                    && !request.IsPassed)
+                {
+                    MailUtil.SendEmail(
+                        interview.Registration.Email,
+                        ContentMailUtil.Title_AnnounceRejectInterview,
+                        ContentMailUtil.AnnounceRejectInterview(
+                            interview.Registration.FullName
+                        ),
+                        ""
+                    );
+                }
 
                 request.Adapt(interview);
-
                 _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
+
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {

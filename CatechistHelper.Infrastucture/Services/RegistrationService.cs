@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Infrastructure.Utils;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -130,6 +131,10 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.Registration.Fail.CreateRegistration);
                 }
+
+                MailUtil.SendEmail(request.Email, ContentMailUtil.Title_ThankingForRegistration,
+                    ContentMailUtil.ThankingForRegistration(request.FullName), "");
+
                 return Success(_mapper.Map<GetRegistrationResponse>(result));
             }
             catch (Exception ex)
@@ -156,7 +161,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: a => a.Id.Equals(id),
+                    include: a => a.Include(x => x.Interviews));
 
                 registration.Status = request.Status;
 
@@ -181,12 +187,21 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }             
       
+                if (registration.Status == Domain.Enums.RegistrationStatus.Pending 
+                    && request.Status == Domain.Enums.RegistrationStatus.Rejected_Duyet_Don)
+                {
+                    MailUtil.SendEmail(registration.Email, ContentMailUtil.Title_AnnounceRejectRegistration,
+                        ContentMailUtil.AnnounceRejectRegistration(registration.FullName, request.Reason ?? ""), "");
+                }
+
                 _unitOfWork.GetRepository<Registration>().UpdateAsync(registration);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
                     throw new Exception(MessageConstant.Registration.Fail.UpdateRegistration);
                 }
+
+
                 return Success(isSuccessful);
             }
             catch (Exception ex)
