@@ -175,7 +175,6 @@ namespace CatechistHelper.Testing
             // Arrange
             var catechistId = new Guid("7b03cc3c-4a6a-4849-9673-1ef9ca8e2f96");
             var catechist = new UpdateCatechistRequest { 
-                Id = catechistId, 
                 FullName = "New Catechist",
                 Code = "CH001",
                 Gender = "Male",

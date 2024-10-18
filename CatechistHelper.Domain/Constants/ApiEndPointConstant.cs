@@ -98,6 +98,10 @@ namespace CatechistHelper.Domain.Constants
             public const string MajorsEndpoint = ApiEndpoint + "/majors";
             /// <summary>"api/v1/majors/{id}"</summary>
             public const string MajorEndpoint = MajorsEndpoint + ByIdRoute;
+            /// <summary>"api/v1/majors/{id}/levels/"</summary>
+            public const string LevelOfMajorsEndpoint = MajorEndpoint + "/levels";
+            /// <summary>"api/v1/majors/{id}/levels/{id}"</summary>
+            public const string LevelOfMajorEndpoint = MajorsEndpoint + "/{majorId}" + "/levels" + "/{levelId}";
         }
         public static class SystemConfiguration
         {
@@ -128,6 +132,8 @@ namespace CatechistHelper.Domain.Constants
             public const string LevelsEndpoint = ApiEndpoint + "/levels";
             /// <summary>"api/v1/rooms/{id}"</summary>
             public const string LevelEndpoint = LevelsEndpoint + ByIdRoute;
+            /// <summary>"api/v1/majors/{id}/levels/"</summary>
+            public const string MajorOfLevelsEndpoint = LevelEndpoint + "/majors";
         }
         public static class CertificateOfCatechist
         {

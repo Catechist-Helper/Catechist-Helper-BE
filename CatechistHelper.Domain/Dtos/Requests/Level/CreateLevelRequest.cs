@@ -2,7 +2,8 @@
 {
     public class CreateLevelRequest
     {
-        public string Description { get; set; } = string.Empty;
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
         public int CatechismLevel { get; set; }
     }
 }

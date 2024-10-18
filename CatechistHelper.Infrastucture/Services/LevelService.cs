@@ -4,12 +4,14 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Level;
 using CatechistHelper.Domain.Dtos.Responses.Level;
+using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -126,6 +128,31 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return Fail<bool>(ex.Message);
             }
+        }
+
+        public async Task<PagingResult<GetMajorResponse>> GetMajorOfLevel(Guid id, int page, int size)
+        {
+            try
+            {
+                Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                IPaginate<GetMajorResponse> majors = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
+                                predicate: t => t.LevelId.Equals(id),
+                                include: t => t.Include(t => t.Major),
+                                selector: t => new GetMajorResponse(t.MajorId, t.Major.Name),
+                                page: page,
+                                size: size
+                            ); ;
+                return SuccessWithPaging(
+                        majors.Adapt<IPaginate<GetMajorResponse>>(),
+                        page,
+                        size,
+                        majors.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
     }
 }

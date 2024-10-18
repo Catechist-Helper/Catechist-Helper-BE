@@ -54,7 +54,7 @@ namespace CatechistHelper.Testing
         public async Task GetAllMajors_ReturnsListOfMajors()
         {
             // Act
-            var result = await _majorService.GetPagination(x => false, 1, 10);
+            var result = await _majorService.GetPagination(1, 10);
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.TotalCount);
