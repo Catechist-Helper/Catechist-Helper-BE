@@ -183,7 +183,7 @@ namespace CatechistHelper.Testing
                 ChristianNameId = new Guid("8199c6f5-8930-45a0-b812-49bec5dfe326")
             };
 
-            var result = await _catechistService.Update(catechist);
+            var result = await _catechistService.Update(catechistId, catechist);
 
             Assert.True(result.Data);
         }

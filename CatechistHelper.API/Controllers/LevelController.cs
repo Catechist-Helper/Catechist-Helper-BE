@@ -4,7 +4,6 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Level;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
-using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -36,7 +35,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Level.LevelsEndpoint)]
         [ProducesResponseType(typeof(Result<GetLevelResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromForm] CreateLevelRequest request)
+        public async Task<IActionResult> Create([FromBody] CreateLevelRequest request)
         {
             Result<GetLevelResponse> result = await _levelService.Create(request);
             return StatusCode((int)result.StatusCode, result);
@@ -45,7 +44,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPut(ApiEndPointConstant.Level.LevelEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateLevelRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateLevelRequest request)
         {
             Result<bool> result = await _levelService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
