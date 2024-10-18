@@ -184,7 +184,6 @@ namespace CatechistHelper.Testing
             {
                 ClassId = classId,
                 RoomId = roomId,
-                Hour = 1
             };
 
             var result = await _classService.CreateSlot(request);

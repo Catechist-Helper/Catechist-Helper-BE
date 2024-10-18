@@ -60,13 +60,37 @@ namespace CatechistHelper.Infrastructure.GoogleServices
             foreach (var imageFile in imageFiles)
             {
                 var filePath = $"{folderPath}/{Path.GetFileName(imageFile.FileName)}";
-                uploadTasks.Add(UploadImageAsync(imageFile, filePath));
+                uploadTasks.Add(UploadImageAsyncV2(imageFile, filePath));
             }
 
             var imageUrls = await Task.WhenAll(uploadTasks);
             return imageUrls;
         }
+        public async Task<string> UploadImageAsyncV2(IFormFile imageFile, string imagePath)
+        {
+            // Đặt giới hạn kích thước file (ví dụ 5MB = 5 * 1024 * 1024 bytes)
+            long fileSizeLimit = 5 * 1024 * 1024;
 
+            if (imageFile.Length > fileSizeLimit)
+            {
+                throw new Exception("Kích thước file vượt quá giới hạn cho phép (5MB).");
+            }
+            using var stream = new MemoryStream();
+            await imageFile.CopyToAsync(stream);
+            stream.Position = 0;
+
+            var blob = await _storageClient.UploadObjectAsync(_bucketName, imagePath, imageFile.ContentType, stream, cancellationToken: CancellationToken.None);
+
+            if (blob is null)
+            {
+                throw new Exception("Upload failed");
+            }
+
+            var folderName = Path.GetDirectoryName(imagePath)?.Replace("\\", "/") ?? string.Empty;
+            var imageName = Path.GetFileName(imagePath);
+
+            return GetImageUrl(folderName, imageName);
+        }
         public async Task<string> UploadImageAsync(IFormFile imageFile, string imagePath)
         {
             // Đặt giới hạn kích thước file (ví dụ 5MB = 5 * 1024 * 1024 bytes)

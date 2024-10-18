@@ -2,6 +2,7 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Major;
+using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +21,12 @@ namespace CatechistHelper.API.Controllers
         [ProducesResponseType(typeof(PagingResult<GetMajorResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetMajorResponse> result = await _majorService.GetPagination(x => false, page, size);
+            PagingResult<GetMajorResponse> result = await _majorService.GetPagination(page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 
         [HttpGet(ApiEndPointConstant.Major.MajorEndpoint)]
-        [ProducesResponseType(typeof(Result<List<GetMajorResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<GetMajorResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             Result<GetMajorResponse> result = await _majorService.Get(id);
@@ -56,6 +57,23 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             Result<bool> result = await _majorService.Delete(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Major.LevelOfMajorsEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetLevelResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetLevelOfMajor([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetLevelResponse> result = await _majorService.GetLevelOfMajor(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpPut(ApiEndPointConstant.Major.LevelOfMajorEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateLevelOfMajor([FromRoute] Guid majorId, [FromRoute] Guid levelId)
+        {
+            Result<bool> result = await _majorService.CreateLevelOfMajor(majorId, levelId);
             return StatusCode((int)result.StatusCode, result);
         }
     }
