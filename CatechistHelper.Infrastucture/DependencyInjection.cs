@@ -82,7 +82,9 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.ChristianName, src => src.ChristianName.Name)
                 .Map(dest => dest.LevelName, src => src.Level.Name)
                 .Map(dest => dest.Email, src => src.Account.Email)
-                .Map(dest => dest.Certificates, src => src.Certificates);
+                .Map(dest => dest.Account, src => src.Account)
+                .Map(dest => dest.Certificates, src => src.Certificates)
+                .Map(dest => dest.Level, src => src.Level);
             return config;
         }
     }
