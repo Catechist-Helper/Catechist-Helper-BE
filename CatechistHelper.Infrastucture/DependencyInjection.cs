@@ -11,6 +11,7 @@ using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Requests.Room;
 using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Dtos.Responses.Catechist;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -74,8 +75,14 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Image);
 
             config.NewConfig<Class, GetClassResponse>()
-                .Map(dest => dest.PastoralYearName, src => src.PastoralYear.Name)  // Map PastoralYear's name
+                .Map(dest => dest.PastoralYearName, src => src.PastoralYear.Name) 
                 .Map(dest => dest.GradeName, src => src.Grade.Name);
+
+            config.NewConfig<Catechist, GetCatechistResponse>()
+                .Map(dest => dest.ChristianName, src => src.ChristianName.Name)
+                .Map(dest => dest.LevelName, src => src.Level.Name)
+                .Map(dest => dest.Email, src => src.Account.Email)
+                .Map(dest => dest.Certificates, src => src.Certificates);
             return config;
         }
     }

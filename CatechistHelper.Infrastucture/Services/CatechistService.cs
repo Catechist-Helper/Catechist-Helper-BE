@@ -10,6 +10,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -78,7 +79,13 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Catechist> GetById(Guid id)
         {
             var catechist = await _unitOfWork.GetRepository<Catechist>()
-                .SingleOrDefaultAsync(predicate: c => c.Id.Equals(id) && !c.IsDeleted);
+                .SingleOrDefaultAsync(
+                predicate: c => c.Id.Equals(id) && !c.IsDeleted,
+                include : c => c.Include(n => n.ChristianName)
+                                .Include(n=> n.Level)
+                                .Include(n => n.Account)
+                                .Include(n => n.Certificates)
+                );
             ArgumentNullException.ThrowIfNull(nameof(id));
             return catechist;
         }
