@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -18,13 +19,17 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class CatechistService : BaseService<CatechistService>, ICatechistService
     {
+        private readonly IFirebaseService _firebaseService;
+
         public CatechistService(
+            IFirebaseService firebaseService,
             IUnitOfWork<ApplicationDbContext> unitOfWork,
             ILogger<CatechistService> logger,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor
         ) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            this._firebaseService = firebaseService;
         }
 
         public async Task<Result<GetCatechistResponse>> Create(CreateCatechistRequest request)
@@ -43,6 +48,12 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Catechist> CreateAsync(CreateCatechistRequest request)
         {
             var catechist = request.Adapt<Catechist>();
+
+            if (request.ImageUrl != null)
+            {
+                string avatar = await _firebaseService.UploadImageAsync(request.ImageUrl, $"catechist/");
+                catechist.ImageUrl = avatar;
+            }
 
             var result = await _unitOfWork.GetRepository<Catechist>().InsertAsync(catechist);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -81,8 +92,8 @@ namespace CatechistHelper.Infrastructure.Services
             var catechist = await _unitOfWork.GetRepository<Catechist>()
                 .SingleOrDefaultAsync(
                 predicate: c => c.Id.Equals(id) && !c.IsDeleted,
-                include : c => c.Include(n => n.ChristianName)
-                                .Include(n=> n.Level)
+                include: c => c.Include(n => n.ChristianName)
+                                .Include(n => n.Level)
                                 .Include(n => n.Account)
                                 .Include(n => n.Certificates)
                 );
@@ -132,6 +143,39 @@ namespace CatechistHelper.Infrastructure.Services
                 var catechist = await GetById(id);
 
                 request.Adapt(catechist);
+                _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
+
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Catechist.Fail.UpdateCatechist);
+                }
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request)
+        {
+            try
+            {
+                var catechist = await GetById(id);
+                if (catechist.ImageUrl != null)
+                {
+                    await _firebaseService.DeleteImageAsync(catechist.ImageUrl);
+                }
+
+                if (request.ImageUrl != null)
+                {
+
+                    string avatar = await _firebaseService.UploadImageAsync(request.ImageUrl, $"catechist/");
+                    catechist.ImageUrl = avatar;
+                }
+
                 _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
 
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

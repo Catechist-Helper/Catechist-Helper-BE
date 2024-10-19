@@ -2,7 +2,7 @@
 
 namespace CatechistHelper.Domain.Dtos.Requests.Catechist
 {
-    public class CreateCatechistRequest : UpdateCatechistRequest
+    public class UpdateImageRequest
     {
         public IFormFile? ImageUrl { get; set; }
     }

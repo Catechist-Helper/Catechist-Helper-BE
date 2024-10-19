@@ -55,6 +55,16 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+
+        [HttpPut(ApiEndPointConstant.Catechist.UpdateImageEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateImage([FromRoute] Guid id, [FromForm] UpdateImageRequest request)
+        {
+            Result<bool> result = await _catechistService.UpdateImage(id, request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpDelete(ApiEndPointConstant.Catechist.CatechistEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
