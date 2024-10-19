@@ -94,6 +94,10 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var catechists = await _unitOfWork.GetRepository<Catechist>()
                     .GetPagingListAsync(
+                include: c => c.Include(n => n.ChristianName)
+                                .Include(n => n.Level)
+                                .Include(n => n.Account)
+                                .Include(n => n.Certificates),
                             predicate: a => !a.IsDeleted,
                             orderBy: a => a.OrderByDescending(x => x.CreatedAt),
                             page: page,
