@@ -11,6 +11,8 @@ namespace CatechistHelper.Domain.Constants
         public const string ApiEndpoint = RootEndPoint + ApiVersion;
 
         public const string ByIdRoute = "/{id}";
+
+        public const string ImageEndpoint = "/image";
         public static class Authentication
         {
             /// <summary>"api/v1/login"</summary>
@@ -61,6 +63,7 @@ namespace CatechistHelper.Domain.Constants
         {
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
+            public const string UpdateImageEndpoint = CatechistsEndpoint + ImageEndpoint + ByIdRoute;
             public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + Certificate.CertificateEndPoint;
         }
         public static class PastoralYear

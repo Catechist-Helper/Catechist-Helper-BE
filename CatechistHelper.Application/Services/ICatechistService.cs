@@ -13,5 +13,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetCatechistResponse>> Create(CreateCatechistRequest request);
         Task<Result<bool>> Update(Guid id, UpdateCatechistRequest request);
         Task<Result<bool>> Delete(Guid id);
+        Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request);
     }
 }

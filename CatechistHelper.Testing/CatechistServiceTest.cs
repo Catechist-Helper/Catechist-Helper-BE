@@ -1,7 +1,9 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.GoogleServices;
 using CatechistHelper.Infrastructure.Repositories;
 using CatechistHelper.Infrastructure.Services;
 using CatechistHelper.Infrastructure.Utils;
@@ -33,7 +35,7 @@ namespace CatechistHelper.Testing
             _testDbContext = new ApplicationDbContext(_contextOptions);
 
             // Create the AccountService with the in-memory database context
-            _catechistService = new CatechistService(new UnitOfWork<ApplicationDbContext>(_testDbContext), 
+            _catechistService = new CatechistService(Mock.Of<IFirebaseService>(), new UnitOfWork<ApplicationDbContext>(_testDbContext), 
                 Mock.Of<ILogger<CatechistService>>(), Mock.Of<IMapper>(), Mock.Of<IHttpContextAccessor>());
 
             // Seed the database with users
