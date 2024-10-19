@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CatechistHelper.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     catechism_level = table.Column<int>(type: "int", nullable: false)
                 },
@@ -386,6 +387,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
                     registration_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
