@@ -5,8 +5,6 @@ namespace CatechistHelper.Application.Services
 {
     public interface ICatechistInClassService
     {
-        Task<Result<bool>> Create(CreateCatechistInClassRequest request);
-        Task<Result<bool>> Update(Guid id, UpdateCatechistInClassRequest request);
-
+        Task<Result<bool>> AddCatechistToClass(CreateCatechistInClassRequest request);
     }
 }
