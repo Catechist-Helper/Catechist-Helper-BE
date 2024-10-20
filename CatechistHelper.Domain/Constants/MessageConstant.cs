@@ -326,6 +326,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateCatechist = String.Format(UpdateFailTemplate, CatechistMessage);
                 public static string DeleteCatechist = String.Format(DeleteFailTemplate, CatechistMessage);
                 public static string NotFoundCatechist = String.Format(NotFoundTemplate, CatechistMessage);
+                public static string UnqualifiedCatechist = "Giáo lý viên không đúng khối ngành!";
 
             }
         }

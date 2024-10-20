@@ -3,6 +3,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
+using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
@@ -62,6 +63,22 @@ namespace CatechistHelper.Infrastructure.Services
                                    .Include(g => g.PastoralYear),
                     predicate: a => a.Id.Equals(id));
             return Success(grade.Adapt<GetGradeResponse>());
+        }
+
+        public async Task<PagingResult<GetCatechistResponse>> GetCatechistsByGradeId(Guid id, int page, int size)
+        {
+            IPaginate<Catechist> catechists =
+                   await _unitOfWork.GetRepository<CatechistInGrade>().GetPagingListAsync(
+                            predicate: cig => cig.GradeId == id,
+                            include: cig => cig.Include(cig => cig.Catechist),
+                            selector: cig => cig.Catechist,
+                            page: page,
+                            size: size);
+            return SuccessWithPaging(
+                    catechists.Adapt<IPaginate<GetCatechistResponse>>(),
+                    page,
+                    size,
+                    catechists.Total);
         }
 
         public async Task<PagingResult<GetGradeResponse>> GetPagination(int page, int size)

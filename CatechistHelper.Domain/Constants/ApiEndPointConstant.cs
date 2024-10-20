@@ -64,7 +64,7 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
             public const string UpdateImageEndpoint = CatechistsEndpoint + ImageEndpoint + ByIdRoute;
-            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";
+            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";      
         }
         public static class PastoralYear
         {
@@ -105,6 +105,8 @@ namespace CatechistHelper.Domain.Constants
             public const string LevelOfMajorsEndpoint = MajorEndpoint + "/levels";
             /// <summary>"api/v1/majors/{id}/levels/{id}"</summary>
             public const string LevelOfMajorEndpoint = MajorsEndpoint + "/{majorId}" + "/levels" + "/{levelId}";
+            /// <summary>"api/v1/majors/{id}/levels/{id}"</summary>
+            public const string CatechistInMajorsEndpoint = MajorEndpoint + "/catechists";
         }
         public static class SystemConfiguration
         {
@@ -151,6 +153,8 @@ namespace CatechistHelper.Domain.Constants
             public const string GradesEndpoint = ApiEndpoint + "/grades";
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
+            /// <summary>"api/v1/grades/{id}"</summary>
+            public const string CatechistsInGradeEndpoint = GradeEndpoint + "/catechists";
         }
 
         public static class Class
@@ -159,6 +163,11 @@ namespace CatechistHelper.Domain.Constants
             public const string ClassesEndpoint = ApiEndpoint + "/classes";
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string ClassEndpoint = ClassesEndpoint + ByIdRoute;
+        }
+        public static class CatechistInGrade
+        {
+            /// <summary>"api/v1/catechist-in-grades"</summary>
+            public const string CatechistInGradesEndpoint = ApiEndpoint + "/catechist-in-grades";
         }
     }
 }

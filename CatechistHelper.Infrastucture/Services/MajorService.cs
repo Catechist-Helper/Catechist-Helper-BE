@@ -3,6 +3,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Major;
+using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Entities;
@@ -154,10 +155,10 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-               predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
-                IPaginate<Major> levels = await _unitOfWork.GetRepository<Major>().GetPagingListAsync(
-                                predicate: m => m.Id.Equals(id),
-                                include: m => m.Include(m => m.Levels),
+                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
+                IPaginate<Level> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
+                                predicate: t => t.MajorId.Equals(id),
+                                selector: t => t.Level,
                                 page: page,
                                 size: size
                             );
@@ -166,6 +167,35 @@ namespace CatechistHelper.Infrastructure.Services
                         page,
                         size,
                         levels.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
+        }
+
+        public async Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(Guid id, int page, int size)
+        {
+            try
+            {
+                ICollection<Guid> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetListAsync(
+                            predicate: t => t.MajorId.Equals(id),
+                            selector: t => t.LevelId
+                        );
+                IPaginate<Catechist> catechists =
+                    await _unitOfWork.GetRepository<Catechist>()
+                    .GetPagingListAsync(
+                            predicate: c => levels.Contains(c.LevelId)
+                                            && c.IsDeleted == false
+                                            && c.IsTeaching == true,
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        catechists.Adapt<IPaginate<GetCatechistResponse>>(),
+                        page,
+                        size,
+                        catechists.Total);
             }
             catch (Exception ex)
             {

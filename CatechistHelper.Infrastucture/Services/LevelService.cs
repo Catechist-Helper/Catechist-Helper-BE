@@ -136,10 +136,9 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
                     predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
-                IPaginate<GetMajorResponse> majors = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
+                IPaginate<Major> majors = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
                                 predicate: t => t.LevelId.Equals(id),
-                                include: t => t.Include(t => t.Major),
-                                selector: t => new GetMajorResponse(t.MajorId, t.Major.Name),
+                                selector: t => t.Major,
                                 page: page,
                                 size: size
                             ); ;
