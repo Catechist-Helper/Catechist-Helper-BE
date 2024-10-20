@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -18,21 +19,31 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class CertificateService : BaseService<CertificateService>, ICertificateService
     {
-        public CertificateService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<CertificateService> logger, IMapper mapper,
-           IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        private readonly IFirebaseService _firebaseService;
+        public CertificateService(
+            IFirebaseService firebaseService,
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<CertificateService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
+            : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<GetCertificateResponse>> Create(CreateCertificateRequest request)
         {
             Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
-        predicate: r => r.Id.Equals(request.LevelId)) ?? throw new Exception(MessageConstant.PostCategory.Fail.NotFoundPostCategory); ;
+                predicate: r => r.Id.Equals(request.LevelId)) ?? throw new Exception(MessageConstant.PostCategory.Fail.NotFoundPostCategory); ;
 
             try
             {
-
                 Certificate certificate = request.Adapt<Certificate>();
-
+                if (request.Image != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(request.Image, $"certificate/");
+                    certificate.Image = image;
+                }
                 Certificate result = await _unitOfWork.GetRepository<Certificate>().InsertAsync(certificate);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
