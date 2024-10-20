@@ -3,6 +3,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Dtos.Responses.Slot;
 using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,9 +27,17 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCatechistInClass([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetCatechistInClassResponse> result = await _classService.GetCatechistInClassById(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Class.SlotsOfClassEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSlotsOfClass([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetSlotResponse> result = await _classService.GetSlotResponseById(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }

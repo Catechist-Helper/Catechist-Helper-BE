@@ -8,9 +8,9 @@ namespace CatechistHelper.Domain.Entities
     public class Slot : BaseEntity
     {
         [Column("date")]
-        public DateTime Date { get; set;}
+        public DateTime Date { get; set; }
 
-        [Column("start_time")] 
+        [Column("start_time")]
         public DateTime StartTime { get; set; }
 
         [Column("end_time")]
