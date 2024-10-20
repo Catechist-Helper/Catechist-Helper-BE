@@ -28,9 +28,15 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Major.CatechistInMajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetQualifiedCatechistByMajorId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetQualifiedCatechistByMajorId(
+                [FromRoute] Guid id, 
+                [FromQuery] Guid pastoralYearId, 
+                [FromQuery] int page = 1, 
+                [FromQuery] int size = 100,
+                [FromQuery] bool excludeGradeAssigned = false
+            )
         {
-            PagingResult<GetCatechistResponse> result = await _majorService.GetQualifiedCatechistByMajorId(id, page, size);
+            PagingResult<GetCatechistResponse> result = await _majorService.GetQualifiedCatechistByMajorId(id, pastoralYearId, page, size, excludeGradeAssigned);
             return StatusCode((int)result.StatusCode, result);
         }
 
