@@ -4,6 +4,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Dtos.Responses.Slot;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
@@ -20,9 +21,9 @@ namespace CatechistHelper.Infrastructure.Services
     public class ClassService : BaseService<ClassService>, IClassService
     {
         public ClassService(
-            IUnitOfWork<ApplicationDbContext> unitOfWork, 
-            ILogger<ClassService> logger, IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor) 
+            IUnitOfWork<ApplicationDbContext> unitOfWork,
+            ILogger<ClassService> logger, IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
@@ -97,6 +98,30 @@ namespace CatechistHelper.Infrastructure.Services
                 filterQuery = filterQuery.AndAlso(x => x.PastoralYearId.Equals(filter.PastoralYearId));
             }
             return filterQuery;
+        }
+
+        public async Task<PagingResult<GetSlotResponse>> GetSlotResponseById(Guid id, int page, int size)
+        {
+            try
+            {
+                IPaginate<Slot> slots =
+                    await _unitOfWork.GetRepository<Slot>()
+                    .GetPagingListAsync(
+                            predicate: c => c.ClassId.Equals(id),
+                            include: c => c.Include(c => c.Class).Include(c => c.Room),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        slots.Adapt<IPaginate<GetSlotResponse>>(),
+                        page,
+                        size,
+                        slots.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
     }
 }

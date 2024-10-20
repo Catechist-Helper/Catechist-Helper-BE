@@ -1,6 +1,7 @@
 ﻿using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Dtos.Responses.Slot;
 using CatechistHelper.Domain.Models;
 
 namespace CatechistHelper.Application.Services
@@ -9,5 +10,7 @@ namespace CatechistHelper.Application.Services
     {
         Task<PagingResult<GetClassResponse>> GetPagination(ClassFilter? filter, int page, int size);
         Task<PagingResult<GetCatechistInClassResponse>> GetCatechistInClassById(Guid id, int page, int size);
+        Task<PagingResult<GetSlotResponse>> GetSlotResponseById(Guid id, int page, int size);
+
     }
 }
