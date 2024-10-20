@@ -2,6 +2,7 @@
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Models;
@@ -54,10 +55,34 @@ namespace CatechistHelper.Infrastructure.Services
                             page: page,
                             size: size,
                             include: a => a.Include(p => p.PastoralYear)
-                                           .Include(p=> p.Grade)
+                                           .Include(p => p.Grade)
                     );
 
             return classes;
+        }
+
+        public async Task<PagingResult<GetCatechistInClassResponse>> GetCatechistInClassById(Guid id, int page, int size)
+        {
+            try
+            {
+                IPaginate<CatechistInClass> catechists =
+                    await _unitOfWork.GetRepository<CatechistInClass>()
+                    .GetPagingListAsync(
+                            predicate: c => c.ClassId.Equals(id),
+                            include: c => c.Include(c => c.Catechist),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        catechists.Adapt<IPaginate<GetCatechistInClassResponse>>(),
+                        page,
+                        size,
+                        catechists.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
 
         private Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)

@@ -1,6 +1,7 @@
 ﻿using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,14 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> GetAllPagination([FromQuery] ClassFilter? filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetClassResponse> result = await _classService.GetPagination(filter, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCatechistInClass([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetCatechistInClassResponse> result = await _classService.GetCatechistInClassById(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }
