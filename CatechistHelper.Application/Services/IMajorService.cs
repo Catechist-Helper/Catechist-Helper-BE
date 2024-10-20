@@ -11,7 +11,7 @@ namespace CatechistHelper.Application.Services
         Task<PagingResult<GetMajorResponse>> GetPagination(int page, int size);
         Task<Result<GetMajorResponse>> Get(Guid id);
         Task<PagingResult<GetLevelResponse>> GetLevelOfMajor(Guid id, int page, int size);
-        Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(Guid id, int page, int size);
+        Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(Guid majorId, Guid pastoralYearId, int page, int size, bool excludeGradeAssigned = false);
         Task<Result<GetMajorResponse>> Create(CreateMajorRequest request);
         Task<Result<bool>> CreateLevelOfMajor(Guid MajorId, Guid LevelId);
         Task<Result<bool>> Update(Guid id, UpdateMajorRequest request);

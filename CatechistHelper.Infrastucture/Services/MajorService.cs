@@ -12,7 +12,6 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -174,20 +173,33 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        public async Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(Guid id, int page, int size)
+        public async Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(
+            Guid majorId, 
+            Guid pastoralYearId, 
+            int page, 
+            int size,
+            bool excludeGradeAssigned = false)
         {
             try
             {
                 ICollection<Guid> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetListAsync(
-                            predicate: t => t.MajorId.Equals(id),
+                            predicate: t => t.MajorId.Equals(majorId),
                             selector: t => t.LevelId
                         );
+                ICollection<Guid> assignedCatechistIds = new List<Guid>();
+                if (excludeGradeAssigned)
+                {
+                    assignedCatechistIds = await _unitOfWork.GetRepository<CatechistInGrade>().GetListAsync(
+                        predicate: cig => cig.Grade.PastoralYearId == pastoralYearId,
+                        selector: cig => cig.CatechisteId);
+                }
                 IPaginate<Catechist> catechists =
                     await _unitOfWork.GetRepository<Catechist>()
                     .GetPagingListAsync(
                             predicate: c => levels.Contains(c.LevelId)
                                             && c.IsDeleted == false
-                                            && c.IsTeaching == true,
+                                            && c.IsTeaching == true
+                                            && (!excludeGradeAssigned || !assignedCatechistIds.Contains(c.Id)),
                             page: page,
                             size: size
                         );

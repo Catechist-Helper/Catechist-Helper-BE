@@ -27,55 +27,63 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                            predicate: t => t.Id.Equals(request.GradeId),
-                            include: t => t.Include(t => t.CatechistInGrades)) 
-                    ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
-                // Find the current catechits linked to the grade
-                ICollection<Guid> existingCatechistIds = await _unitOfWork.GetRepository<CatechistInGrade>().GetListAsync(
-                            predicate: t => t.GradeId == request.GradeId,
-                            selector: t => t.CatechisteId
-                        );
-                // Determine catechits to be removed (catechits that are in existingCatechistIds but not in request.Catechists.Id)
-                var catechistsToRemove = await _unitOfWork.GetRepository<CatechistInGrade>().GetListAsync(
-                            predicate: cig => !request.Catechists.Select(c => c.Id).Contains(cig.CatechisteId)
-                        );
-                _unitOfWork.GetRepository<CatechistInGrade>().DeleteRangeAsync(catechistsToRemove);
-                // Get levels of major
-                ICollection<Guid> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetListAsync(
-                            predicate: t => t.MajorId.Equals(grade.MajorId),
-                            selector: t => t.LevelId
-                        );
-                foreach (var catechist in request.Catechists)
+                var grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    predicate: g => g.Id == request.GradeId,
+                    include: g => g.Include(g => g.CatechistInGrades)
+                ) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                var levels = await _unitOfWork.GetRepository<TeachingQualification>().GetListAsync(
+                    predicate: t => t.MajorId == grade.MajorId,
+                    selector: t => t.LevelId
+                );
+                var requestedCatechists = await _unitOfWork.GetRepository<Catechist>().GetListAsync(
+                    predicate: c => request.CatechistIds.Contains(c.Id)
+                );
+                if (requestedCatechists.Count != request.CatechistIds.Count)
                 {
-                    Catechist catechistFromDb = await _unitOfWork.GetRepository<Catechist>().SingleOrDefaultAsync(
-                            predicate: t => t.Id.Equals(catechist.Id)) ?? throw new Exception(MessageConstant.Catechist.Fail.NotFoundCatechist);
-                    if (!levels.Contains(catechistFromDb.LevelId))
+                    throw new Exception(MessageConstant.Catechist.Fail.NotFoundCatechist);
+                }
+                // Filter out unqualified catechists
+                var unqualifiedCatechists = requestedCatechists.Where(c => !levels.Contains(c.LevelId)).ToList();
+                if (unqualifiedCatechists.Any())
+                {
+                    throw new Exception(MessageConstant.Catechist.Fail.UnqualifiedCatechist);
+                }
+                // Remove catechists not in the request
+                var catechistsToRemove = grade.CatechistInGrades.Where(cig => !request.CatechistIds.Contains(cig.CatechisteId)).ToList();
+                if (catechistsToRemove.Any())
+                {
+                    _unitOfWork.GetRepository<CatechistInGrade>().DeleteRangeAsync(catechistsToRemove);
+                }
+                foreach (var catechist in requestedCatechists)
+                {
+                    var isMain = catechist.Id == request.MainCatechistId;
+                    var existingCatechistInGrade = grade.CatechistInGrades.FirstOrDefault(cig => cig.CatechisteId == catechist.Id);
+                    if (existingCatechistInGrade != null)
                     {
-                        throw new Exception(MessageConstant.Catechist.Fail.UnqualifiedCatechist);
+                        if (existingCatechistInGrade.IsMain != isMain)
+                        {
+                            existingCatechistInGrade.IsMain = isMain;
+                            _unitOfWork.GetRepository<CatechistInGrade>().UpdateAsync(existingCatechistInGrade);
+                        }
                     }
-                    // Check if catechist is already assigned
-                    if (!grade.CatechistInGrades.Any(c => c.CatechisteId == catechist.Id))
+                    else
                     {
                         await _unitOfWork.GetRepository<CatechistInGrade>().InsertAsync(new CatechistInGrade
                         {
                             GradeId = request.GradeId,
                             CatechisteId = catechist.Id,
-                            IsMain = catechist.IsMain
+                            IsMain = isMain
                         });
                     }
                 }
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.Account.Fail.CreateAccount);
-                }
-                return Success(isSuccessful);
+                await _unitOfWork.CommitAsync();
+                return Success(true);
             }
             catch (Exception ex)
             {
                 return Fail<bool>(ex.Message);
             }
         }
+
     }
 }

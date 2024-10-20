@@ -312,7 +312,7 @@ namespace CatechistHelper.Domain.Constants
         public static class Catechist
         {
             #region Account Field
-            private const string CatechistMessage = "Level";
+            private const string CatechistMessage = "Catechist";
             #endregion
             public static class Success
             {
