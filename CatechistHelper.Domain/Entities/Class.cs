@@ -27,7 +27,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("status")]
         [EnumDataType(typeof(ClassStatus))] 
-        public ClassStatus ClassStatus { get; set; }
+        public ClassStatus ClassStatus { get; set; } = ClassStatus.Active;
 
         [Column("pastoral_year_id")]
         [ForeignKey(nameof(PastoralYear))]
