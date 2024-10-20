@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
 {
-    public class CatechistInGradeService : BaseService<CatechistInGradeService>, ICatechistInGrade
+    public class CatechistInGradeService : BaseService<CatechistInGradeService>, ICatechistInGradeService
     {
         public CatechistInGradeService(
             IUnitOfWork<ApplicationDbContext> unitOfWork,
@@ -84,6 +84,5 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
-
     }
 }

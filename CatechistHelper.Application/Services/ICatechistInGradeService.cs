@@ -3,7 +3,7 @@ using CatechistHelper.Domain.Dtos.Requests.CatechistInGrade;
 
 namespace CatechistHelper.Application.Services
 {
-    public interface ICatechistInGrade
+    public interface ICatechistInGradeService
     {
         Task<Result<bool>> AddCatechistToGrade(CreateCatechistInGradeRequest request);
     }

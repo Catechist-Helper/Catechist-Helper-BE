@@ -3,7 +3,7 @@
     public class CreateCatechistInClassRequest
     {
         public Guid ClassId { get; set; }
-        public Guid CatechistId { get; set; }
-        public bool IsMain { get; set; }
+        public required List<Guid> CatechistIds { get; set; }
+        public Guid MainCatechistId { get; set; }
     }
 }

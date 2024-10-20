@@ -73,24 +73,6 @@ namespace CatechistHelper.Infrastructure.Services
             return Success(grade);
         }
 
-        public async Task<PagingResult<GetCatechistResponse>> GetCatechistsByGradeId(Guid id, int page, int size)
-        {
-            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                predicate: g => g.Id == id) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
-            IPaginate<Catechist> catechists =
-                   await _unitOfWork.GetRepository<CatechistInGrade>().GetPagingListAsync(
-                            predicate: cig => cig.GradeId == id,
-                            include: cig => cig.Include(cig => cig.Catechist),
-                            selector: cig => cig.Catechist,
-                            page: page,
-                            size: size);
-            return SuccessWithPaging(
-                    catechists.Adapt<IPaginate<GetCatechistResponse>>(),
-                    page,
-                    size,
-                    catechists.Total);
-        }
-
         public async Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, int page, int size)
         {
             IPaginate<Class> classes =
@@ -123,6 +105,47 @@ namespace CatechistHelper.Infrastructure.Services
                     page,
                     size,
                     grades.Total);
+        }
+
+        public async Task<PagingResult<GetCatechistResponse>> GetCatechistsByGradeId(
+            Guid id,
+            int page, 
+            int size, 
+            bool excludeClassAssigned = false)
+        {
+            try
+            {
+                Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    predicate: g => g.Id == id) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                ICollection<Guid> assignedCatechistInClassIds = new List<Guid>();
+                if (excludeClassAssigned)
+                {
+                    assignedCatechistInClassIds = await _unitOfWork.GetRepository<CatechistInClass>()
+                        .GetListAsync(
+                            predicate: cic => cic.Class.GradeId == id,
+                            selector: cic => cic.CatechistId);
+                }
+                IPaginate<Catechist> catechists = await _unitOfWork.GetRepository<CatechistInGrade>()
+                    .GetPagingListAsync(
+                        predicate: cig => cig.GradeId == id
+                                          && cig.Catechist.IsDeleted == false       
+                                          && cig.Catechist.IsTeaching == true   
+                                          && (!excludeClassAssigned || !assignedCatechistInClassIds.Contains(cig.CatechisteId)),
+                        selector: cig => cig.Catechist,
+                        page: page,
+                        size: size
+                    );
+                return SuccessWithPaging(
+                    catechists.Adapt<IPaginate<GetCatechistResponse>>(),
+                    page,
+                    size,
+                    catechists.Total
+                );
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
     }
 }

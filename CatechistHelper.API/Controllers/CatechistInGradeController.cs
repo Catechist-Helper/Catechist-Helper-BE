@@ -8,10 +8,10 @@ namespace CatechistHelper.API.Controllers
 {
     public class CatechistInGradeController : BaseController<CatechistInGradeController>
     {
-        private readonly ICatechistInGrade _catechistInGrade;
+        private readonly ICatechistInGradeService _catechistInGrade;
 
         public CatechistInGradeController(
-            ICatechistInGrade catechistInGrade,
+            ICatechistInGradeService catechistInGrade,
             ILogger<CatechistInGradeController> logger)
             : base(logger)
         {
