@@ -3,7 +3,7 @@ using CatechistHelper.Domain.Dtos.Requests.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Dtos.Responses.InterviewProcess;
-using CatechistHelper.Domain.Enums;
+using CatechistHelper.Domain.Models;
 
 namespace CatechistHelper.Application.Services
 {

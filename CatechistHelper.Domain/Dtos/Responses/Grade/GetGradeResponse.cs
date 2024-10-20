@@ -7,7 +7,21 @@ namespace CatechistHelper.Domain.Dtos.Responses.Grade
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public required GetMajorResponse Major { get; set; } 
-        public required GetPastoralYearResponse PastoralYear { get; set; }
+        public int TotalCatechist { get; set; }
+        public GetMajorResponse Major { get; set; } 
+        public GetPastoralYearResponse PastoralYear { get; set; }
+
+        public GetGradeResponse(Guid id, string name, int totalCatechist, GetMajorResponse major, GetPastoralYearResponse pastoralYear)
+        {
+            Id = id;
+            Name = name;
+            TotalCatechist = totalCatechist;
+            Major = major;
+            PastoralYear = pastoralYear;
+        }
+
+        public GetGradeResponse()
+        {
+        }
     }
 }

@@ -4,7 +4,10 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
+using CatechistHelper.Domain.Dtos.Responses.Major;
+using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -58,15 +61,22 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<GetGradeResponse>> Get(Guid id)
         {
-            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                    include: g => g.Include(g => g.Major)
-                                   .Include(g => g.PastoralYear),
-                    predicate: a => a.Id.Equals(id));
-            return Success(grade.Adapt<GetGradeResponse>());
+            GetGradeResponse grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    selector: g => new GetGradeResponse(
+                                                g.Id,
+                                                g.Name,
+                                                g.Classes.Select(x => x.NumberOfCatechist).Sum(),
+                                                g.Major.Adapt<GetMajorResponse>(),
+                                                g.PastoralYear.Adapt<GetPastoralYearResponse>()
+                                            ),
+                    include: g => g.Include(g => g.Classes));
+            return Success(grade);
         }
 
         public async Task<PagingResult<GetCatechistResponse>> GetCatechistsByGradeId(Guid id, int page, int size)
         {
+            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                predicate: g => g.Id == id) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
             IPaginate<Catechist> catechists =
                    await _unitOfWork.GetRepository<CatechistInGrade>().GetPagingListAsync(
                             predicate: cig => cig.GradeId == id,
@@ -81,16 +91,35 @@ namespace CatechistHelper.Infrastructure.Services
                     catechists.Total);
         }
 
-        public async Task<PagingResult<GetGradeResponse>> GetPagination(int page, int size)
+        public async Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, int page, int size)
         {
-            IPaginate<Grade> grades =
-                   await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
-                            include: g => g.Include(g => g.Major)
-                                           .Include(g => g.PastoralYear),
+            IPaginate<Class> classes =
+                   await _unitOfWork.GetRepository<Class>().GetPagingListAsync(
+                            predicate: c => c.GradeId == id,
+                            orderBy: c => c.OrderByDescending(c => c.CreatedAt),
                             page: page,
                             size: size);
             return SuccessWithPaging(
-                    grades.Adapt<IPaginate<GetGradeResponse>>(),
+                    classes.Adapt<IPaginate<GetClassResponse>>(),
+                    page,
+                    size,
+                    classes.Total);
+        }
+
+        public async Task<PagingResult<GetGradeResponse>> GetPagination(int page, int size)
+        {
+            IPaginate<GetGradeResponse> grades =
+                   await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
+                            selector: g => new GetGradeResponse(
+                                                g.Id, 
+                                                g.Name, 
+                                                g.Classes.Select(x => x.NumberOfCatechist).Sum(), 
+                                                g.Major.Adapt<GetMajorResponse>(), 
+                                                g.PastoralYear.Adapt<GetPastoralYearResponse>()
+                                            ),
+                            include: g => g.Include(g => g.Classes));
+            return SuccessWithPaging(
+                    grades,
                     page,
                     size,
                     grades.Total);
