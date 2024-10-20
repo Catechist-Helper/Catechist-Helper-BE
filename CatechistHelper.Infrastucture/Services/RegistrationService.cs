@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Infrastructure.Utils;
+using CatechistHelper.Domain.Models;
 
 namespace CatechistHelper.Infrastructure.Services
 {

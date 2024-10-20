@@ -155,6 +155,8 @@ namespace CatechistHelper.Domain.Constants
             public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string CatechistsInGradeEndpoint = GradeEndpoint + "/catechists";
+            /// <summary>"api/v1/grades/{id}"</summary>
+            public const string ClassesByGradeEndpoint = GradeEndpoint + "/classes";
         }
 
         public static class Class
