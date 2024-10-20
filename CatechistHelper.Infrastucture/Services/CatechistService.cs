@@ -5,6 +5,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -190,6 +191,30 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return Fail<bool>(ex.Message);
             }
+        }
+
+        public async Task<PagingResult<GetCertificateOfCatechistResponse>> GetCertificateOfCatechistById(Guid id, int page, int size)
+        {
+            try
+            {
+                IPaginate<CertificateOfCatechist> certificates =
+                    await _unitOfWork.GetRepository<CertificateOfCatechist>()
+                    .GetPagingListAsync(
+                            predicate: c => c.CatechistId.Equals(id),
+                            include: c => c.Include(c => c.Certificate),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        certificates.Adapt<IPaginate<GetCertificateOfCatechistResponse>>(),
+                        page,
+                        size,
+                        certificates.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
     }
 }

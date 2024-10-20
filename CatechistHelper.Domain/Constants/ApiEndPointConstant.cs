@@ -64,7 +64,7 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
             public const string UpdateImageEndpoint = CatechistsEndpoint + ImageEndpoint + ByIdRoute;
-            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + Certificate.CertificateEndPoint;
+            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";
         }
         public static class PastoralYear
         {
@@ -142,6 +142,8 @@ namespace CatechistHelper.Domain.Constants
         {
             /// <summary>"api/v1/certificate-of-catechists"</summary>
             public const string CertificateOfCatechistsEndpoint = ApiEndpoint + "/certificate-of-catechists";
+            /// <summary>"api/v1/certificate-of-catechists"</summary>
+            public const string CertificateOfCatechistEndpoint = CertificateOfCatechistsEndpoint + ByIdRoute;
         }
         public static class Grade
         {

@@ -7,6 +7,7 @@ using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,6 +35,14 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             Result<GetCatechistResponse> result = await _catechistService.Get(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Catechist.CertificateOfCatechistsEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCertificateOfCatechistResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCertificateOfCatechist([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetCertificateOfCatechistResponse> result = await _catechistService.GetCertificateOfCatechistById(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 
