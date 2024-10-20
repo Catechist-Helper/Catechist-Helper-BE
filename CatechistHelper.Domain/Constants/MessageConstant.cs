@@ -1,5 +1,3 @@
-using System.Xml.Linq;
-
 namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
@@ -348,9 +346,9 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
                 public static string DeleteSystemConfiguration = String.Format(UpdateSuccessTemplate, SystemConfigurationMessage);
             }
-             public static class Fail
-            {              
-                          public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
+            public static class Fail
+            {
+                public static string CreateSystemConfiguration = String.Format(CreateFailTemplate, SystemConfigurationMessage);
                 public static string UpdateSystemConfiguration = String.Format(UpdateFailTemplate, SystemConfigurationMessage);
                 public static string DeleteSystemConfiguration = String.Format(DeleteFailTemplate, SystemConfigurationMessage);
                 public static string NotFoundSystemConfiguration = String.Format(NotFoundTemplate, SystemConfigurationMessage);
@@ -373,7 +371,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string DeleteRoom = String.Format(UpdateSuccessTemplate, RoomMessage);
             }
             public static class Fail
-            {              
+            {
                 public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
                 public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
@@ -420,6 +418,42 @@ namespace CatechistHelper.Domain.Constants
                 public static string DeleteGrade = String.Format(DeleteFailTemplate, GradeMessage);
                 public static string NotFoundGrade = String.Format(NotFoundTemplate, GradeMessage);
 
+            }
+        }
+        public static class Class
+        {
+            #region Class Field
+            private const string ClassMessage = "Class";
+            #endregion
+            public static class Success
+            {
+                public static string CreateClass = String.Format(CreateSuccessTemplate, ClassMessage);
+                public static string UpdateClass = String.Format(UpdateSuccessTemplate, ClassMessage);
+                public static string DeleteClass = String.Format(DeleteSuccessTemplate, ClassMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateClass = String.Format(CreateFailTemplate, ClassMessage);
+                public static string UpdateClass = String.Format(UpdateFailTemplate, ClassMessage);
+                public static string NotFoundClass = String.Format(NotFoundTemplate, ClassMessage);
+            }
+        }
+        public static class CatechistInClass
+        {
+            #region CatechistInClass Field
+            private const string CatechistInClassMessage = "CatechistInClass";
+            #endregion
+            public static class Success
+            {
+                public static string CreateCatechistInClass = String.Format(CreateSuccessTemplate, CatechistInClassMessage);
+                public static string UpdateCatechistInClass = String.Format(UpdateSuccessTemplate, CatechistInClassMessage);
+                public static string DeleteCatechistInClass = String.Format(DeleteSuccessTemplate, CatechistInClassMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateCatechistInClass = String.Format(CreateFailTemplate, CatechistInClassMessage);
+                public static string UpdateCatechistInClass = String.Format(UpdateFailTemplate, CatechistInClassMessage);
+                public static string NotFoundCatechistInClass = String.Format(NotFoundTemplate, CatechistInClassMessage);
             }
         }
     }

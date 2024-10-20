@@ -64,7 +64,7 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistsEndpoint = ApiEndpoint + "/catechists";
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
             public const string UpdateImageEndpoint = CatechistsEndpoint + ImageEndpoint + ByIdRoute;
-            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";      
+            public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";
         }
         public static class PastoralYear
         {
@@ -159,15 +159,25 @@ namespace CatechistHelper.Domain.Constants
 
         public static class Class
         {
-            /// <summary>"api/v1/grades"</summary>
+            /// <summary>"api/v1/classes"</summary>
             public const string ClassesEndpoint = ApiEndpoint + "/classes";
-            /// <summary>"api/v1/grades/{id}"</summary>
+            /// <summary>"api/v1/classes/{id}"</summary>
             public const string ClassEndpoint = ClassesEndpoint + ByIdRoute;
+            /// <summary>"api/v1/classes/{id}/catechists"</summary>
+            public const string CatechistInClassesEndpoint = ClassEndpoint + "/catechists";
+
         }
         public static class CatechistInGrade
         {
             /// <summary>"api/v1/catechist-in-grades"</summary>
             public const string CatechistInGradesEndpoint = ApiEndpoint + "/catechist-in-grades";
+        }
+        public static class CatechistInClass
+        {
+            /// <summary>"api/v1/catechist-in-classes"</summary>
+            public const string CatechistInClassesEndpoint = ApiEndpoint + "/catechist-in-classes";
+            public const string CatechistInClassEndpoint = CatechistInClassesEndpoint + ByIdRoute;
+
         }
     }
 }
