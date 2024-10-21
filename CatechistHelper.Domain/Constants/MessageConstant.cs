@@ -456,5 +456,24 @@ namespace CatechistHelper.Domain.Constants
                 public static string NotFoundCatechistInClass = String.Format(NotFoundTemplate, CatechistInClassMessage);
             }
         }
+        public static class TrainingList
+        {
+            #region TrainingList Field
+            private const string TrainingListMessage = "TrainingList";
+            #endregion
+            public static class Success
+            {
+                public static string CreateTrainingList = String.Format(CreateSuccessTemplate, TrainingListMessage);
+                public static string UpdateTrainingList = String.Format(UpdateSuccessTemplate, TrainingListMessage);
+                public static string DeleteTrainingList = String.Format(DeleteSuccessTemplate, TrainingListMessage);
+            }
+            public static class Fail
+            {
+                public static string CreateTrainingList = String.Format(CreateFailTemplate, TrainingListMessage);
+                public static string UpdateTrainingList = String.Format(UpdateFailTemplate, TrainingListMessage);
+                public static string DeleteTrainingList = String.Format(DeleteFailTemplate, TrainingListMessage);
+                public static string NotFoundTrainingList = String.Format(NotFoundTemplate, TrainingListMessage);
+            }
+        }
     }
 }
