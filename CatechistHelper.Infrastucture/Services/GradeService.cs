@@ -9,6 +9,7 @@ using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
@@ -88,10 +89,12 @@ namespace CatechistHelper.Infrastructure.Services
                     classes.Total);
         }
 
-        public async Task<PagingResult<GetGradeResponse>> GetPagination(int page, int size)
+        public async Task<PagingResult<GetGradeResponse>> GetPagination(GradeFilter filter, int page, int size)
         {
             IPaginate<GetGradeResponse> grades =
                    await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
+                            predicate: g => (!filter.MajorId.HasValue || g.Major.Equals(filter.MajorId))
+                            && (!filter.PastoralYearId.HasValue || g.PastoralYearId.Equals(filter.PastoralYearId)),
                             selector: g => new GetGradeResponse(
                                                 g.Id, 
                                                 g.Name, 
