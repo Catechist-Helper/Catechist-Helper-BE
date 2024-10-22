@@ -142,7 +142,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var classDto = await GetClassById(request.ClassId);
 
-            await AddCatechistsToClass(request.Catechists, classDto);
+            // await AddCatechistsToClass(request.Catechists, classDto);
 
             var fixedDay = await GetWeekDay();
             var holidayDates = await GetHolidayDates(classDto.StartDate, classDto.EndDate);
@@ -154,7 +154,7 @@ namespace CatechistHelper.Infrastructure.Services
             return slots;
         }
 
-        // Add Catechists to the Class
+        /* // Add Catechists to the Class
         private async Task AddCatechistsToClass(List<CatechistSlot> catechists, Class classDto)
         {
             foreach (var catechistSlot in catechists)
@@ -169,7 +169,7 @@ namespace CatechistHelper.Infrastructure.Services
                 classDto.CatechistInClasses.Add(catechistInClass);
                 await _unitOfWork.GetRepository<CatechistInClass>().InsertAsync(catechistInClass);
             }
-        }
+        }*/
 
         // Get list of holidays as DateTime
         private static async Task<List<DateTime>> GetHolidayDates(DateTime startDate, DateTime? endDate)
