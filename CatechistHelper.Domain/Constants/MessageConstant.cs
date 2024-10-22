@@ -11,9 +11,12 @@ namespace CatechistHelper.Domain.Constants
         private const string DeleteFailTemplate = "Xóa {0} thất bại @.@";
         private const string NotFoundTemplate = "{0} không có trong hệ thống";
         private const string InvalidRoleTemplate = "{0} không phải là {1} !!!";
-        private const string RequiredSuffix = " không được bỏ trống !!!";
+        private const string RequiredSuffix = " không được bỏ trống !!!";  
         #endregion
-
+        public static class Common
+        {
+            public const string DeleteFail = "Không thể xóa dữ liệu đang được sử dụng!";
+        }
         public static class Account
         {
             #region Account Field
@@ -459,7 +462,7 @@ namespace CatechistHelper.Domain.Constants
         public static class TrainingList
         {
             #region TrainingList Field
-            private const string TrainingListMessage = "TrainingList";
+            private const string TrainingListMessage = "Training list";
             #endregion
             public static class Success
             {

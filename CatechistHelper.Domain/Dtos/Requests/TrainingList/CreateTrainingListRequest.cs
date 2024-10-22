@@ -1,13 +1,10 @@
-﻿using CatechistHelper.Domain.Enums;
-
-namespace CatechistHelper.Domain.Dtos.Requests.TrainingList
+﻿namespace CatechistHelper.Domain.Dtos.Requests.TrainingList
 {
     public class CreateTrainingListRequest
     {
-        public string PreviousLevel { get; set; }
-        public string NextLevel { get; set; }
+        public string PreviousLevel { get; set; } = null!;
+        public string NextLevel { get; set; } = null!;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public TrainingListStatus TrainingListStatus { get; set; }
     }
 }

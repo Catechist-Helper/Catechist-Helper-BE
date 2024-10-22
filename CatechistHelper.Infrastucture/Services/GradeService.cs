@@ -36,7 +36,7 @@ namespace CatechistHelper.Infrastructure.Services
             Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
                 predicate: m => m.Id.Equals(request.MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
             PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                predicate: p => p.Id.Equals(request.PastoralYearId)) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                predicate: py => py.Id.Equals(request.PastoralYearId)) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
             Grade grade = request.Adapt<Grade>();
             Grade result = await _unitOfWork.GetRepository<Grade>().InsertAsync(grade);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -50,7 +50,13 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Result<bool>> Delete(Guid id)
         {
             Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                    predicate: g => g.Id.Equals(id),
+                    include: g => g.Include(g => g.Classes)
+                                   .Include(g => g.CatechistInGrades)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+            if (grade.Classes.Any() || grade.CatechistInGrades.Any())
+            {
+                throw new Exception(MessageConstant.Common.DeleteFail);
+            }
             _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
             if (!isSuccessful)
