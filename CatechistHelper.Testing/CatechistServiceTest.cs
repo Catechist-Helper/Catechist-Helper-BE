@@ -1,9 +1,7 @@
 ﻿using CatechistHelper.Application.GoogleServices;
-using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
-using CatechistHelper.Infrastructure.GoogleServices;
 using CatechistHelper.Infrastructure.Repositories;
 using CatechistHelper.Infrastructure.Services;
 using CatechistHelper.Infrastructure.Utils;
@@ -12,11 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Testing
 {

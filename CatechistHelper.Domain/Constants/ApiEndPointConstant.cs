@@ -65,6 +65,8 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistEndpoint = CatechistsEndpoint + ByIdRoute;
             public const string UpdateImageEndpoint = CatechistsEndpoint + ImageEndpoint + ByIdRoute;
             public const string CertificateOfCatechistsEndpoint = CatechistEndpoint + "/certificates";
+            public const string ClassesEndpoint = CatechistsEndpoint + ByIdRoute + "/classes";
+            public const string GradesEndpoint = CatechistsEndpoint + ByIdRoute + "/grades";
         }
         public static class PastoralYear
         {

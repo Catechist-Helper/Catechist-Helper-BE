@@ -82,5 +82,19 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [HttpGet(ApiEndPointConstant.Catechist.ClassesEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<ClassOfCatechist>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCatechistClasses([FromRoute] Guid id, [FromQuery] string pastoralYear, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<ClassOfCatechist> result = await _catechistService.GetCatechistClasses(id, pastoralYear, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+        [HttpGet(ApiEndPointConstant.Catechist.GradesEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GradeOfCatechist>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCatechistGrades([FromRoute] Guid id, [FromQuery] string pastoralYear, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GradeOfCatechist> result = await _catechistService.GetCatechistGrades(id, pastoralYear, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
 }

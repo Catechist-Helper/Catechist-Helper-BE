@@ -17,7 +17,6 @@ namespace CatechistHelper.Testing
         private readonly DbContextOptions<ApplicationDbContext> _contextOptions;
         private readonly AccountService _accountService;
         private readonly ApplicationDbContext _testDbContext;
-        private readonly IFirebaseService _firebaseService;
 
         public AuthenticationTest()
         {

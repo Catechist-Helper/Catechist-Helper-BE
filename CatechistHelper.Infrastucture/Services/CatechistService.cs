@@ -217,5 +217,59 @@ namespace CatechistHelper.Infrastructure.Services
             }
             return null!;
         }
+
+        public async Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear, int page, int size)
+        {
+            try
+            {
+                IPaginate<CatechistInClass> catechistInClasses = await _unitOfWork.GetRepository<CatechistInClass>()
+                    .GetPagingListAsync(
+                        predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear,
+                        include: c => c.Include(cl => cl.Class)
+                                       .ThenInclude(y => y.PastoralYear),
+                        page: page,
+                        size: size);
+
+                // Adapt result to ClassOfCatechist
+                return SuccessWithPaging(
+                    catechistInClasses.Adapt<IPaginate<ClassOfCatechist>>(),
+                    page,
+                    size,
+                    catechistInClasses.Total);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            // In case of an exception, you can return a failure result or null
+            return null!;
+        }
+
+        public async Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, string pastoralYear, int page, int size)
+        {
+            try
+            {
+                IPaginate<CatechistInGrade> catechistInGrades = await _unitOfWork.GetRepository<CatechistInGrade>()
+                    .GetPagingListAsync(
+                        predicate: c => c.CatechisteId == id && c.Grade.PastoralYear.Name == pastoralYear,
+                        include: c => c.Include(cl => cl.Grade)
+                                       .ThenInclude(y => y.PastoralYear),
+                        page: page,
+                        size: size);
+
+                // Adapt result to ClassOfCatechist
+                return SuccessWithPaging(
+                    catechistInGrades.Adapt<IPaginate<GradeOfCatechist>>(),
+                    page,
+                    size,
+                    catechistInGrades.Total);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            // In case of an exception, you can return a failure result or null
+            return null!;
+        }
     }
 }
