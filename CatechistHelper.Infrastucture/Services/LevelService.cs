@@ -19,7 +19,12 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class LevelService : BaseService<LevelService>, ILevelService
     {
-        public LevelService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<LevelService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public LevelService(
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<LevelService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
+            : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -52,8 +57,16 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                var level = await GetById(id);
-                _unitOfWork.GetRepository<Level>().UpdateAsync(level);
+                var level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: c => c.Id.Equals(id),
+                    include: l => l.Include(l => l.Certificates)
+                                   .Include(l => l.Catechists)
+                                   .Include(l => l.TeachingQualifications));
+                if (level.Certificates.Any() || level.Catechists.Any() || level.TeachingQualifications.Any())
+                {
+                    throw new Exception(MessageConstant.Common.DeleteFail);
+                }
+                _unitOfWork.GetRepository<Level>().DeleteAsync(level);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
@@ -71,7 +84,7 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Level> GetById(Guid id)
         {
             var level = await _unitOfWork.GetRepository<Level>()
-                .SingleOrDefaultAsync(predicate: c => c.Id.Equals(id));
+                .SingleOrDefaultAsync(predicate: l => l.Id.Equals(id));
             ArgumentNullException.ThrowIfNull(nameof(id));
             return level;
         }
@@ -80,7 +93,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             return await _unitOfWork.GetRepository<Level>()
                      .GetPagingListAsync(
-                            orderBy: a => a.OrderBy(x => x.CatechismLevel)
+                            orderBy: l => l.OrderBy(l => l.CatechismLevel)
                      );
         }
 
@@ -92,7 +105,7 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Level> accounts =
                     await _unitOfWork.GetRepository<Level>()
                     .GetPagingListAsync(
-                            orderBy: a => a.OrderByDescending(x => x.CatechismLevel),
+                            orderBy: l => l.OrderByDescending(l => l.CatechismLevel),
                             page: page,
                             size: size
                         );
@@ -113,9 +126,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Level level = await GetById(id);
-
                 request.Adapt(level);
-
                 _unitOfWork.GetRepository<Level>().UpdateAsync(level);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -137,8 +148,8 @@ namespace CatechistHelper.Infrastructure.Services
                 Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
                     predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 IPaginate<Major> majors = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
-                                predicate: t => t.LevelId.Equals(id),
-                                selector: t => t.Major,
+                                predicate: tq => tq.LevelId.Equals(id),
+                                selector: tq => tq.Major,
                                 page: page,
                                 size: size
                             ); ;

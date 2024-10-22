@@ -17,7 +17,12 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class TrainingListService : BaseService<TrainingListService>, ITrainingListService
     {
-        public TrainingListService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<TrainingListService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public TrainingListService(
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<TrainingListService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
+            : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -47,7 +52,8 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
-                _unitOfWork.GetRepository<TrainingList>().DeleteAsync(trainingList);
+                trainingList.IsDeleted = true;
+                _unitOfWork.GetRepository<TrainingList>().UpdateAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
@@ -66,7 +72,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
 
                 return Success(trainingList.Adapt<GetTrainingListResponse>());
             }
@@ -104,9 +110,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
-
                 request.Adapt(trainingList);
-
                 _unitOfWork.GetRepository<TrainingList>().UpdateAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
