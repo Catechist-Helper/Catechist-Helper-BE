@@ -30,7 +30,6 @@ namespace CatechistHelper.Infrastructure.Services
 
             try
             {
-
                 Post post = request.Adapt<Post>();
 
                 Post result = await _unitOfWork.GetRepository<Post>().InsertAsync(post);

@@ -14,7 +14,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Drawing;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services

@@ -378,6 +378,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreateRoom = String.Format(CreateFailTemplate, RoomMessage);
                 public static string UpdateRoom = String.Format(UpdateFailTemplate, RoomMessage);
                 public static string DeleteRoom = String.Format(DeleteFailTemplate, RoomMessage);
+                public static string NameAlreadyUsed = "Tên đã tồn tại!";
             }
         }
         public static class Level
