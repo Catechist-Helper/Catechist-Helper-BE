@@ -3,6 +3,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.TrainingList;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.TrainingList;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
@@ -10,6 +11,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -18,10 +20,10 @@ namespace CatechistHelper.Infrastructure.Services
     public class TrainingListService : BaseService<TrainingListService>, ITrainingListService
     {
         public TrainingListService(
-            IUnitOfWork<ApplicationDbContext> unitOfWork, 
-            ILogger<TrainingListService> logger, 
-            IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor) 
+            IUnitOfWork<ApplicationDbContext> unitOfWork,
+            ILogger<TrainingListService> logger,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
@@ -80,6 +82,30 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return BadRequest<GetTrainingListResponse>(ex.Message);
             }
+        }
+
+        public async Task<PagingResult<GetCatechistInTrainingResponse>> GetAllCatechistInTrainingById(Guid id, int page, int size)
+        {
+            try
+            {
+                IPaginate<CatechistInTraining> catechists =
+                    await _unitOfWork.GetRepository<CatechistInTraining>()
+                    .GetPagingListAsync(
+                            predicate: c => c.TrainingListId.Equals(id),
+                            include: c => c.Include(c => c.Catechist),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        catechists.Adapt<IPaginate<GetCatechistInTrainingResponse>>(),
+                        page,
+                        size,
+                        catechists.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
 
         public async Task<PagingResult<GetTrainingListResponse>> GetPagination(Expression<Func<TrainingList, bool>>? predicate, int page, int size)

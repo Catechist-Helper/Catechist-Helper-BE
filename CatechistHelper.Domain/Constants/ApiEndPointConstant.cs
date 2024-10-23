@@ -198,6 +198,8 @@ namespace CatechistHelper.Domain.Constants
             public const string TrainingListsEndpoint = ApiEndpoint + "/training-lists";
             /// <summary>"api/v1/training-list/{id}"</summary>
             public const string TrainingListEndpoint = TrainingListsEndpoint + ByIdRoute;
+            public const string CatechistsInTrainingEndpoint = TrainingListEndpoint + "/catechists";
+
         }
     }
 }
