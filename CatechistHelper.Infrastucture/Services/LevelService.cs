@@ -11,6 +11,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
@@ -58,20 +59,21 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 var level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
-                    predicate: c => c.Id.Equals(id),
-                    include: l => l.Include(l => l.Certificates)
-                                   .Include(l => l.Catechists)
-                                   .Include(l => l.TeachingQualifications));
-                if (level.Certificates.Any() || level.Catechists.Any() || level.TeachingQualifications.Any())
-                {
-                    throw new Exception(MessageConstant.Common.DeleteFail);
-                }
+                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 _unitOfWork.GetRepository<Level>().DeleteAsync(level);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(ex.Message);
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    // 547 is the SQL Server error code for a foreign key violation
+                    return Fail<bool>(MessageConstant.Common.DeleteFail);
+                }
+                else
+                {
+                    return Fail<bool>(ex.Message);
+                }
             }
         }
 

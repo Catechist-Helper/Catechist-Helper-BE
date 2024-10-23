@@ -15,6 +15,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -49,21 +50,30 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<bool>> Delete(Guid id)
         {
-            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                    predicate: g => g.Id.Equals(id),
-                    include: g => g.Include(g => g.Classes)
-                                   .Include(g => g.CatechistInGrades)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
-            if (grade.Classes.Any() || grade.CatechistInGrades.Any())
+            try
             {
-                throw new Exception(MessageConstant.Common.DeleteFail);
+                Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    predicate: g => g.Id.Equals(id)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Grade.Fail.DeleteGrade);
+                }
+                return Success(isSuccessful);
             }
-            _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
-            bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-            if (!isSuccessful)
+            catch (Exception ex)
             {
-                throw new Exception(MessageConstant.Grade.Fail.DeleteGrade);
-            }
-            return Success(isSuccessful);
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    // 547 is the SQL Server error code for a foreign key violation
+                    return Fail<bool>(MessageConstant.Common.DeleteFail);
+                }
+                else
+                {
+                    return Fail<bool>(ex.Message);
+                }
+            }     
         }
 
         public async Task<Result<GetGradeResponse>> Get(Guid id)
