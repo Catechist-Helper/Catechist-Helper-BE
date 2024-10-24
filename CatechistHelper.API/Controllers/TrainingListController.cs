@@ -2,6 +2,7 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.TrainingList;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.TrainingList;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,14 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             Result<bool> result = await _trainingListService.Delete(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.TrainingList.CatechistsInTrainingEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCatechistInTrainingResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCatechistInTraining([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetCatechistInTrainingResponse> result = await _trainingListService.GetAllCatechistInTrainingById(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }

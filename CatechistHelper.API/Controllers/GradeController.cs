@@ -5,6 +5,7 @@ using CatechistHelper.Domain.Dtos.Requests.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
+using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -23,9 +24,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Grade.GradesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetGradeResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetAllPagination([FromQuery] GradeFilter filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetGradeResponse> result = await _gradeService.GetPagination(page, size);
+            PagingResult<GetGradeResponse> result = await _gradeService.GetPagination(filter, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 

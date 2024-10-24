@@ -20,7 +20,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Certificate.CertificatesEndPoint)]
         [ProducesResponseType(typeof(Result<GetCertificateResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateCertificateRequest request)
+        public async Task<IActionResult> Create([FromForm] CreateCertificateRequest request)
         {
             Result<GetCertificateResponse> result = await _certificateService.Create(request);
             return StatusCode((int)result.StatusCode, result);

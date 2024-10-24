@@ -12,13 +12,19 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
 {
     public class MajorService : BaseService<MajorService>, IMajorService
     {
-        public MajorService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<MajorService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) 
+        public MajorService(
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<MajorService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
@@ -28,8 +34,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-
+                    predicate: m => m.Id.Equals(id));
                 return Success(major.Adapt<GetMajorResponse>());
             }
             catch (Exception ex)
@@ -65,7 +70,6 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = request.Adapt<Major>();
-
                 Major result = await _unitOfWork.GetRepository<Major>().InsertAsync(major);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -85,10 +89,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
-
+                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
                 request.Adapt(major);
-
                 _unitOfWork.GetRepository<Major>().UpdateAsync(major);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -108,7 +110,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
+                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
                 _unitOfWork.GetRepository<Major>().DeleteAsync(major);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -119,7 +121,15 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                return Fail<bool>(ex.Message);
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    // 547 is the SQL Server error code for a foreign key violation
+                    return Fail<bool>(MessageConstant.Common.DeleteFail);
+                }
+                else
+                {
+                   return Fail<bool>(ex.Message);
+                }
             }
         }
 
@@ -128,9 +138,9 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-                   predicate: c => c.Id.Equals(MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
+                   predicate: m => m.Id.Equals(MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
                 Level certificate = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
-                    predicate: c => c.Id.Equals(LevelId)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                    predicate: m => m.Id.Equals(LevelId)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 TeachingQualification teachingQualification = new TeachingQualification
                 {
                     MajorId = MajorId,
@@ -154,10 +164,10 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
-                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
+                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
                 IPaginate<Level> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
-                                predicate: t => t.MajorId.Equals(id),
-                                selector: t => t.Level,
+                                predicate: tq => tq.MajorId.Equals(id),
+                                selector: tq => tq.Level,
                                 page: page,
                                 size: size
                             );
@@ -183,8 +193,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 ICollection<Guid> levels = await _unitOfWork.GetRepository<TeachingQualification>().GetListAsync(
-                            predicate: t => t.MajorId.Equals(majorId),
-                            selector: t => t.LevelId
+                            predicate: tq => tq.MajorId.Equals(majorId),
+                            selector: tq => tq.LevelId
                         );
                 ICollection<Guid> assignedCatechistIds = new List<Guid>();
                 if (excludeGradeAssigned)

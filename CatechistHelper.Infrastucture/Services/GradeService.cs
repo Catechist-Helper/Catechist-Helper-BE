@@ -9,11 +9,13 @@ using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +37,7 @@ namespace CatechistHelper.Infrastructure.Services
             Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
                 predicate: m => m.Id.Equals(request.MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
             PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                predicate: p => p.Id.Equals(request.PastoralYearId)) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                predicate: py => py.Id.Equals(request.PastoralYearId)) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
             Grade grade = request.Adapt<Grade>();
             Grade result = await _unitOfWork.GetRepository<Grade>().InsertAsync(grade);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -48,15 +50,30 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<bool>> Delete(Guid id)
         {
-            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
-            _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
-            bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-            if (!isSuccessful)
+            try
             {
-                throw new Exception(MessageConstant.Grade.Fail.DeleteGrade);
+                Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    predicate: g => g.Id.Equals(id)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Grade.Fail.DeleteGrade);
+                }
+                return Success(isSuccessful);
             }
-            return Success(isSuccessful);
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    // 547 is the SQL Server error code for a foreign key violation
+                    return Fail<bool>(MessageConstant.Common.DeleteFail);
+                }
+                else
+                {
+                    return Fail<bool>(ex.Message);
+                }
+            }     
         }
 
         public async Task<Result<GetGradeResponse>> Get(Guid id)
@@ -88,10 +105,12 @@ namespace CatechistHelper.Infrastructure.Services
                     classes.Total);
         }
 
-        public async Task<PagingResult<GetGradeResponse>> GetPagination(int page, int size)
+        public async Task<PagingResult<GetGradeResponse>> GetPagination(GradeFilter filter, int page, int size)
         {
             IPaginate<GetGradeResponse> grades =
                    await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
+                            predicate: g => (!filter.MajorId.HasValue || g.Major.Equals(filter.MajorId))
+                            && (!filter.PastoralYearId.HasValue || g.PastoralYearId.Equals(filter.PastoralYearId)),
                             selector: g => new GetGradeResponse(
                                                 g.Id, 
                                                 g.Name, 
