@@ -10,5 +10,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.TrainingList
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public TrainingListStatus TrainingListStatus { get; set; }
+        public bool IsDeleted { get; set; }
+
     }
 }

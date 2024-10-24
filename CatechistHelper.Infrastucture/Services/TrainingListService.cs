@@ -47,7 +47,8 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
-                _unitOfWork.GetRepository<TrainingList>().DeleteAsync(trainingList);
+                trainingList.IsDeleted = false;
+                _unitOfWork.GetRepository<TrainingList>().UpdateAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
