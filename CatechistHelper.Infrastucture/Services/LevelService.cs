@@ -59,6 +59,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 var level = await GetById(id);
+                _unitOfWork.GetRepository<Level>().DeleteAsync(level);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
