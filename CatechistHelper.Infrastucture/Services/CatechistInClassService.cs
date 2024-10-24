@@ -5,7 +5,6 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
-using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,4 @@
-﻿using CatechistHelper.Domain.Enums;
-
-namespace CatechistHelper.Domain.Models
+﻿namespace CatechistHelper.Domain.Models
 {
     public class GradeFilter
     {

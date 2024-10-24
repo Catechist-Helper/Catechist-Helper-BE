@@ -11,6 +11,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
@@ -19,7 +20,12 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class LevelService : BaseService<LevelService>, ILevelService
     {
-        public LevelService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<LevelService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public LevelService(
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<LevelService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
+            : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -53,12 +59,19 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 var level = await GetById(id);
-                _unitOfWork.GetRepository<Level>().DeleteAsync(level);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(ex.Message);
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                {
+                    // 547 is the SQL Server error code for a foreign key violation
+                    return Fail<bool>(MessageConstant.Common.DeleteFail);
+                }
+                else
+                {
+                    return Fail<bool>(ex.Message);
+                }
             }
         }
 
@@ -71,7 +84,7 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Level> GetById(Guid id)
         {
             var level = await _unitOfWork.GetRepository<Level>()
-                .SingleOrDefaultAsync(predicate: c => c.Id.Equals(id));
+                .SingleOrDefaultAsync(predicate: l => l.Id.Equals(id));
             ArgumentNullException.ThrowIfNull(nameof(id));
             return level;
         }
@@ -80,7 +93,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             return await _unitOfWork.GetRepository<Level>()
                      .GetPagingListAsync(
-                            orderBy: a => a.OrderBy(x => x.CatechismLevel)
+                            orderBy: l => l.OrderBy(l => l.CatechismLevel)
                      );
         }
 
@@ -92,7 +105,7 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Level> accounts =
                     await _unitOfWork.GetRepository<Level>()
                     .GetPagingListAsync(
-                            orderBy: a => a.OrderByDescending(x => x.CatechismLevel),
+                            orderBy: l => l.OrderByDescending(l => l.CatechismLevel),
                             page: page,
                             size: size
                         );
@@ -113,9 +126,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Level level = await GetById(id);
-
                 request.Adapt(level);
-
                 _unitOfWork.GetRepository<Level>().UpdateAsync(level);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -137,8 +148,8 @@ namespace CatechistHelper.Infrastructure.Services
                 Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
                     predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 IPaginate<Major> majors = await _unitOfWork.GetRepository<TeachingQualification>().GetPagingListAsync(
-                                predicate: t => t.LevelId.Equals(id),
-                                selector: t => t.Major,
+                                predicate: tq => tq.LevelId.Equals(id),
+                                selector: tq => tq.Major,
                                 page: page,
                                 size: size
                             ); ;

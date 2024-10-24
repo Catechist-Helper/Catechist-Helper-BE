@@ -24,7 +24,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("status")]
         [EnumDataType(typeof(TrainingListStatus))]
-        public TrainingListStatus TrainingListStatus { get; set; }
+        public TrainingListStatus TrainingListStatus { get; set; } = TrainingListStatus.Training;
 
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
         public virtual ICollection<CatechistInTraining> CatechistInTrainings { get; set; } = new List<CatechistInTraining>();

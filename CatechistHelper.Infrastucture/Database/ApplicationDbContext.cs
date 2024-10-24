@@ -69,25 +69,25 @@ namespace CatechistHelper.Infrastructure.Database
 
             modelBuilder.Entity<Interview>()
                 .HasOne(i => i.Registration)
-                .WithMany(a => a.Interviews)
+                .WithMany(r => r.Interviews)
                 .HasForeignKey(i => i.RegistrationId);
 
             modelBuilder.Entity<InterviewProcess>()
-                .HasOne(i => i.Registration)
-                .WithMany(a => a.InterviewProcesses)
-                .HasForeignKey(i => i.RegistrationId);
+                .HasOne(ip => ip.Registration)
+                .WithMany(r => r.InterviewProcesses)
+                .HasForeignKey(ip => ip.RegistrationId);
 
             modelBuilder.Entity<Registration>()
-                .HasMany(a => a.Accounts)
+                .HasMany(r => r.Accounts)
                 .WithMany(a => a.Registrations)
                 .UsingEntity<Recruiter>(
-                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.ClientSetNull),
-                    r => r.HasOne<Registration>(e => e.Registration).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.ClientSetNull));
+                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict),
+                    r => r.HasOne<Registration>(e => e.Registration).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<CertificateOfCandidate>()
-                .HasOne(c => c.Registration)
-                .WithMany(c => c.CertificateOfCandidates)
-                .HasForeignKey(c => c.RegistrationId);
+                .HasOne(coc => coc.Registration)
+                .WithMany(r => r.CertificateOfCandidates)
+                .HasForeignKey(coc => coc.RegistrationId);
 
             modelBuilder.Entity<Account>()
                .HasOne(a => a.Catechist)
@@ -95,7 +95,7 @@ namespace CatechistHelper.Infrastructure.Database
                .HasForeignKey<Catechist>(c => c.AccountId);
 
             modelBuilder.Entity<TrainingList>()
-               .HasMany(t => t.Catechists)
+               .HasMany(tl => tl.Catechists)
                .WithMany(c => c.TrainingLists)
                .UsingEntity<CatechistInTraining>(
                     l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CatechistInTrainings),
@@ -103,43 +103,47 @@ namespace CatechistHelper.Infrastructure.Database
 
             modelBuilder.Entity<Catechist>()
                .HasOne(c => c.ChristianName)
-               .WithMany(c => c.Catechists)
-               .HasForeignKey(c => c.ChristianNameId);
+               .WithMany(cn => cn.Catechists)
+               .HasForeignKey(c => c.ChristianNameId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Catechist>()
                .HasOne(c => c.Level)
                .WithMany(l => l.Catechists)
-               .HasForeignKey(c => c.LevelId);
+               .HasForeignKey(c => c.LevelId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Certificate>()
                .HasOne(c => c.Level)
                .WithMany(l => l.Certificates)
-               .HasForeignKey(c => c.LevelId);
+               .HasForeignKey(c => c.LevelId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Certificate>()
                 .HasMany(c => c.Catechists)
                 .WithMany(c => c.Certificates)
                 .UsingEntity<CertificateOfCatechist>(
-                    l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CertificateOfCatechists).OnDelete(DeleteBehavior.ClientSetNull),
-                    r => r.HasOne<Certificate>(e => e.Certificate).WithMany(e => e.CertificateOfCatechists).OnDelete(DeleteBehavior.ClientSetNull));
+                    l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CertificateOfCatechists).OnDelete(DeleteBehavior.Restrict),
+                    r => r.HasOne<Certificate>(e => e.Certificate).WithMany(e => e.CertificateOfCatechists).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Major>()
                .HasMany(m => m.Levels)
                .WithMany(l => l.Majors)
                .UsingEntity<TeachingQualification>(
-                   l => l.HasOne<Level>(e => e.Level).WithMany(e => e.TeachingQualifications).OnDelete(DeleteBehavior.ClientSetNull),
-                   r => r.HasOne<Major>(e => e.Major).WithMany(e => e.TeachingQualifications).OnDelete(DeleteBehavior.ClientSetNull));
+                   l => l.HasOne<Level>(e => e.Level).WithMany(e => e.TeachingQualifications).OnDelete(DeleteBehavior.Restrict),
+                   r => r.HasOne<Major>(e => e.Major).WithMany(e => e.TeachingQualifications).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Grade>()
                .HasOne(g => g.Major)
                .WithMany(m => m.Grades)
-               .HasForeignKey(g => g.MajorId);
+               .HasForeignKey(g => g.MajorId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Class>()
                .HasOne(c => c.PastoralYear)
-               .WithMany(p => p.Classes)
+               .WithMany(py => py.Classes)
                .HasForeignKey(c => c.PastoralYearId)
-               .OnDelete(DeleteBehavior.ClientSetNull);
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Class>()
                .HasMany(c => c.Catechists)
@@ -156,7 +160,8 @@ namespace CatechistHelper.Infrastructure.Database
             modelBuilder.Entity<Slot>()
               .HasOne(s => s.Room)
               .WithMany(r => r.Slots)
-              .HasForeignKey(s => s.RoomId);
+              .HasForeignKey(s => s.RoomId)
+              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Slot>()
               .HasMany(s => s.Catechists)
@@ -168,19 +173,21 @@ namespace CatechistHelper.Infrastructure.Database
             modelBuilder.Entity<Class>()
              .HasOne(c => c.Grade)
              .WithMany(g => g.Classes)
-             .HasForeignKey(c => c.GradeId);
+             .HasForeignKey(c => c.GradeId)
+             .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Member>()
              .HasOne(m => m.RoleEvent)
              .WithMany(re => re.Members)
-             .HasForeignKey(m => m.RoleEventId);
+             .HasForeignKey(m => m.RoleEventId)
+             .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Event>()
               .HasMany(e => e.Accounts)
               .WithMany(a => a.Events)
               .UsingEntity<Member>(
-                  l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Members).OnDelete(DeleteBehavior.ClientSetNull),
-                  r => r.HasOne<Event>(e => e.Event).WithMany(e => e.Members).OnDelete(DeleteBehavior.ClientSetNull));
+                  l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Members).OnDelete(DeleteBehavior.Restrict),
+                  r => r.HasOne<Event>(e => e.Event).WithMany(e => e.Members).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<BudgetTransaction>()
              .HasOne(bt => bt.Event)
@@ -201,25 +208,27 @@ namespace CatechistHelper.Infrastructure.Database
                  .HasMany(p => p.Accounts)
                  .WithMany(a => a.Processes)
                  .UsingEntity<MemberOfProcess>(
-                     l => l.HasOne<Account>(e => e.Account).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.ClientSetNull),
-                     r => r.HasOne<Process>(e => e.Process).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.ClientSetNull));
+                     l => l.HasOne<Account>(e => e.Account).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.Restrict),
+                     r => r.HasOne<Process>(e => e.Process).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Grade>()
                 .HasOne(g => g.PastoralYear)
                 .WithMany(p => p.Grades)
-                .HasForeignKey(g => g.PastoralYearId);
+                .HasForeignKey(g => g.PastoralYearId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Grade>()
                  .HasMany(g => g.Catechists)
                  .WithMany(c => c.Grades)
                  .UsingEntity<CatechistInGrade>(
-                     l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.ClientSetNull),
-                     r => r.HasOne<Grade>(e => e.Grade).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.ClientSetNull));
+                     l => l.HasOne<Catechist>(e => e.Catechist).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.Restrict),
+                     r => r.HasOne<Grade>(e => e.Grade).WithMany(e => e.CatechistInGrades).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Post>()
                .HasOne(p => p.PostCategory)
-               .WithMany(p => p.Posts)
-               .HasForeignKey(p => p.PostCategoryId);
+               .WithMany(pc => pc.Posts)
+               .HasForeignKey(p => p.PostCategoryId)
+               .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
     }
