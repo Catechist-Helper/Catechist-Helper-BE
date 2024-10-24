@@ -16,5 +16,7 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> Update(Guid id, UpdateCatechistRequest request);
         Task<Result<bool>> Delete(Guid id);
         Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request);
+        Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear,int page, int size);
+        Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, string pastoralYear, int page, int size);
     }
 }

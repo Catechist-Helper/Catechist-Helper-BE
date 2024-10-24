@@ -58,9 +58,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                var level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
-                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
-                _unitOfWork.GetRepository<Level>().DeleteAsync(level);
+                var level = await GetById(id);
                 return Success(await _unitOfWork.CommitAsync() > 0);
             }
             catch (Exception ex)
