@@ -11,7 +11,11 @@ namespace CatechistHelper.Domain.Dtos.Responses.Class
         public int NumberOfCatechist { get; set; }
         public string? Note { get; set; }
         public ClassStatus ClassStatus { get; set; }
+        public string PastoralYearId { get; set; } = string.Empty;
         public string PastoralYearName { get; set; } = string.Empty;
+        public string MajorId { get; set; } = string.Empty;
+        public string MajorName { get; set; } = string.Empty;
+        public string GradeId { get; set; } = string.Empty;
         public string GradeName { get; set; } = string.Empty;
     }
 }

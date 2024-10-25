@@ -109,7 +109,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             IPaginate<GetGradeResponse> grades =
                    await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
-                            predicate: g => (!filter.MajorId.HasValue || g.Major.Equals(filter.MajorId))
+                            predicate: g => (!filter.MajorId.HasValue || g.MajorId.Equals(filter.MajorId))
                             && (!filter.PastoralYearId.HasValue || g.PastoralYearId.Equals(filter.PastoralYearId)),
                             selector: g => new GetGradeResponse(
                                                 g.Id, 
@@ -150,6 +150,10 @@ namespace CatechistHelper.Infrastructure.Services
                                           && cig.Catechist.IsDeleted == false       
                                           && cig.Catechist.IsTeaching == true   
                                           && (!excludeClassAssigned || !assignedCatechistInClassIds.Contains(cig.CatechisteId)),
+                        include: c => c.Include(n => n.Catechist.ChristianName)
+                                .Include(n => n.Catechist.Level)
+                                .Include(n => n.Catechist.Account)
+                                .Include(n => n.Catechist.Certificates),
                         selector: cig => cig.Catechist,
                         page: page,
                         size: size
