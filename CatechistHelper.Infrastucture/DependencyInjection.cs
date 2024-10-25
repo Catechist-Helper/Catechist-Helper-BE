@@ -75,8 +75,11 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Image);
 
             config.NewConfig<Class, GetClassResponse>()
-                .Map(dest => dest.PastoralYearName, src => src.PastoralYear.Name) 
-                .Map(dest => dest.GradeName, src => src.Grade.Name);
+                .Map(dest => dest.PastoralYearName, src => src.PastoralYear.Name)
+                .Map(dest => dest.GradeId, src => src.Grade.Id)
+                .Map(dest => dest.GradeName, src => src.Grade.Name)
+                .Map(dest => dest.MajorId, src => src.Grade.Major.Id)
+                .Map(dest => dest.MajorName, src => src.Grade.Major.Name);
 
             config.NewConfig<Catechist, GetCatechistResponse>()
                 .Map(dest => dest.ChristianName, src => src.ChristianName.Name)

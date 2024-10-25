@@ -210,6 +210,10 @@ namespace CatechistHelper.Infrastructure.Services
                                             && c.IsDeleted == false
                                             && c.IsTeaching == true
                                             && (!excludeGradeAssigned || !assignedCatechistIds.Contains(c.Id)),
+                            include: c => c.Include(n => n.ChristianName)
+                                .Include(n => n.Level)
+                                .Include(n => n.Account)
+                                .Include(n => n.Certificates),
                             page: page,
                             size: size
                         );

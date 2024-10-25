@@ -57,6 +57,7 @@ namespace CatechistHelper.Infrastructure.Services
                             size: size,
                             include: a => a.Include(p => p.PastoralYear)
                                            .Include(p => p.Grade)
+                                           .Include(p => p.Grade.Major)
                     );
 
             return classes;
@@ -89,6 +90,10 @@ namespace CatechistHelper.Infrastructure.Services
         private Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)
         {
             Expression<Func<Class, bool>> filterQuery = x => x.IsDeleted == false;
+            if (filter.MajorId != null)
+            {
+                filterQuery = filterQuery.AndAlso(x => x.Grade.Major.Id.Equals(filter.MajorId));
+            }
             if (filter.GradeId != null)
             {
                 filterQuery = filterQuery.AndAlso(x => x.GradeId.Equals(filter.GradeId));
