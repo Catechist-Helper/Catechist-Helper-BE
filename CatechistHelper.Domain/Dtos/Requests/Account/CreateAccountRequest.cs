@@ -22,7 +22,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.Require.PhoneRequired)]
-        [RegularExpression(@"^(\d{10})$", ErrorMessage = "không đúng định dạng số điện thoại")]
+        [RegularExpression(@"^(\d{10})$", ErrorMessage = MessageConstant.Common.InvalidPhoneNumber)]
         public string Phone { get; set; } = null!;
 
         public IFormFile? Avatar { get; set; }

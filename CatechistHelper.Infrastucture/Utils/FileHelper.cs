@@ -177,7 +177,7 @@ namespace CatechistHelper.Infrastructure.Utils
 
                     var catechists = string.Join(", ",
                          slot.CatechistInSlots.Select(c =>
-                             c.Catechist.Account.FullName + (c.IsMain ? " (Chính)" : "")
+                             c.Catechist.Account.FullName 
                          )
                      );
 

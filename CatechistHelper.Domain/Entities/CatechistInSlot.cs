@@ -13,7 +13,7 @@ namespace CatechistHelper.Domain.Entities
         public Guid CatechistId { get; set; }
         public virtual Catechist Catechist { get; set; } = null!;
 
-        [Column("is_main")]
-        public bool IsMain { get; set; }
+        [Column("type")]
+        public string Type { get; set; } = null!;
     }
 }
