@@ -8,14 +8,14 @@ namespace CatechistHelper.API.Controllers
 {
     public class CatechistInTrainingController : BaseController<CatechistInTrainingController>
     {
-        private readonly ICatechistInTraining _catechistInTraining;
+        private readonly ICatechistInTraining _catechistInTrainingService;
 
         public CatechistInTrainingController(
             ICatechistInTraining catechistInTraining,
             ILogger<CatechistInTrainingController> logger)
             : base(logger)
         {
-            _catechistInTraining = catechistInTraining;
+            _catechistInTrainingService = catechistInTraining;
         }
 
         [HttpPut(ApiEndPointConstant.CatechistInTraining.CatechistInTrainingEndpoint)]
@@ -23,7 +23,7 @@ namespace CatechistHelper.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddCatechistToTrainingList([FromRoute] Guid trainingListId, [FromBody] List<CreateCatechistInTrainingRequest> request)
         {
-            Result<bool> result = await _catechistInTraining.AddCatechistToTrainingList(trainingListId, request);
+            Result<bool> result = await _catechistInTrainingService.AddCatechistToTrainingList(trainingListId, request);
             return StatusCode((int)result.StatusCode, result);
         }
     }

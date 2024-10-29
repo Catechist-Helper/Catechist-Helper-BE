@@ -1,6 +1,4 @@
 ﻿using CatechistHelper.Domain.Dtos.Responses.Role;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Responses.Account
 {

@@ -235,7 +235,6 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     SlotId = slot.Id,
                     CatechistId = catechistInClass.CatechistId,
-                    IsMain = catechistInClass.IsMain
                 };
 
                 slot.CatechistInSlots.Add(catechistInSlot);

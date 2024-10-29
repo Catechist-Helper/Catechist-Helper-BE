@@ -84,6 +84,13 @@ namespace CatechistHelper.Infrastructure.Database
                     l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict),
                     r => r.HasOne<Registration>(e => e.Registration).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict));
 
+            modelBuilder.Entity<Interview>()
+                .HasMany(i => i.Accounts)
+                .WithMany(a => a.Interviews)
+                .UsingEntity<RecruiterInInterview>(
+                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Restrict),
+                    r => r.HasOne<Interview>(e => e.Interview).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Restrict));
+
             modelBuilder.Entity<CertificateOfCandidate>()
                 .HasOne(coc => coc.Registration)
                 .WithMany(r => r.CertificateOfCandidates)

@@ -79,6 +79,7 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Result<GetGradeResponse>> Get(Guid id)
         {
             GetGradeResponse grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                    predicate: g => g.Id.Equals(id),
                     selector: g => new GetGradeResponse(
                                                 g.Id,
                                                 g.Name,

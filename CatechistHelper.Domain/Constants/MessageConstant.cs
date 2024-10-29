@@ -15,17 +15,18 @@ namespace CatechistHelper.Domain.Constants
         #endregion
         public static class Common
         {
+            public const string InvalidPhoneNumber = "Không đúng định dạng số điện thoại!";
             public const string DeleteFail = "Không thể xóa dữ liệu đang được sử dụng!";
         }
         public static class Account
         {
             #region Account Field
-            private const string AccountMessage = "Account";
+            private const string AccountMessage = "Tài khoản";
             private const string Email = "Email";
-            private const string Password = "Password";
-            private const string FullName = "Full name";
-            private const string Gender = "Gender";
-            private const string Phone = "Phone";
+            private const string Password = "Mật khẩu";
+            private const string FullName = "Họ và tên";
+            private const string Gender = "Giới tính";
+            private const string Phone = "Số điện thoại";
             #endregion
             public static class Require
             {
@@ -53,12 +54,12 @@ namespace CatechistHelper.Domain.Constants
         public static class Registration
         {
             #region Registration Field
-            private const string RegistrationMessage = "Registration";
-            private const string FullName = "Full name";
-            private const string Gender = "Gender";
+            private const string RegistrationMessage = "Đơn đăng kí";
+            private const string FullName = "Họ và tên";
+            private const string Gender = "Giới tính";
             private const string Email = "Email";
-            private const string Address = "Adress";
-            private const string Phone = "Phone";
+            private const string Address = "Địa chỉ";
+            private const string Phone = "Số điện thoại";
             #endregion
             public static class Require
             {
@@ -86,14 +87,14 @@ namespace CatechistHelper.Domain.Constants
         {
             public static class Fail
             {
-                public static string PasswordIncorrect = "Password Incorrect";
-                public static string InvalidAccount = "Invalid Account";
+                public static string PasswordIncorrect = "Sai mật khẩu";
+                public static string InvalidAccount = "Tài khoản không hợp lệ";
             }
         }
         public static class Interview
         {
             #region Interview Field
-            private const string InterviewMessage = "Interview";
+            private const string InterviewMessage = "Phỏng vấn";
             #endregion
             public static class Require
             {
@@ -137,8 +138,8 @@ namespace CatechistHelper.Domain.Constants
         public static class Certificate
         {
             #region Certificate Field
-            private const string CertificateMessage = "Certificate";
-            private const string Name = "Name of Certificate";
+            private const string CertificateMessage = "Chứng chỉ";
+            private const string Name = "Tên chứng chỉ";
 
             #endregion
             public static class Require
@@ -159,9 +160,9 @@ namespace CatechistHelper.Domain.Constants
         public static class PastoralYear
         {
             #region PastoralYear Field
-            private const string PastoralYearMessage = "PastoralYear";
-            private const string Status = "Status";
-            private const string Name = "Name of PastoralYear";
+            private const string PastoralYearMessage = "Niên khóa";
+            private const string Status = "Trạng thái";
+            private const string Name = "Tên niên khóa";
             #endregion
             public static class Require
             {
@@ -186,8 +187,8 @@ namespace CatechistHelper.Domain.Constants
         public static class ChristianName
         {
             #region ChristianName Field
-            private const string ChristianNameMessage = "Christian name";
-            private const string Name = "Name";
+            private const string ChristianNameMessage = "Tên thánh";
+            private const string Name = "Tên";
             #endregion
             public static class Require
             {
@@ -211,9 +212,9 @@ namespace CatechistHelper.Domain.Constants
         public static class PostCategory
         {
             #region PostCategory Field
-            private const string PostCategoryMessage = "PostCategory";
-            private const string Name = "PostCategory name";
-            private const string Description = "Description";
+            private const string PostCategoryMessage = "Danh mục tin";
+            private const string Name = "Tên danh mục";
+            private const string Description = "Mô tả";
 
             #endregion
             public static class Require
@@ -240,11 +241,10 @@ namespace CatechistHelper.Domain.Constants
         public static class Post
         {
             #region Post Field
-            private const string PostMessage = "Post";
-            private const string Title = "Title";
-            private const string Content = "Content";
-            private const string Module = "Module";
-            private const string PostCategory = "PostCategory";
+            private const string PostMessage = "Tin";
+            private const string Title = "Tiêu đề";
+            private const string Content = "Nội dung";
+            private const string Module = "Loại";
 
             #endregion
             public static class Require
@@ -252,8 +252,6 @@ namespace CatechistHelper.Domain.Constants
                 public const string TitleRequired = Title + RequiredSuffix;
                 public const string ContentRequired = Content + RequiredSuffix;
                 public const string ModuleRequired = Module + RequiredSuffix;
-                public const string PostCategoryRequired = PostCategory + RequiredSuffix;
-
             }
             public static class Success
             {
@@ -272,14 +270,8 @@ namespace CatechistHelper.Domain.Constants
         public static class Role
         {
             #region Role Field
-            private const string RoleMessage = "Role";
+            private const string RoleMessage = "Vai trò";
             #endregion
-            public static class Require
-            {
-            }
-            public static class Success
-            {
-            }
             public static class Fail
             {
                 public static string NotFoundRole = String.Format(NotFoundTemplate, RoleMessage);
@@ -288,8 +280,8 @@ namespace CatechistHelper.Domain.Constants
         public static class Major
         {
             #region Major Field
-            private const string MajorMessage = "Major";
-            private const string Name = "Name";
+            private const string MajorMessage = "Ngành";
+            private const string Name = "Tên ngành";
             #endregion
             public static class Require
             {
@@ -313,7 +305,7 @@ namespace CatechistHelper.Domain.Constants
         public static class Catechist
         {
             #region Account Field
-            private const string CatechistMessage = "Catechist";
+            private const string CatechistMessage = "Giáo lý viên";
             #endregion
             public static class Success
             {
@@ -334,9 +326,9 @@ namespace CatechistHelper.Domain.Constants
         public static class SystemConfiguration
         {
             #region System Configuration Field
-            private const string SystemConfigurationMessage = "System configuration";
-            private const string Key = "Key";
-            private const string Value = "Value";
+            private const string SystemConfigurationMessage = "Cấu hình hệ thống";
+            private const string Key = "Khóa";
+            private const string Value = "Giá trị";
             #endregion
             public static class Require
             {
@@ -360,8 +352,8 @@ namespace CatechistHelper.Domain.Constants
         public static class Room
         {
             #region Room Field
-            private const string RoomMessage = "Room";
-            private const string Name = "Name";
+            private const string RoomMessage = "Phòng";
+            private const string Name = "Tên phòng";
             #endregion
             public static class Require
             {
@@ -384,7 +376,7 @@ namespace CatechistHelper.Domain.Constants
         public static class Level
         {
             #region
-            private const string LevelMessage = "Level";
+            private const string LevelMessage = "Cấp độ";
             #endregion
             public static class Success
             {
@@ -404,8 +396,8 @@ namespace CatechistHelper.Domain.Constants
         public static class Grade
         {
             #region
-            private const string GradeMessage = "Grade";
-            private const string Name = "Name";
+            private const string GradeMessage = "Khối";
+            private const string Name = "Tên khối";
             #endregion
             public static class Require
             {
@@ -427,7 +419,7 @@ namespace CatechistHelper.Domain.Constants
         public static class Class
         {
             #region Class Field
-            private const string ClassMessage = "Class";
+            private const string ClassMessage = "Lớp học";
             #endregion
             public static class Success
             {
@@ -477,6 +469,133 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateTrainingList = String.Format(UpdateFailTemplate, TrainingListMessage);
                 public static string DeleteTrainingList = String.Format(DeleteFailTemplate, TrainingListMessage);
                 public static string NotFoundTrainingList = String.Format(NotFoundTemplate, TrainingListMessage);
+            }
+        }
+        public static class Event
+        {
+            #region
+            private const string Message = "Sự kiện";
+            private const string Name = "Tên sự kiện";
+            private const string Description = "Mô tả";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+                public const string DescriptionRequired = Description + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+
+            }
+        }
+        public static class ParticipantInEvent
+        {
+            #region
+            private const string Message = "Người tham gia sự kiện";
+            private const string FullName = "Họ và tên";
+            private const string Email = "Email";
+            private const string Phone = "Số điện thoại";
+            private const string Gender = "Giới tính";
+            private const string Address = "Địa chỉ";
+            #endregion
+            public static class Require
+            {
+                public const string FullNameRequired = FullName + RequiredSuffix;
+                public const string EmailRequired = Email + RequiredSuffix;
+                public const string PhoneRequired = Phone + RequiredSuffix;
+                public const string GenderRequired = Gender + RequiredSuffix;
+                public const string AddressRequired = Address + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+
+            }
+        }
+        public static class RoleEvent
+        {
+            #region
+            private const string Message = "Vai trò trong sự kiện";
+            private const string Name = "Tên vai trò";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+
+            }
+        }
+        public static class BudgetTransaction
+        {
+            #region
+            private const string Message = "Ngân sách sự kiện";
+            #endregion
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+
+            }
+        }
+        public static class Process
+        {
+            #region
+            private const string Message = "Tiến trình sự kiện";
+            private const string Name = "Tên tiến trình";
+            private const string Description = "Mô tả";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+                public const string DescriptionRequired = Description + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+
             }
         }
     }

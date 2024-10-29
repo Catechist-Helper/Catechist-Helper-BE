@@ -155,12 +155,11 @@ namespace CatechistHelper.Domain.Constants
             public const string GradesEndpoint = ApiEndpoint + "/grades";
             /// <summary>"api/v1/grades/{id}"</summary>
             public const string GradeEndpoint = GradesEndpoint + ByIdRoute;
-            /// <summary>"api/v1/grades/{id}"</summary>
+            /// <summary>"api/v1/grades/{id}/catechists"</summary>
             public const string CatechistsInGradeEndpoint = GradeEndpoint + "/catechists";
-            /// <summary>"api/v1/grades/{id}"</summary>
+            /// <summary>"api/v1/grades/{id}/classes"</summary>
             public const string ClassesByGradeEndpoint = GradeEndpoint + "/classes";
         }
-
         public static class Class
         {
             /// <summary>"api/v1/classes"</summary>
@@ -171,8 +170,6 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistInClassesEndpoint = ClassEndpoint + "/catechists";
             /// <summary>"api/v1/classes/{id}/slots"</summary>
             public const string SlotsOfClassEndpoint = ClassEndpoint + "/slots";
-
-
         }
         public static class CatechistInGrade
         {
@@ -201,7 +198,50 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/training-list/{id}"</summary>
             public const string TrainingListEndpoint = TrainingListsEndpoint + ByIdRoute;
             public const string CatechistsInTrainingEndpoint = TrainingListEndpoint + "/catechists";
-
+        }
+        public static class Event
+        {
+            /// <summary>"api/v1/events"</summary>
+            public const string EventsEndpoint = ApiEndpoint + "/events";
+            /// <summary>"api/v1/events/{id}"</summary>
+            public const string EventEndpoint = EventsEndpoint + ByIdRoute;
+            /// <summary>"api/v1/events/{id}/members"</summary>
+            public const string MemberInEventEndpoint = EventEndpoint + "/members";
+        }
+        public static class ParticipantInEvent
+        {
+            /// <summary>"api/v1/participent-in-events"</summary>
+            public const string ParticipantInEventsEndpoint = ApiEndpoint + "/participent-in-events";
+            /// <summary>"api/v1/participent-in-events/{id}"</summary>
+            public const string ParticipantInEventEndpoint = ParticipantInEventsEndpoint + ByIdRoute;
+        }
+        public static class RoleEvent
+        {
+            /// <summary>"api/v1/role-events"</summary>
+            public const string RoleEventsEndpoint = ApiEndpoint + "/role-events";
+            /// <summary>"api/v1/role-events/{id}"</summary>
+            public const string RoleEventEndpoint = RoleEventsEndpoint + ByIdRoute;
+        }
+        public static class Member
+        {
+            /// <summary>"api/v1/members"</summary>
+            public const string MembersEndpoint = ApiEndpoint + "/members";
+            /// <summary>"api/v1/members/{eventId}"</summary>
+            public const string MemberEndpoint = MembersEndpoint + "/{eventId}";
+        }
+        public static class BudgetTransaction
+        {
+            /// <summary>"api/v1/budget-transactions"</summary>
+            public const string BudgetTransactionsEndpoint = ApiEndpoint + "/budget-transactions";
+            /// <summary>"api/v1/budget-transactions/{id}"</summary>
+            public const string BudgetTransactionEndpoint = BudgetTransactionsEndpoint + ByIdRoute;
+        }
+        public static class Process
+        {
+            /// <summary>"api/v1/processes"</summary>
+            public const string ProcessesEndpoint = ApiEndpoint + "/processes";
+            /// <summary>"api/v1/processes/{id}"</summary>
+            public const string ProcessEndpoint = ProcessesEndpoint + ByIdRoute;
         }
     }
 }

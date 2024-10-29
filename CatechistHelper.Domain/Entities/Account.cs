@@ -51,5 +51,8 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Process> Processes { get; set; } = new List<Process>();
         public virtual ICollection<MemberOfProcess> MemberOfProcesses { get; set; } = new List<MemberOfProcess>();
+
+        public virtual ICollection<Interview> Interviews { get; set; } = new List<Interview>();
+        public virtual ICollection<RecruiterInInterview> RecruiterInInterviews { get; set; } = new List<RecruiterInInterview>();
     }
 }
