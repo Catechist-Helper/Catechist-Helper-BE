@@ -207,6 +207,12 @@ namespace CatechistHelper.Domain.Constants
             public const string EventEndpoint = EventsEndpoint + ByIdRoute;
             /// <summary>"api/v1/events/{id}/members"</summary>
             public const string MemberInEventEndpoint = EventEndpoint + "/members";
+            /// <summary>"api/v1/events/{id}/budget-transactions"</summary>
+            public const string BudgetTransactionInEventEndpoint = EventEndpoint + "/budget-transactions";
+            /// <summary>"api/v1/events/{id}/processes"</summary>
+            public const string ProcessInEventEndpoint = EventEndpoint + "/processes";
+            /// <summary>"api/v1/events/{id}/participants"</summary>
+            public const string ParticipantInEventEndpoint = EventEndpoint + "/participants";
         }
         public static class ParticipantInEvent
         {
@@ -242,6 +248,15 @@ namespace CatechistHelper.Domain.Constants
             public const string ProcessesEndpoint = ApiEndpoint + "/processes";
             /// <summary>"api/v1/processes/{id}"</summary>
             public const string ProcessEndpoint = ProcessesEndpoint + ByIdRoute;
+            /// <summary>"api/v1/processes/{id}/members"</summary>
+            public const string MemberOfProcessEndpoint = ProcessEndpoint + "/members";
+        }
+        public static class MemberOfProcess
+        {
+            /// <summary>"api/v1/members"</summary>
+            public const string MemberOfProcessesEndpoint = ApiEndpoint + "/members";
+            /// <summary>"api/v1/members/{eventId}"</summary>
+            public const string MemberOfProcessEndpoint = MemberOfProcessesEndpoint + "/{processId}";
         }
     }
 }

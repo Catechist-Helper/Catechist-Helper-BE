@@ -3,15 +3,16 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Process;
-using CatechistHelper.Domain.Dtos.Requests.RoleEvent;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
+using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Process;
-using CatechistHelper.Domain.Dtos.Responses.RoleEvent;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -24,6 +25,30 @@ namespace CatechistHelper.Infrastructure.Services
             IHttpContextAccessor httpContextAccessor)
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+        }
+
+        public async Task<PagingResult<GetMemberOfProcessRepsonse>> GetMembersByProcessId(Guid id, int page, int size)
+        {
+            try
+            {
+                IPaginate<MemberOfProcess> catechists =
+                    await _unitOfWork.GetRepository<MemberOfProcess>()
+                    .GetPagingListAsync(
+                            predicate: mop => mop.ProcessId == id,
+                            include: mop => mop.Include(mop => mop.Account),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        catechists.Adapt<IPaginate<GetMemberOfProcessRepsonse>>(),
+                        page,
+                        size,
+                        catechists.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
         }
 
         public async Task<Result<GetProcessResponse>> Create(CreateProcessRequest request)
@@ -63,19 +88,6 @@ namespace CatechistHelper.Infrastructure.Services
             Process process = await _unitOfWork.GetRepository<Process>().SingleOrDefaultAsync(
                 predicate: e => e.Id == id) ?? throw new Exception(MessageConstant.Process.Fail.NotFound);
             return Success(process.Adapt<GetProcessResponse>());
-        }
-
-        public async Task<PagingResult<GetProcessResponse>> GetPagination(int page, int size)
-        {
-            IPaginate<Process> processes =
-                   await _unitOfWork.GetRepository<Process>().GetPagingListAsync(
-                            page: page,
-                            size: size);
-            return SuccessWithPaging(
-                    processes.Adapt<IPaginate<GetProcessResponse>>(),
-                    page,
-                    size,
-                    processes.Total);
         }
 
         public async Task<Result<bool>> Update(Guid id, UpdateProcessRequest request)

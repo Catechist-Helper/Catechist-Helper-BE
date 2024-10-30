@@ -5,7 +5,6 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.ParticipantInEvent;
 using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
 using CatechistHelper.Domain.Entities;
-using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
@@ -63,19 +62,6 @@ namespace CatechistHelper.Infrastructure.Services
             ParticipantInEvent participantInEvent = await _unitOfWork.GetRepository<ParticipantInEvent>().SingleOrDefaultAsync(
                 predicate: pie => pie.Id == id);
             return Success(participantInEvent.Adapt<GetParicipantInEventResponse>());
-        }
-
-        public async Task<PagingResult<GetParicipantInEventResponse>> GetPagination(int page, int size)
-        {
-            IPaginate<ParticipantInEvent> participantInEvents =
-                   await _unitOfWork.GetRepository<ParticipantInEvent>().GetPagingListAsync(
-                            page: page,
-            size: size);
-            return SuccessWithPaging(
-                    participantInEvents.Adapt<IPaginate<GetParicipantInEventResponse>>(),
-                    page,
-                    size,
-                    participantInEvents.Total);
         }
 
         public async Task<Result<bool>> Update(Guid id, UpdateParicipantInEventRequest request)

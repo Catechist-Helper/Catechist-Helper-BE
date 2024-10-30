@@ -4,7 +4,11 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Event;
 using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.Event;
+using CatechistHelper.Domain.Dtos.Responses.Member;
+using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
+using CatechistHelper.Domain.Dtos.Responses.Process;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
@@ -12,6 +16,7 @@ using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -113,19 +118,61 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<GetAccountResponse>> GetMembersByEventId(Guid id, int page, int size)
+        public async Task<PagingResult<GetMemberResponse>> GetMembersByEventId(Guid id, int page, int size)
         {
-            IPaginate<Account> accounts =
+            IPaginate<Member> accounts =
                    await _unitOfWork.GetRepository<Member>().GetPagingListAsync(
                             predicate: m => m.EventId == id,
-                            selector: m => m.Account,
+                            include: m => m.Include(m => m.Account),
                             page: page,
                             size: size);
             return SuccessWithPaging(
-                    accounts.Adapt<IPaginate<GetAccountResponse>>(),
+                    accounts.Adapt<IPaginate<GetMemberResponse>>(),
                     page,
                     size,
                     accounts.Total);
+        }
+
+        public async Task<PagingResult<GetBudgetTransactionResponse>> GetBudgetTransactionByEventId(Guid id, int page, int size)
+        {
+            IPaginate<BudgetTransaction> budgetTransaction =
+                   await _unitOfWork.GetRepository<BudgetTransaction>().GetPagingListAsync(
+                            predicate: bt => bt.EventId == id,
+                            page: page,
+                            size: size);
+            return SuccessWithPaging(
+                    budgetTransaction.Adapt<IPaginate<GetBudgetTransactionResponse>>(),
+                    page,
+                    size,
+                    budgetTransaction.Total);
+        }
+
+        public async Task<PagingResult<GetProcessResponse>> GetProcessByEventId(Guid id, int page, int size)
+        {
+            IPaginate<Process> processes =
+                   await _unitOfWork.GetRepository<Process>().GetPagingListAsync(
+                            predicate: bt => bt.EventId == id,
+                            page: page,
+                            size: size);
+            return SuccessWithPaging(
+                    processes.Adapt<IPaginate<GetProcessResponse>>(),
+                    page,
+                    size,
+                    processes.Total);
+        }
+
+        public async Task<PagingResult<GetParicipantInEventResponse>> GetParticipantByEventId(Guid id, int page, int size)
+        {
+            IPaginate<ParticipantInEvent> processes =
+                   await _unitOfWork.GetRepository<ParticipantInEvent>().GetPagingListAsync(
+                            predicate: bt => bt.EventId == id,
+                            page: page,
+                            size: size);
+            return SuccessWithPaging(
+                    processes.Adapt<IPaginate<GetParicipantInEventResponse>>(),
+                    page,
+                    size,
+                    processes.Total);
         }
     }
 }

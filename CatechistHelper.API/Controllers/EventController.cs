@@ -3,8 +3,12 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Event;
 using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.Event;
 using CatechistHelper.Domain.Dtos.Responses.Major;
+using CatechistHelper.Domain.Dtos.Responses.Member;
+using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
+using CatechistHelper.Domain.Dtos.Responses.Process;
 using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,10 +32,34 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Event.MemberInEventEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagingResult<GetMemberResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMemberInEvent([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetAccountResponse> result = await _eventService.GetMembersByEventId(id, page, size);
+            PagingResult<GetMemberResponse> result = await _eventService.GetMembersByEventId(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Event.BudgetTransactionInEventEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetBudgetTransactionResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetBudgetTransactionByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetBudgetTransactionResponse> result = await _eventService.GetBudgetTransactionByEventId(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Event.ProcessInEventEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetProcessResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProcessByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetProcessResponse> result = await _eventService.GetProcessByEventId(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Event.ParticipantInEventEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetParicipantInEventResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetParticipantByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetParicipantInEventResponse> result = await _eventService.GetParticipantByEventId(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 

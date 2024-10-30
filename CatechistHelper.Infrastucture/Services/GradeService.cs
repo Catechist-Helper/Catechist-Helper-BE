@@ -4,6 +4,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInGrade;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Major;
@@ -127,7 +128,7 @@ namespace CatechistHelper.Infrastructure.Services
                     grades.Total);
         }
 
-        public async Task<PagingResult<GetCatechistResponse>> GetCatechistsByGradeId(
+        public async Task<PagingResult<GetCatechistInGradeResponse>> GetCatechistsByGradeId(
             Guid id,
             int page, 
             int size, 
@@ -145,7 +146,7 @@ namespace CatechistHelper.Infrastructure.Services
                             predicate: cic => cic.Class.GradeId == id,
                             selector: cic => cic.CatechistId);
                 }
-                IPaginate<Catechist> catechists = await _unitOfWork.GetRepository<CatechistInGrade>()
+                IPaginate<CatechistInGrade> catechists = await _unitOfWork.GetRepository<CatechistInGrade>()
                     .GetPagingListAsync(
                         predicate: cig => cig.GradeId == id
                                           && cig.Catechist.IsDeleted == false       
@@ -155,12 +156,11 @@ namespace CatechistHelper.Infrastructure.Services
                                 .Include(n => n.Catechist.Level)
                                 .Include(n => n.Catechist.Account)
                                 .Include(n => n.Catechist.Certificates),
-                        selector: cig => cig.Catechist,
                         page: page,
                         size: size
                     );
                 return SuccessWithPaging(
-                    catechists.Adapt<IPaginate<GetCatechistResponse>>(),
+                    catechists.Adapt<IPaginate<GetCatechistInGradeResponse>>(),
                     page,
                     size,
                     catechists.Total

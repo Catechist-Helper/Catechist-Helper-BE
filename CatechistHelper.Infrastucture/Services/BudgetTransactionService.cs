@@ -66,30 +66,6 @@ namespace CatechistHelper.Infrastructure.Services
             return Success(budgetTransaction.Adapt<GetBudgetTransactionResponse>());
         }
 
-        public async Task<PagingResult<GetBudgetTransactionResponse>> GetPagination(BudgetTransactionFilter? filter, int page, int size)
-        {
-            IPaginate<BudgetTransaction> budgetTransactions =
-                   await _unitOfWork.GetRepository<BudgetTransaction>().GetPagingListAsync(
-                            predicate: BuildGetPaginationQuery(filter),
-                            page: page,
-                            size: size);
-            return SuccessWithPaging(
-                    budgetTransactions.Adapt<IPaginate<GetBudgetTransactionResponse>>(),
-                    page,
-                    size,
-                    budgetTransactions.Total);
-        }
-
-        private Expression<Func<BudgetTransaction, bool>> BuildGetPaginationQuery(BudgetTransactionFilter? filter)
-        {
-            Expression<Func<BudgetTransaction, bool>> filterQuery = x => false;
-            if (filter.EventId != null)
-            {
-                filterQuery = filterQuery.AndAlso(bt => bt.EventId == filter.EventId);
-            }
-            return filterQuery;
-        }
-
         public async Task<Result<bool>> Update(Guid id, UpdateBudgetTransactionRequest request)
         {
             try

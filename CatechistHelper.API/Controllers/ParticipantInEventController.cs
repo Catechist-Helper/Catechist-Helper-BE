@@ -16,14 +16,6 @@ namespace CatechistHelper.API.Controllers
             _participantInEventService = participantInEventService;
         }
 
-        [HttpGet(ApiEndPointConstant.ParticipantInEvent.ParticipantInEventsEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetParicipantInEventResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
-        {
-            PagingResult<GetParicipantInEventResponse> result = await _participantInEventService.GetPagination(page, size);
-            return StatusCode((int)result.StatusCode, result);
-        }
-
         [HttpGet(ApiEndPointConstant.ParticipantInEvent.ParticipantInEventEndpoint)]
         [ProducesResponseType(typeof(Result<GetParicipantInEventResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
