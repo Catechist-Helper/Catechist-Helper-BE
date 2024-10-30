@@ -2,7 +2,10 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Process;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
+using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Process;
+using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -16,11 +19,11 @@ namespace CatechistHelper.API.Controllers
             _processService = processService;
         }
 
-        [HttpGet(ApiEndPointConstant.Process.ProcessesEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetProcessResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        [HttpGet(ApiEndPointConstant.MemberOfProcess.MemberOfProcessEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetMemberOfProcessRepsonse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetProcessResponse> result = await _processService.GetPagination(page, size);
+            PagingResult<GetMemberOfProcessRepsonse> result = await _processService.GetMembersByProcessId(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 

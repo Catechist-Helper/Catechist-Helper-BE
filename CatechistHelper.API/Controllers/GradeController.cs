@@ -3,6 +3,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInGrade;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Models;
@@ -31,14 +32,14 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Grade.CatechistsInGradeEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetCatechistResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagingResult<GetCatechistInGradeResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistsByGradeId(
             [FromRoute] Guid id, 
             [FromQuery] int page = 1, 
             [FromQuery] int size = 100, 
             [FromQuery] bool excludeClassAssigned = false)
         {
-            PagingResult<GetCatechistResponse> result = await _gradeService.GetCatechistsByGradeId(id, page, size, excludeClassAssigned);
+            PagingResult<GetCatechistInGradeResponse> result = await _gradeService.GetCatechistsByGradeId(id, page, size, excludeClassAssigned);
             return StatusCode((int)result.StatusCode, result);
         }
 

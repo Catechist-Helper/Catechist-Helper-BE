@@ -27,7 +27,6 @@ namespace CatechistHelper.Domain.Dtos.Responses.Catechist
         public string Note { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string LevelName { get; set; } = string.Empty;
-        public bool IsMain { get; set; }
         public List<GetCertificateResponse> Certificates { get; set; } = [];
     }
 

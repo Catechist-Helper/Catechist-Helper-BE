@@ -7,7 +7,6 @@ namespace CatechistHelper.Application.Services
 {
     public interface IBudgetTransactionService
     {
-        Task<PagingResult<GetBudgetTransactionResponse>> GetPagination(BudgetTransactionFilter? filter, int page, int size);
         Task<Result<GetBudgetTransactionResponse>> Get(Guid id);
         Task<Result<GetBudgetTransactionResponse>> Create(CreateBudgetTransactionRequest request);
         Task<Result<bool>> Update(Guid id, UpdateBudgetTransactionRequest request);

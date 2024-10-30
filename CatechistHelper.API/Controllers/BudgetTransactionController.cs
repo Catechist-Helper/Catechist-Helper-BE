@@ -20,14 +20,6 @@ namespace CatechistHelper.API.Controllers
             _budgetTransactionService = budgetTransactionService;
         }
 
-        [HttpGet(ApiEndPointConstant.BudgetTransaction.BudgetTransactionsEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetBudgetTransactionResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] BudgetTransactionFilter? filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
-        {
-            PagingResult<GetBudgetTransactionResponse> result = await _budgetTransactionService.GetPagination(filter, page, size);
-            return StatusCode((int)result.StatusCode, result);
-        }
-
         [HttpGet(ApiEndPointConstant.BudgetTransaction.BudgetTransactionEndpoint)]
         [ProducesResponseType(typeof(Result<GetBudgetTransactionResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
