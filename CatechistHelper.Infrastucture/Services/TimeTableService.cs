@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.API.Utils;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
@@ -328,12 +329,19 @@ namespace CatechistHelper.Infrastructure.Services
                                                         .ThenInclude(s => s.Slots)
                                                         .ThenInclude(s => s.CatechistInSlots)
                                                         .ThenInclude(s => s.Catechist)
-                                                        .ThenInclude(s => s.Account)
                                                      .Include(g => g.Classes)
                                                         .ThenInclude(g => g.Grade)
                                 );
 
             return FileHelper.ExportPastoralYearToExcel(year);
+        }
+
+        public async Task<byte[]> ExportCatechists()
+        {
+            var catechist = await _unitOfWork.GetRepository<Catechist>()
+                                     .GetListAsync(include: c => c.Include(c => c.Account)
+                                                                  .Include(c=> c.Level));
+            return FileHelper.ExportCatechist(catechist);
         }
 
     }

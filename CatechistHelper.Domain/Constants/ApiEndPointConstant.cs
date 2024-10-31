@@ -132,6 +132,7 @@ namespace CatechistHelper.Domain.Constants
             public const string ClassesEndpoint = ApiEndpoint + "/classes";
             public const string ExportEndpoint = ClassesEndpoint + "/export" + ByIdRoute;
             public const string ExportYearEndpoint = YearsEndpoint + "/export";
+            public const string ExportCatechistEndpoint = ApiEndpoint + "/catechists/export";
         }
         public static class Level
         {

@@ -69,5 +69,21 @@ namespace CatechistHelper.API.Controllers
                 return BadRequest(new { message = "An error occurred while exporting the class slots." });
             }
         }
+
+        [HttpGet(ApiEndPointConstant.Timetable.ExportCatechistEndpoint)]
+        [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExportCatechists()
+        {
+            try
+            {
+                var result = await _timetableService.ExportCatechists();
+                return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Catechists.xlsx");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while exporting the catechists" });
+            }
+        }
     }
 }

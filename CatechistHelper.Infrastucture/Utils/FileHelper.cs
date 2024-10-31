@@ -3,7 +3,6 @@ using CatechistHelper.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 
-
 namespace CatechistHelper.Infrastructure.Utils
 {
     public static class FileHelper
@@ -146,25 +145,25 @@ namespace CatechistHelper.Infrastructure.Utils
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package = new ExcelPackage();
-            var worksheet = package.Workbook.Worksheets.Add("Slots");
-
-            // Set the headers
-            worksheet.Cells[1, 1].Value = "SlotId";
-            worksheet.Cells[1, 2].Value = "StartTime";
-            worksheet.Cells[1, 3].Value = "EndTime";
-            worksheet.Cells[1, 4].Value = "Date";
-            worksheet.Cells[1, 5].Value = "Note";
-            worksheet.Cells[1, 6].Value = "RoomName";
-            worksheet.Cells[1, 7].Value = "ClassName";
-            worksheet.Cells[1, 8].Value = "Catechists";
-            worksheet.Cells[1, 9].Value = "Grade";
-            worksheet.Cells[1, 10].Value = "Year";
-
-            int row = 2;
 
             foreach (var classDto in year.Classes)
             {
-                
+                // Create a worksheet for each class
+                var worksheet = package.Workbook.Worksheets.Add(classDto.Name);
+
+                // Set the headers
+                worksheet.Cells[1, 1].Value = "SlotId";
+                worksheet.Cells[1, 2].Value = "StartTime";
+                worksheet.Cells[1, 3].Value = "EndTime";
+                worksheet.Cells[1, 4].Value = "Date";
+                worksheet.Cells[1, 5].Value = "Note";
+                worksheet.Cells[1, 6].Value = "RoomName";
+                worksheet.Cells[1, 7].Value = "ClassName";
+                worksheet.Cells[1, 8].Value = "Catechists";
+                worksheet.Cells[1, 9].Value = "Grade";
+                worksheet.Cells[1, 10].Value = "Year";
+
+                int row = 2;
                 foreach (var slot in classDto.Slots)
                 {
                     worksheet.Cells[row, 1].Value = slot.Id;
@@ -177,7 +176,7 @@ namespace CatechistHelper.Infrastructure.Utils
 
                     var catechists = string.Join(", ",
                          slot.CatechistInSlots.Select(c =>
-                             c.Catechist.Account.FullName 
+                             c.Catechist.FullName
                          )
                      );
 
@@ -189,9 +188,55 @@ namespace CatechistHelper.Infrastructure.Utils
                 worksheet.Cells.AutoFitColumns();
             }
 
+            return package.GetAsByteArray();
+        }
 
+
+        public static byte[] ExportCatechist(ICollection<Catechist> catechists)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Catechists");
+
+            // Set the headers
+            worksheet.Cells[1, 1].Value = "Code";
+            worksheet.Cells[1, 2].Value = "Full Name";
+            worksheet.Cells[1, 3].Value = "Gender";
+            worksheet.Cells[1, 4].Value = "Date of Birth";
+            worksheet.Cells[1, 5].Value = "Birth Place";
+            worksheet.Cells[1, 6].Value = "Father Name";
+            worksheet.Cells[1, 7].Value = "Father Phone";
+            worksheet.Cells[1, 8].Value = "Mother Name";
+            worksheet.Cells[1, 9].Value = "Mother Phone";
+            worksheet.Cells[1, 10].Value = "Image URL";
+            worksheet.Cells[1, 11].Value = "Address";
+            worksheet.Cells[1, 12].Value = "Phone";
+            worksheet.Cells[1, 13].Value = "Level";
+            worksheet.Cells[1, 14].Value = "Email";
+            int row = 2;
+            foreach (var catechist in catechists)
+            {
+                worksheet.Cells[row, 1].Value = catechist.Code;
+                worksheet.Cells[row, 2].Value = catechist.FullName;
+                worksheet.Cells[row, 3].Value = catechist.Gender;
+                worksheet.Cells[row, 4].Value = catechist.DateOfBirth.ToString("yyyy-MM-dd");
+                worksheet.Cells[row, 5].Value = catechist.BirthPlace ?? string.Empty;
+                worksheet.Cells[row, 6].Value = catechist.FatherName ?? string.Empty;
+                worksheet.Cells[row, 7].Value = catechist.FatherPhone ?? string.Empty;
+                worksheet.Cells[row, 8].Value = catechist.MotherName ?? string.Empty;
+                worksheet.Cells[row, 9].Value = catechist.MotherPhone ?? string.Empty;
+                worksheet.Cells[row, 10].Value = catechist.ImageUrl ?? string.Empty;
+                worksheet.Cells[row, 11].Value = catechist.Address ?? string.Empty;
+                worksheet.Cells[row, 12].Value = catechist.Phone ?? string.Empty;
+                worksheet.Cells[row, 13].Value = catechist.Level.Name ?? string.Empty;
+                worksheet.Cells[row, 14].Value = catechist.Account.Email ?? string.Empty;
+                row++;
+            }
+
+            worksheet.Cells.AutoFitColumns();
 
             return package.GetAsByteArray();
         }
+
     }
 }

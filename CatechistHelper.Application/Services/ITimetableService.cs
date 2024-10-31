@@ -10,5 +10,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<ClassResponse>> CreateTimeTable(CreateTimetableRequest request);
         Task<byte[]> ExportSlotsToExcel(Guid classId);
         Task<byte[]> ExportPastoralYearToExcel(string pastoralYear);
+        Task<byte[]> ExportCatechists();
     }
 }
