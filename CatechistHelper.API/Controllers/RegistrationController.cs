@@ -5,10 +5,9 @@ using CatechistHelper.Domain.Dtos.Requests.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
-using CatechistHelper.Domain.Dtos.Responses.InterviewProcess;
 using Microsoft.AspNetCore.Mvc;
-using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
+using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 
 namespace CatechistHelper.API.Controllers
 {
@@ -37,11 +36,11 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpGet(ApiEndPointConstant.Registration.InterviewProcessesOfRegistrationEndPoint)]
+        [HttpGet(ApiEndPointConstant.Registration.RegistrationProcessesOfRegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<List<GetRegistrationResponse>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetInterviewProcessesOfApplication([FromRoute] Guid id)
+        public async Task<IActionResult> GetRegistrationProcessesOfApplication([FromRoute] Guid id)
         {
-            Result<IEnumerable<GetInterviewProcessResponse>> result = await _registrationService.GetInterviewProcessOfApplication(id);
+            Result<IEnumerable<GetRegistrationProcessResponse>> result = await _registrationService.GetRegistrationProcessOfApplication(id);
             return StatusCode((int)result.StatusCode, result);
         }
 

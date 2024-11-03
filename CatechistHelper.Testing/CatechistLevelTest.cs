@@ -37,14 +37,14 @@ namespace CatechistHelper.Testing
             // Add test users to the in-memory database
             var level = new Level
             {
-                CatechismLevel = 1,
+                HierarchyLevel = 1,
                 Description = "Junior Level",
             };
             _testDbContext.Levels.Add(level);
 
             var level1 = new Level
             {
-                CatechismLevel = 3,
+                HierarchyLevel = 3,
                 Description = "Senior Level",
                 Id = new Guid("7b03cc3c-4a6a-4849-9673-1ef9ca8e2f96")
             };
@@ -52,7 +52,7 @@ namespace CatechistHelper.Testing
 
             var level2 = new Level
             {
-                CatechismLevel = 4,
+                HierarchyLevel = 4,
                 Description = "Master Level",
             };
             _testDbContext.Levels.Add(level2);
@@ -68,7 +68,7 @@ namespace CatechistHelper.Testing
             var request = new CreateLevelRequest
             {
                 Description = "Intermediate Level",
-                CatechismLevel = 2
+                HierarchyLevel = 2
             };
 
             // Act
@@ -77,7 +77,7 @@ namespace CatechistHelper.Testing
             // Assert
             Assert.NotNull(level);
             Assert.Equal("Intermediate Level", level.Description);
-            Assert.Equal(2, level.CatechismLevel);
+            Assert.Equal(2, level.HierarchyLevel);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace CatechistHelper.Testing
             var request = new CreateLevelRequest
             {
                 Description = "", // Invalid  
-                CatechismLevel = -1 // Invalid
+                HierarchyLevel = -1 // Invalid
             };
 
             await Assert.ThrowsAsync<Exception>(() => _levelService.CreateAsync(request));
@@ -104,7 +104,7 @@ namespace CatechistHelper.Testing
             // Assert
             Assert.NotNull(retrievedLevel);
             Assert.Equal("Senior Level", retrievedLevel.Description);
-            Assert.Equal(3, retrievedLevel.CatechismLevel);
+            Assert.Equal(3, retrievedLevel.HierarchyLevel);
         }
 
         [Fact]

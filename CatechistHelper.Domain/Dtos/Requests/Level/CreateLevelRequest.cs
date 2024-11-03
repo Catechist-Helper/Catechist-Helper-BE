@@ -4,6 +4,6 @@
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
-        public int CatechismLevel { get; set; }
+        public int HierarchyLevel { get; set; }
     }
 }

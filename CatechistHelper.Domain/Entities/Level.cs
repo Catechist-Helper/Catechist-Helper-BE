@@ -18,8 +18,8 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(100)]
         public string? Description { get; set; }
 
-        [Column("catechism_level")]
-        public int CatechismLevel { get; set; }
+        [Column("hierarchy_level")]
+        public int HierarchyLevel { get; set; }
 
         [InverseProperty(nameof(Level))]
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
@@ -30,5 +30,7 @@ namespace CatechistHelper.Domain.Entities
         public virtual ICollection<Major> Majors { get; set; } = new List<Major>();
         public virtual ICollection<TeachingQualification> TeachingQualifications { get; set; } = new List<TeachingQualification>();
 
+        public virtual ICollection<TrainingList> NextLevelTrainings { get; set; } = new List<TrainingList>();
+        public virtual ICollection<TrainingList> PreviousLevelTrainings { get; set; } = new List<TrainingList>();
     }
 }

@@ -244,15 +244,14 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        public async Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, string pastoralYear, int page, int size)
+        public async Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, int page, int size)
         {
             try
             {
                 IPaginate<CatechistInGrade> catechistInGrades = await _unitOfWork.GetRepository<CatechistInGrade>()
                     .GetPagingListAsync(
-                        predicate: c => c.CatechisteId == id && c.Grade.PastoralYear.Name == pastoralYear,
-                        include: c => c.Include(cl => cl.Grade)
-                                       .ThenInclude(y => y.PastoralYear),
+                        predicate: c => c.CatechisteId == id,
+                        include: c => c.Include(cl => cl.Grade),
                         page: page,
                         size: size);
 

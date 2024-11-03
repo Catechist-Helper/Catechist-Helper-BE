@@ -9,5 +9,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Major
         [MaxLength(20, ErrorMessage = "Vượt quá {1} kí tự!")]
         public string Name { get; set; } = null!;
 
+        public int HierarchyLevel { get; set; }
     }
 }

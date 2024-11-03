@@ -34,10 +34,10 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Class.SlotsOfClassEndpoint)]
-        [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetSlotsOfClass([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        [ProducesResponseType(typeof(PagingResult<GetSlotResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSlotsByClassId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetSlotResponse> result = await _classService.GetSlotResponseById(id, page, size);
+            PagingResult<GetSlotResponse> result = await _classService.GetSlotsByClassId(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }

@@ -105,7 +105,7 @@ namespace CatechistHelper.Infrastructure.Services
             return filterQuery;
         }
 
-        public async Task<PagingResult<GetSlotResponse>> GetSlotResponseById(Guid id, int page, int size)
+        public async Task<PagingResult<GetSlotResponse>> GetSlotsByClassId(Guid id, int page, int size)
         {
             try
             {

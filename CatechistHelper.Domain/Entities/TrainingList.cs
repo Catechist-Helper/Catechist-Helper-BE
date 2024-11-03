@@ -8,13 +8,13 @@ namespace CatechistHelper.Domain.Entities
     [Table("training_list")]
     public class TrainingList : BaseEntity
     {
-        [Column("previous_level")]
-        [StringLength(20)]
-        public string PreviousLevel { get; set; } = null!;
+        [Column("previous_level_id")]
+        public Guid PreviousLevelId { get; set; }
+        public Level PreviousLevel { get; set; } = null!;
 
-        [Column("next_level")]
-        [StringLength(20)]
-        public string NextLevel { get; set; } = null!;
+        [Column("next_level_id")]
+        public Guid NextLevelId { get; set; }
+        public Level NextLevel { get; set; } = null!;
 
         [Column("start_time")]
         public DateTime StartTime { get; set; }

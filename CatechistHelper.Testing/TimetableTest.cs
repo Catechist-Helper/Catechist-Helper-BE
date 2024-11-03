@@ -120,7 +120,6 @@ namespace CatechistHelper.Testing
             {
                 Major = major,
                 Name = "Tiếp Sức 1",
-                PastoralYear = pastoralYear,
             };
             _testDbContext.Grades.Add(grade);
 

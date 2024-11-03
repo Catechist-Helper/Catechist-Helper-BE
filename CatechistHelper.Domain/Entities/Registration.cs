@@ -58,7 +58,7 @@ namespace CatechistHelper.Domain.Entities
         public virtual ICollection<Interview> Interviews { get; set; } = new List<Interview>();
 
         [InverseProperty(nameof(Registration))]
-        public virtual ICollection<InterviewProcess> InterviewProcesses { get; set; } = new List<InterviewProcess>();
+        public virtual ICollection<RegistrationProcess> RegistrationProcesses { get; set; } = new List<RegistrationProcess>();
 
         public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
         public virtual ICollection<Recruiter> Recruiters { get; set; } = new List<Recruiter>();

@@ -42,8 +42,8 @@ namespace CatechistHelper.Domain.Constants
             public const string RegistrationEndPoint = RegistrationsEndPoint + ByIdRoute;
             // <summary>"api/v1/registrations/{id}/interviews"</summary>
             public const string InterviewsOfRegistrationEndPoint = RegistrationEndPoint + "/interviews";
-            // <summary>"api/v1/registrations/{id}/interview-processes"</summary>
-            public const string InterviewProcessesOfRegistrationEndPoint = RegistrationEndPoint + "/interview-processes";
+            // <summary>"api/v1/registrations/{id}/registration-processes"</summary>
+            public const string RegistrationProcessesOfRegistrationEndPoint = RegistrationEndPoint + "/registration-processes";
         }
         public static class Interview
         {
@@ -52,12 +52,12 @@ namespace CatechistHelper.Domain.Constants
             // <summary>"api/v1/interviews/{id}"</summary>
             public const string InterviewEndPoint = InterviewsEndPoint + ByIdRoute;
         }
-        public static class InterviewProcess
+        public static class RegistrationProcess
         {
-            /// <summary>"api/v1/interview-processes"</summary>
-            public const string InterviewProcessesEndPoint = ApiEndpoint + "/interview-processes";
-            // <summary>"api/v1/interview-processes/{id}"</summary>
-            public const string InterviewProcessEndPoint = InterviewProcessesEndPoint + ByIdRoute;
+            /// <summary>"api/v1/registration-processes"</summary>
+            public const string RegistrationProcessesEndPoint = ApiEndpoint + "/registration-processes";
+            // <summary>"api/v1/registration-processes/{id}"</summary>
+            public const string RegistrationProcessEndPoint = RegistrationProcessesEndPoint + ByIdRoute;
         }
         public static class Catechist
         {
