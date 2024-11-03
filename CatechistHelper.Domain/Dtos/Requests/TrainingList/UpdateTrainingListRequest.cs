@@ -2,12 +2,9 @@
 
 namespace CatechistHelper.Domain.Dtos.Requests.TrainingList
 {
-    public class UpdateTrainingListRequest
+    public class UpdateTrainingListRequest : CreateTrainingListRequest
     {
-        public string PreviousLevel { get; set; } = null!;
-        public string NextLevel { get; set; } = null!;
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public bool IsDeleted { get; set; }
         public TrainingListStatus TrainingListStatus { get; set; }
     }
 }
