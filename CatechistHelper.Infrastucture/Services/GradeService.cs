@@ -3,12 +3,10 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
-using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInGrade;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Major;
-using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
@@ -85,8 +83,7 @@ namespace CatechistHelper.Infrastructure.Services
                                                 g.Id,
                                                 g.Name,
                                                 g.Classes.Select(x => x.NumberOfCatechist).Sum(),
-                                                g.Major.Adapt<GetMajorResponse>(),
-                                                g.PastoralYear.Adapt<GetPastoralYearResponse>()
+                                                g.Major.Adapt<GetMajorResponse>()
                                             ),
                     include: g => g.Include(g => g.Classes));
             return Success(grade);
@@ -111,14 +108,12 @@ namespace CatechistHelper.Infrastructure.Services
         {
             IPaginate<GetGradeResponse> grades =
                    await _unitOfWork.GetRepository<Grade>().GetPagingListAsync(
-                            predicate: g => (!filter.MajorId.HasValue || g.MajorId.Equals(filter.MajorId))
-                            && (!filter.PastoralYearId.HasValue || g.PastoralYearId.Equals(filter.PastoralYearId)),
+                            predicate: g => (!filter.MajorId.HasValue || g.MajorId.Equals(filter.MajorId)),
                             selector: g => new GetGradeResponse(
                                                 g.Id, 
                                                 g.Name, 
                                                 g.Classes.Select(x => x.NumberOfCatechist).Sum(), 
-                                                g.Major.Adapt<GetMajorResponse>(), 
-                                                g.PastoralYear.Adapt<GetPastoralYearResponse>()
+                                                g.Major.Adapt<GetMajorResponse>()
                                             ),
                             include: g => g.Include(g => g.Classes));
             return SuccessWithPaging(

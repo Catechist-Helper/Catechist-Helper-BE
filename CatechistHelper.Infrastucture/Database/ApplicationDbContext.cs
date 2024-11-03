@@ -20,7 +20,7 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<Post> Posts { get; set; }
         public DbSet<Registration> Applications { get; set; }
         public DbSet<Interview> Interviews { get; set; }
-        public DbSet<InterviewProcess> InterviewProcesses { get; set; }
+        public DbSet<RegistrationProcess> RegistrationProcesses { get; set; }
         public DbSet<CertificateOfCandidate> CertificateOfCandidates { get; set; }
         public DbSet<Catechist> Catechists { get; set; }
         public DbSet<TrainingList> TrainingLists {  get; set; } 
@@ -72,9 +72,9 @@ namespace CatechistHelper.Infrastructure.Database
                 .WithMany(r => r.Interviews)
                 .HasForeignKey(i => i.RegistrationId);
 
-            modelBuilder.Entity<InterviewProcess>()
+            modelBuilder.Entity<RegistrationProcess>()
                 .HasOne(ip => ip.Registration)
-                .WithMany(r => r.InterviewProcesses)
+                .WithMany(r => r.RegistrationProcesses)
                 .HasForeignKey(ip => ip.RegistrationId);
 
             modelBuilder.Entity<Registration>()
@@ -219,12 +219,6 @@ namespace CatechistHelper.Infrastructure.Database
                      r => r.HasOne<Process>(e => e.Process).WithMany(e => e.MemberOfProcesses).OnDelete(DeleteBehavior.Restrict));
 
             modelBuilder.Entity<Grade>()
-                .HasOne(g => g.PastoralYear)
-                .WithMany(p => p.Grades)
-                .HasForeignKey(g => g.PastoralYearId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Grade>()
                  .HasMany(g => g.Catechists)
                  .WithMany(c => c.Grades)
                  .UsingEntity<CatechistInGrade>(
@@ -236,6 +230,18 @@ namespace CatechistHelper.Infrastructure.Database
                .WithMany(pc => pc.Posts)
                .HasForeignKey(p => p.PostCategoryId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TrainingList>()
+            .HasOne(tl => tl.NextLevel)
+            .WithMany(l => l.NextLevelTrainings)
+            .HasForeignKey(tl => tl.NextLevelId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TrainingList>()
+                .HasOne(tl => tl.PreviousLevel)
+                .WithMany(l => l.PreviousLevelTrainings)
+                .HasForeignKey(tl => tl.PreviousLevelId)
+                .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
     }

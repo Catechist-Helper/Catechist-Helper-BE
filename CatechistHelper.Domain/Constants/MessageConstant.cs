@@ -112,11 +112,11 @@ namespace CatechistHelper.Domain.Constants
                 public static string NotFoundInterview = String.Format(NotFoundTemplate, InterviewMessage);
             }
         }
-        public static class InterviewProcess
+        public static class RegistrationProcess
         {
-            #region InterviewProcess Field
-            private const string InterviewProcessMessage = "Interview process";
-            private const string Name = "Name";
+            #region RegistrationProcess Field
+            private const string RegistrationProcessMessage = "Quy trình đơn đăng kí";
+            private const string Name = "Tên";
             #endregion
             public static class Require
             {
@@ -124,15 +124,15 @@ namespace CatechistHelper.Domain.Constants
             }
             public static class Success
             {
-                public static string CreateInterviewProcess = String.Format(CreateSuccessTemplate, InterviewProcessMessage);
-                public static string UpdateInterviewProcess = String.Format(UpdateSuccessTemplate, InterviewProcessMessage);
+                public static string CreateRegistrationProcess = String.Format(CreateSuccessTemplate, RegistrationProcessMessage);
+                public static string UpdateRegistrationProcess = String.Format(UpdateSuccessTemplate, RegistrationProcessMessage);
             }
             public static class Fail
             {
-                public static string CreateInterviewProcess = String.Format(CreateFailTemplate, InterviewProcessMessage);
-                public static string UpdateInterviewProcess = String.Format(UpdateFailTemplate, InterviewProcessMessage);
-                public static string DeleteInterviewProcess = String.Format(DeleteFailTemplate, InterviewProcessMessage);
-                public static string NotFoundInterviewProcess = String.Format(NotFoundTemplate, InterviewProcessMessage);
+                public static string CreateRegistrationProcess = String.Format(CreateFailTemplate, RegistrationProcessMessage);
+                public static string UpdateRegistrationProcess = String.Format(UpdateFailTemplate, RegistrationProcessMessage);
+                public static string DeleteRegistrationProcess = String.Format(DeleteFailTemplate, RegistrationProcessMessage);
+                public static string NotFoundRegistrationProcess = String.Format(NotFoundTemplate, RegistrationProcessMessage);
             }
         }
         public static class Certificate

@@ -1,6 +1,6 @@
 ﻿namespace CatechistHelper.Domain.Enums
 {
-    public enum InterviewProcessStatus
+    public enum RegistrationProcessStatus
     {
         Pending,
         Approved,

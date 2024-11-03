@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
 {
-    [Table("interview_process")]
-    public class InterviewProcess
+    [Table("registration_process")]
+    public class RegistrationProcess
     {
         [Key]
         [Column("id")]
@@ -19,8 +19,8 @@ namespace CatechistHelper.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Column("status")]
-        [EnumDataType(typeof(InterviewProcessStatus))]
-        public InterviewProcessStatus Status { get; set; }
+        [EnumDataType(typeof(RegistrationProcessStatus))]
+        public RegistrationProcessStatus Status { get; set; }
 
         [Column("registration_id")]
         [ForeignKey(nameof(Registration))]

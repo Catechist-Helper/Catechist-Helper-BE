@@ -93,7 +93,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             return await _unitOfWork.GetRepository<Level>()
                      .GetPagingListAsync(
-                            orderBy: l => l.OrderBy(l => l.CatechismLevel)
+                            orderBy: l => l.OrderBy(l => l.HierarchyLevel)
                      );
         }
 
@@ -105,7 +105,7 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Level> accounts =
                     await _unitOfWork.GetRepository<Level>()
                     .GetPagingListAsync(
-                            orderBy: l => l.OrderByDescending(l => l.CatechismLevel),
+                            orderBy: l => l.OrderByDescending(l => l.HierarchyLevel),
                             page: page,
                             size: size
                         );

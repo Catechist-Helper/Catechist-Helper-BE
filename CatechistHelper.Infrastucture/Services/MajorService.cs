@@ -185,7 +185,6 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<PagingResult<GetCatechistResponse>> GetQualifiedCatechistByMajorId(
             Guid majorId, 
-            Guid pastoralYearId, 
             int page, 
             int size,
             bool excludeGradeAssigned = false)
@@ -200,7 +199,7 @@ namespace CatechistHelper.Infrastructure.Services
                 if (excludeGradeAssigned)
                 {
                     assignedCatechistIds = await _unitOfWork.GetRepository<CatechistInGrade>().GetListAsync(
-                        predicate: cig => cig.Grade.PastoralYearId == pastoralYearId,
+                        //predicate: cig => cig.Grade.PastoralYearId == pastoralYearId,
                         selector: cig => cig.CatechisteId);
                 }
                 IPaginate<Catechist> catechists =

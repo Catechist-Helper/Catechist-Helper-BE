@@ -1,7 +1,7 @@
 ﻿using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
-using CatechistHelper.Domain.Dtos.Responses.InterviewProcess;
+using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 using CatechistHelper.Domain.Enums;
 using System.Text.Json.Serialization;
 
@@ -23,7 +23,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Registration
         public RegistrationStatus Status { get; set; }
         public List<GetCertificateOfCandidateResponse> CertificateOfCandidates { get; set; }
         public List<GetInterviewResponse> Interviews { get; set; }
-        public List<GetInterviewProcessResponse> InterviewProcesses { get; set; }
+        public List<GetRegistrationProcessResponse> RegistrationProcesses { get; set; }
         [JsonPropertyName("recruiters")]
         public List<GetAccountResponse> Accounts { get; set; }
     }

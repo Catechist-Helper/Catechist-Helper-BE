@@ -83,7 +83,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 foreach (var gradeDto in majorDto.Grades)
                 {
-                    var grade = await CreateGrade(gradeDto, pastoralYear.Id, major.Id);
+                    var grade = await CreateGrade(gradeDto, major.Id);
 
                     foreach (var classDto in gradeDto.Classes)
                     {
@@ -102,10 +102,10 @@ namespace CatechistHelper.Infrastructure.Services
 
         }
 
-        private async Task<Grade> CreateGrade(GradeDto gradeDto, Guid pastoralYearId, Guid majorId)
+        private async Task<Grade> CreateGrade(GradeDto gradeDto, Guid majorId)
         {
             var grade = await _unitOfWork.GetRepository<Grade>()
-                .SingleOrDefaultAsync(predicate: g => g.Name == gradeDto.Name && g.PastoralYearId == pastoralYearId);
+                .SingleOrDefaultAsync(predicate: g => g.Name == gradeDto.Name);
 
             if (grade == null)
             {
@@ -113,7 +113,6 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     Name = gradeDto.Name,
                     MajorId = majorId,
-                    PastoralYearId = pastoralYearId
                 };
 
                 await _unitOfWork.GetRepository<Grade>().InsertAsync(grade);

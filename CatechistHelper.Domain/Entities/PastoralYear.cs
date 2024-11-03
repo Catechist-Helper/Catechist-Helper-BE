@@ -25,8 +25,5 @@ namespace CatechistHelper.Domain.Entities
 
         [InverseProperty(nameof(PastoralYear))]
         public ICollection<Class> Classes { get; set; } = new List<Class>();
-
-        [InverseProperty(nameof(PastoralYear))]
-        public ICollection<Grade> Grades { get; set; } = new List<Grade>();
     }
 }

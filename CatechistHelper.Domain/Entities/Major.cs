@@ -14,6 +14,9 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(20)]
         public string Name { get; set; } = null!;
 
+        [Column("hierarchy_level")]
+        public int HierarchyLevel { get; set; }
+
         public virtual ICollection<Level> Levels { get; set; } = new List<Level>();
         public virtual ICollection<TeachingQualification> TeachingQualifications { get; set; } = new List<TeachingQualification>();
 

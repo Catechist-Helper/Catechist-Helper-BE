@@ -5,7 +5,6 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
-using CatechistHelper.Domain.Dtos.Responses.InterviewProcess;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -19,6 +18,7 @@ using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Infrastructure.Utils;
 using CatechistHelper.Domain.Models;
+using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -40,7 +40,7 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id),
                     include: a => a.Include(a => a.CertificateOfCandidates)
                                    .Include(a => a.Interviews)
-                                   .Include(a => a.InterviewProcesses)
+                                   .Include(a => a.RegistrationProcesses)
                                    .Include(a => a.Accounts));
 
                 return Success(application.Adapt<GetRegistrationResponse>());
@@ -63,7 +63,7 @@ namespace CatechistHelper.Infrastructure.Services
                             orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
                                            .Include(a => a.Interviews)
-                                           .Include(a => a.InterviewProcesses)
+                                           .Include(a => a.RegistrationProcesses)
                                            .Include(a => a.Accounts),
                             page: page,
                             size: size
@@ -251,23 +251,23 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<IEnumerable<GetInterviewProcessResponse>>> GetInterviewProcessOfApplication(Guid id)
+        public async Task<Result<IEnumerable<GetRegistrationProcessResponse>>> GetRegistrationProcessOfApplication(Guid id)
         {
             try
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id));
 
-                if (registration == null) return NotFound<IEnumerable<GetInterviewProcessResponse>>(MessageConstant.Registration.Fail.NotFoundRegistration);
+                if (registration == null) return NotFound<IEnumerable<GetRegistrationProcessResponse>>(MessageConstant.Registration.Fail.NotFoundRegistration);
 
-                IEnumerable<InterviewProcess> interviewProcesses = await _unitOfWork.GetRepository<InterviewProcess>().GetListAsync(
+                IEnumerable<RegistrationProcess> registrationProcesses = await _unitOfWork.GetRepository<RegistrationProcess>().GetListAsync(
                     predicate: i => i.RegistrationId == id);
 
-                return Success(interviewProcesses.Adapt<IEnumerable<GetInterviewProcessResponse>>());
+                return Success(registrationProcesses.Adapt<IEnumerable<GetRegistrationProcessResponse>>());
             }
             catch (Exception ex)
             {
-                return BadRequest<IEnumerable<GetInterviewProcessResponse>>(ex.Message);
+                return BadRequest<IEnumerable<GetRegistrationProcessResponse>>(ex.Message);
             }
         }
     }
