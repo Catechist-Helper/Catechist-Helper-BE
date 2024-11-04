@@ -3,7 +3,6 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
-using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers

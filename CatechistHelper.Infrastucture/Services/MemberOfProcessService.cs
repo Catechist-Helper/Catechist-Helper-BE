@@ -2,7 +2,6 @@
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
-using CatechistHelper.Domain.Dtos.Requests.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Requests.MemberOfProcess;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
@@ -10,11 +9,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CatechistHelper.Infrastructure.Services
 {

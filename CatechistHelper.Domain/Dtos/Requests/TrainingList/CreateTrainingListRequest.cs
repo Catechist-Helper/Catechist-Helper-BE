@@ -2,8 +2,8 @@
 {
     public class CreateTrainingListRequest
     {
-        public string PreviousLevel { get; set; } = null!;
-        public string NextLevel { get; set; } = null!;
+        public Guid PreviousLevelId { get; set; }
+        public Guid NextLevelId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
     }

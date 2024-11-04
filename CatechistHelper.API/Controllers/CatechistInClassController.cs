@@ -2,7 +2,6 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
-using CatechistHelper.Domain.Dtos.Requests.CatechistInGrade;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers

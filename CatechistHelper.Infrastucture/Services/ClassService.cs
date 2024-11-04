@@ -112,8 +112,9 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Slot> slots =
                     await _unitOfWork.GetRepository<Slot>()
                     .GetPagingListAsync(
-                            predicate: c => c.ClassId.Equals(id),
-                            include: c => c.Include(c => c.Class).Include(c => c.Room),
+                            predicate: s => s.ClassId.Equals(id),
+                            include: s => s.Include(s => s.Room)
+                                           .Include(s => s.CatechistInSlots).ThenInclude(cis => cis.Catechist),
                             page: page,
                             size: size
                         );

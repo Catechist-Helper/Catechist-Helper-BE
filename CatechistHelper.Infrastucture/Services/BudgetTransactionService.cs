@@ -1,19 +1,15 @@
-﻿using CatechistHelper.Application.Extensions;
-using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
 using CatechistHelper.Domain.Entities;
-using CatechistHelper.Domain.Models;
-using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {

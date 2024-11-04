@@ -1,5 +1,4 @@
-﻿using CatechistHelper.API.Utils;
-using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
@@ -12,7 +11,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml;
 using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services

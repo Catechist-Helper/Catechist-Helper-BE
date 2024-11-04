@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using CatechistHelper.Domain.Common;
-using Newtonsoft.Json.Linq;
 
 namespace CatechistHelper.API.Configurations;
 
