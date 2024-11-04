@@ -1,7 +1,6 @@
 ﻿using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
-using CatechistHelper.Domain.Models;
 
 namespace CatechistHelper.Application.Services
 {

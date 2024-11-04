@@ -2,7 +2,6 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Event;
-using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.Event;
 using CatechistHelper.Domain.Dtos.Responses.Major;
