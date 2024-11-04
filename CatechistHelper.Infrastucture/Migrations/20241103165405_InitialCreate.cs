@@ -55,7 +55,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    catechism_level = table.Column<int>(type: "int", nullable: false)
+                    hierarchy_level = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +67,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    hierarchy_level = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,25 +182,6 @@ namespace CatechistHelper.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "training_list",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    previous_level = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    next_level = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    start_time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    end_time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    status = table.Column<byte>(type: "tinyint", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_training_list", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "budget_transaction",
                 columns: table => new
                 {
@@ -290,7 +272,57 @@ namespace CatechistHelper.Infrastructure.Migrations
                         column: x => x.level_id,
                         principalTable: "level",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "training_list",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    previous_level_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    next_level_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    start_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    end_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<byte>(type: "tinyint", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_training_list", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_training_list_level_next_level_id",
+                        column: x => x.next_level_id,
+                        principalTable: "level",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_training_list_level_previous_level_id",
+                        column: x => x.previous_level_id,
+                        principalTable: "level",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "grade",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    major_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_grade", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_grade_major_major_id",
+                        column: x => x.major_id,
+                        principalTable: "major",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -307,38 +339,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_teaching_qualification_level_level_id",
                         column: x => x.level_id,
                         principalTable: "level",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_teaching_qualification_major_major_id",
                         column: x => x.major_id,
                         principalTable: "major",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "grade",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    major_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    pastoral_year_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_grade", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_grade_major_major_id",
-                        column: x => x.major_id,
-                        principalTable: "major",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_grade_pastoral_year_pastoral_year_id",
-                        column: x => x.pastoral_year_id,
-                        principalTable: "pastoral_year",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -382,7 +390,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "interview_process",
+                name: "registration_process",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -393,9 +401,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_interview_process", x => x.id);
+                    table.PrimaryKey("PK_registration_process", x => x.id);
                     table.ForeignKey(
-                        name: "FK_interview_process_registration_registration_id",
+                        name: "FK_registration_process_registration_registration_id",
                         column: x => x.registration_id,
                         principalTable: "registration",
                         principalColumn: "id",
@@ -454,12 +462,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                         column: x => x.grade_id,
                         principalTable: "grade",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_class_pastoral_year_pastoral_year_id",
                         column: x => x.pastoral_year_id,
                         principalTable: "pastoral_year",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -503,13 +512,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                         column: x => x.christian_name_id,
                         principalTable: "christian_name",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_catechist_level_level_id",
                         column: x => x.level_id,
                         principalTable: "level",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -527,18 +536,20 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_member_account_account_id",
                         column: x => x.account_id,
                         principalTable: "account",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_member_event_event_id",
                         column: x => x.event_id,
                         principalTable: "event",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_member_role_event_role_event_id",
                         column: x => x.role_event_id,
                         principalTable: "role_event",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -556,12 +567,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_member_of_process_account_account_id",
                         column: x => x.account_id,
                         principalTable: "account",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_member_of_process_process_process_id",
                         column: x => x.process_id,
                         principalTable: "process",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -592,7 +605,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                         column: x => x.post_category_id,
                         principalTable: "post_category",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -609,12 +622,38 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_recruiter_account_account_id",
                         column: x => x.account_id,
                         principalTable: "account",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_recruiter_registration_registration_id",
                         column: x => x.registration_id,
                         principalTable: "registration",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "recruiter_in_interview",
+                columns: table => new
+                {
+                    account_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    interview_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_recruiter_in_interview", x => new { x.account_id, x.interview_id });
+                    table.ForeignKey(
+                        name: "FK_recruiter_in_interview_account_account_id",
+                        column: x => x.account_id,
+                        principalTable: "account",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_recruiter_in_interview_interview_interview_id",
+                        column: x => x.interview_id,
+                        principalTable: "interview",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -646,7 +685,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                         column: x => x.room_id,
                         principalTable: "room",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -687,12 +726,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_catechist_in_grade_catechist_catechist_id",
                         column: x => x.catechist_id,
                         principalTable: "catechist",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_catechist_in_grade_grade_grade_id",
                         column: x => x.grade_id,
                         principalTable: "grade",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -735,12 +776,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         name: "FK_certificate_of_catechist_catechist_catechist_id",
                         column: x => x.catechist_id,
                         principalTable: "catechist",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_certificate_of_catechist_certificate_certificate_id",
                         column: x => x.certificate_id,
                         principalTable: "certificate",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -749,7 +792,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                 {
                     slot_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     catechist_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    is_main = table.Column<bool>(type: "bit", nullable: false)
+                    type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -849,18 +892,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                 column: "major_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_grade_pastoral_year_id",
-                table: "grade",
-                column: "pastoral_year_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_interview_registration_id",
                 table: "interview",
-                column: "registration_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_interview_process_registration_id",
-                table: "interview_process",
                 column: "registration_id");
 
             migrationBuilder.CreateIndex(
@@ -904,6 +937,16 @@ namespace CatechistHelper.Infrastructure.Migrations
                 column: "registration_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_recruiter_in_interview_interview_id",
+                table: "recruiter_in_interview",
+                column: "interview_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_registration_process_registration_id",
+                table: "registration_process",
+                column: "registration_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_slot_class_id",
                 table: "slot",
                 column: "class_id");
@@ -917,6 +960,16 @@ namespace CatechistHelper.Infrastructure.Migrations
                 name: "IX_teaching_qualification_major_id",
                 table: "teaching_qualification",
                 column: "major_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_training_list_next_level_id",
+                table: "training_list",
+                column: "next_level_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_training_list_previous_level_id",
+                table: "training_list",
+                column: "previous_level_id");
         }
 
         /// <inheritdoc />
@@ -944,12 +997,6 @@ namespace CatechistHelper.Infrastructure.Migrations
                 name: "certificate_of_catechist");
 
             migrationBuilder.DropTable(
-                name: "interview");
-
-            migrationBuilder.DropTable(
-                name: "interview_process");
-
-            migrationBuilder.DropTable(
                 name: "member");
 
             migrationBuilder.DropTable(
@@ -963,6 +1010,12 @@ namespace CatechistHelper.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "recruiter");
+
+            migrationBuilder.DropTable(
+                name: "recruiter_in_interview");
+
+            migrationBuilder.DropTable(
+                name: "registration_process");
 
             migrationBuilder.DropTable(
                 name: "system_configuration");
@@ -992,7 +1045,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                 name: "post_category");
 
             migrationBuilder.DropTable(
-                name: "registration");
+                name: "interview");
 
             migrationBuilder.DropTable(
                 name: "class");
@@ -1013,16 +1066,19 @@ namespace CatechistHelper.Infrastructure.Migrations
                 name: "event");
 
             migrationBuilder.DropTable(
+                name: "registration");
+
+            migrationBuilder.DropTable(
                 name: "grade");
+
+            migrationBuilder.DropTable(
+                name: "pastoral_year");
 
             migrationBuilder.DropTable(
                 name: "role");
 
             migrationBuilder.DropTable(
                 name: "major");
-
-            migrationBuilder.DropTable(
-                name: "pastoral_year");
         }
     }
 }

@@ -322,12 +322,12 @@ namespace CatechistHelper.Infrastructure.Services
                                     include: y => y.Include(c => c.Classes)
                                                      .ThenInclude(s => s.Slots)
                                                         .ThenInclude(r => r.Room)
-                                                     .Include(c => c.Classes)
-                                                        .ThenInclude(s => s.Slots)
-                                                        .ThenInclude(s => s.CatechistInSlots)
-                                                        .ThenInclude(s => s.Catechist)
-                                                     .Include(g => g.Classes)
-                                                        .ThenInclude(g => g.Grade)
+                                .Include(c => c.Classes)
+                                   .ThenInclude(s => s.Slots)
+                                   .ThenInclude(s => s.CatechistInSlots)
+                                   .ThenInclude(s => s.Catechist)
+                                .Include(g => g.Classes)
+                                   .ThenInclude(g => g.Grade)
                                 );
 
             return FileHelper.ExportPastoralYearToExcel(year);
@@ -337,7 +337,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var catechist = await _unitOfWork.GetRepository<Catechist>()
                                      .GetListAsync(include: c => c.Include(c => c.Account)
-                                                                  .Include(c=> c.Level));
+                                                                  .Include(c => c.Level));
             return FileHelper.ExportCatechist(catechist);
         }
 

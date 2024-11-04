@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatechistHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241019024529_InitialCreate")]
+    [Migration("20241103165405_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -284,9 +284,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("slot_id");
 
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_main");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("type");
 
                     b.HasKey("CatechistId", "SlotId");
 
@@ -565,15 +566,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
-                    b.Property<Guid>("PastoralYearId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("pastoral_year_id");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MajorId");
-
-                    b.HasIndex("PastoralYearId");
 
                     b.ToTable("grade");
                 });
@@ -609,38 +604,6 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.ToTable("interview");
                 });
 
-            modelBuilder.Entity("CatechistHelper.Domain.Entities.InterviewProcess", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("name");
-
-                    b.Property<Guid>("RegistrationId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("registration_id");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int")
-                        .HasColumnName("status");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RegistrationId");
-
-                    b.ToTable("interview_process");
-                });
-
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Level", b =>
                 {
                     b.Property<Guid>("Id")
@@ -648,14 +611,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
-                    b.Property<int>("CatechismLevel")
-                        .HasColumnType("int")
-                        .HasColumnName("catechism_level");
-
                     b.Property<string>("Description")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("description");
+
+                    b.Property<int>("HierarchyLevel")
+                        .HasColumnType("int")
+                        .HasColumnName("hierarchy_level");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -674,6 +637,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
+
+                    b.Property<int>("HierarchyLevel")
+                        .HasColumnType("int")
+                        .HasColumnName("hierarchy_level");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -966,6 +933,23 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.ToTable("recruiter");
                 });
 
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
+                {
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("account_id");
+
+                    b.Property<Guid>("InterviewId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("interview_id");
+
+                    b.HasKey("AccountId", "InterviewId");
+
+                    b.HasIndex("InterviewId");
+
+                    b.ToTable("recruiter_in_interview");
+                });
+
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Registration", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1038,6 +1022,38 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("registration");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RegistrationProcess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("RegistrationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("registration_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrationId");
+
+                    b.ToTable("registration_process");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Role", b =>
@@ -1231,17 +1247,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
 
-                    b.Property<string>("NextLevel")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("next_level");
+                    b.Property<Guid>("NextLevelId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("next_level_id");
 
-                    b.Property<string>("PreviousLevel")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("previous_level");
+                    b.Property<Guid>("PreviousLevelId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("previous_level_id");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2")
@@ -1256,6 +1268,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NextLevelId");
+
+                    b.HasIndex("PreviousLevelId");
 
                     b.ToTable("training_list");
                 });
@@ -1293,13 +1309,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.ChristianName", "ChristianName")
                         .WithMany("Catechists")
                         .HasForeignKey("ChristianNameId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Level", "Level")
                         .WithMany("Catechists")
                         .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1331,11 +1347,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Catechist", "Catechist")
                         .WithMany("CatechistInGrades")
                         .HasForeignKey("CatechisteId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Grade", "Grade")
                         .WithMany("CatechistInGrades")
                         .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Catechist");
@@ -1384,7 +1402,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Level", "Level")
                         .WithMany("Certificates")
                         .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Level");
@@ -1406,11 +1424,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Catechist", "Catechist")
                         .WithMany("CertificateOfCatechists")
                         .HasForeignKey("CatechistId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Certificate", "Certificate")
                         .WithMany("CertificateOfCatechists")
                         .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Catechist");
@@ -1423,12 +1443,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Grade", "Grade")
                         .WithMany("Classes")
                         .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.PastoralYear", "PastoralYear")
                         .WithMany("Classes")
                         .HasForeignKey("PastoralYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Grade");
@@ -1441,18 +1462,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Major", "Major")
                         .WithMany("Grades")
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CatechistHelper.Domain.Entities.PastoralYear", "PastoralYear")
-                        .WithMany("Grades")
-                        .HasForeignKey("PastoralYearId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Major");
-
-                    b.Navigation("PastoralYear");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Interview", b =>
@@ -1466,33 +1479,24 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Registration");
                 });
 
-            modelBuilder.Entity("CatechistHelper.Domain.Entities.InterviewProcess", b =>
-                {
-                    b.HasOne("CatechistHelper.Domain.Entities.Registration", "Registration")
-                        .WithMany("InterviewProcesses")
-                        .HasForeignKey("RegistrationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Registration");
-                });
-
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Member", b =>
                 {
                     b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
                         .WithMany("Members")
                         .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Event", "Event")
                         .WithMany("Members")
                         .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.RoleEvent", "RoleEvent")
                         .WithMany("Members")
                         .HasForeignKey("RoleEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1507,11 +1511,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
                         .WithMany("MemberOfProcesses")
                         .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Process", "Process")
                         .WithMany("MemberOfProcesses")
                         .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1541,7 +1547,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.PostCategory", "PostCategory")
                         .WithMany("Posts")
                         .HasForeignKey("PostCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1565,14 +1571,46 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
                         .WithMany("Recruiters")
                         .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Registration", "Registration")
                         .WithMany("Recruiters")
                         .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Account");
+
+                    b.Navigation("Registration");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
+                        .WithMany("RecruiterInInterviews")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CatechistHelper.Domain.Entities.Interview", "Interview")
+                        .WithMany("RecruiterInInterviews")
+                        .HasForeignKey("InterviewId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Interview");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RegistrationProcess", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.Registration", "Registration")
+                        .WithMany("RegistrationProcesses")
+                        .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Registration");
                 });
@@ -1588,7 +1626,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Room", "Room")
                         .WithMany("Slots")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Class");
@@ -1601,16 +1639,37 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Level", "Level")
                         .WithMany("TeachingQualifications")
                         .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Major", "Major")
                         .WithMany("TeachingQualifications")
                         .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Level");
 
                     b.Navigation("Major");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.TrainingList", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.Level", "NextLevel")
+                        .WithMany("NextLevelTrainings")
+                        .HasForeignKey("NextLevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CatechistHelper.Domain.Entities.Level", "PreviousLevel")
+                        .WithMany("PreviousLevelTrainings")
+                        .HasForeignKey("PreviousLevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("NextLevel");
+
+                    b.Navigation("PreviousLevel");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Account", b =>
@@ -1622,6 +1681,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("RecruiterInInterviews");
 
                     b.Navigation("Recruiters");
                 });
@@ -1674,11 +1735,20 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Classes");
                 });
 
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.Interview", b =>
+                {
+                    b.Navigation("RecruiterInInterviews");
+                });
+
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Level", b =>
                 {
                     b.Navigation("Catechists");
 
                     b.Navigation("Certificates");
+
+                    b.Navigation("NextLevelTrainings");
+
+                    b.Navigation("PreviousLevelTrainings");
 
                     b.Navigation("TeachingQualifications");
                 });
@@ -1693,8 +1763,6 @@ namespace CatechistHelper.Infrastructure.Migrations
             modelBuilder.Entity("CatechistHelper.Domain.Entities.PastoralYear", b =>
                 {
                     b.Navigation("Classes");
-
-                    b.Navigation("Grades");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.PostCategory", b =>
@@ -1711,11 +1779,11 @@ namespace CatechistHelper.Infrastructure.Migrations
                 {
                     b.Navigation("CertificateOfCandidates");
 
-                    b.Navigation("InterviewProcesses");
-
                     b.Navigation("Interviews");
 
                     b.Navigation("Recruiters");
+
+                    b.Navigation("RegistrationProcesses");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Role", b =>
