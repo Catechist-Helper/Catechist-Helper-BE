@@ -44,9 +44,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Grade.ClassesByGradeEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetClassResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetClassesByGradeId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetClassesByGradeId([FromRoute] Guid id, [FromQuery] Guid? pastoralYearId, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
-            PagingResult<GetClassResponse> result = await _gradeService.GetClassesByGradeId(id, page, size);
+            PagingResult<GetClassResponse> result = await _gradeService.GetClassesByGradeId(id, pastoralYearId, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
 

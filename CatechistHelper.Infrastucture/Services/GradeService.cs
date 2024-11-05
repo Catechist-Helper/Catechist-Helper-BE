@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Extensions;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -35,8 +37,6 @@ namespace CatechistHelper.Infrastructure.Services
         {
             Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
                 predicate: m => m.Id.Equals(request.MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
-            PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                predicate: py => py.Id.Equals(request.PastoralYearId)) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
             Grade grade = request.Adapt<Grade>();
             Grade result = await _unitOfWork.GetRepository<Grade>().InsertAsync(grade);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -89,11 +89,13 @@ namespace CatechistHelper.Infrastructure.Services
             return Success(grade);
         }
 
-        public async Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, int page, int size)
+        public async Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, Guid? pastoralYearId, int page, int size)
         {
+            Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
+                predicate: g => g.Id == id) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
             IPaginate<Class> classes =
                    await _unitOfWork.GetRepository<Class>().GetPagingListAsync(
-                            predicate: c => c.GradeId == id,
+                            predicate: BuildGetClassesByGradeIdQuery(id, pastoralYearId),
                             orderBy: c => c.OrderByDescending(c => c.CreatedAt),
                             page: page,
                             size: size);
@@ -102,6 +104,16 @@ namespace CatechistHelper.Infrastructure.Services
                     page,
                     size,
                     classes.Total);
+        }
+
+        private Expression<Func<Class, bool>> BuildGetClassesByGradeIdQuery(Guid id, Guid? pastoralYearId)
+        {
+            Expression<Func<Class, bool>> filterQuery = c => c.GradeId == id;
+            if (pastoralYearId != null)
+            {
+                filterQuery = filterQuery.AndAlso(c => c.PastoralYearId == pastoralYearId);
+            }
+            return filterQuery;
         }
 
         public async Task<PagingResult<GetGradeResponse>> GetPagination(GradeFilter filter, int page, int size)

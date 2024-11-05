@@ -15,6 +15,5 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetMajorResponse>> Create(CreateMajorRequest request);
         Task<Result<bool>> CreateLevelOfMajor(Guid MajorId, Guid LevelId);
         Task<Result<bool>> Update(Guid id, UpdateMajorRequest request);
-        Task<Result<bool>> Delete(Guid id);
     }
 }

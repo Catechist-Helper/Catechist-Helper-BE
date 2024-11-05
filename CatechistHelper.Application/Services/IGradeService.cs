@@ -10,7 +10,7 @@ namespace CatechistHelper.Application.Services
     public interface IGradeService
     {
         Task<PagingResult<GetGradeResponse>> GetPagination(GradeFilter filter, int page, int size);
-        Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, int page, int size);
+        Task<PagingResult<GetClassResponse>> GetClassesByGradeId(Guid id, Guid? pastoralYearId, int page, int size);
         Task<PagingResult<GetCatechistInGradeResponse>> GetCatechistsByGradeId(Guid gradeId, int page, int size, bool excludeClassAssigned = false);
         Task<Result<GetGradeResponse>> Get(Guid id);
         Task<Result<GetGradeResponse>> Create(CreateGradeRequest request);
