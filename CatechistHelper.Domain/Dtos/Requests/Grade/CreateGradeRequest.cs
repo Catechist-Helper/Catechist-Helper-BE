@@ -10,8 +10,5 @@ namespace CatechistHelper.Domain.Dtos.Requests.Grade
         public string Name { get; set; } = null!;
 
         public Guid MajorId { get; set; }
-
-        public Guid PastoralYearId { get; set; }
-
     }
 }

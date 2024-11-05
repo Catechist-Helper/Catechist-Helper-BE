@@ -17,6 +17,8 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class InterviewService : BaseService<InterviewService>, IInterviewService
     {
+        private Guid systemConfigIdForRestrictedUpdateDaysBeforeInterview = Guid.Parse("351f2dc9-0bac-42b0-9005-b07d2b7b63f4");
+
         public InterviewService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<InterviewService> logger, IMapper mapper,
            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
@@ -28,11 +30,17 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-
+                var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                    .SingleOrDefaultAsync(predicate: sc => sc.Id == systemConfigIdForRestrictedUpdateDaysBeforeInterview);
+                _ = int.TryParse(configEntry.Value, out var days);
+                int minDaysBeforeInterview = days;
+                DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
+                if (request.MeetingTime < minimumAllowedDate)
+                {
+                    throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
+                }
                 Interview interview = request.Adapt<Interview>();
-
-                Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);
-                
+                Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);           
                 string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
                 MailUtil.SendEmail(
                     registration.Email,
@@ -66,8 +74,16 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id)
                     , include: a => a.Include(x => x.Registration)) 
                     ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
-
-                if(interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Duyet_Don
+                var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                    .SingleOrDefaultAsync(predicate: sc => sc.Id == systemConfigIdForRestrictedUpdateDaysBeforeInterview);
+                _ = int.TryParse(configEntry.Value, out var days);
+                int minDaysBeforeInterview = days;
+                DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
+                if (interview.MeetingTime < minimumAllowedDate)
+                {
+                    throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
+                }
+                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Duyet_Don
                     && !interview.IsPassed
                     && request.MeetingTime != interview.MeetingTime)
                 {

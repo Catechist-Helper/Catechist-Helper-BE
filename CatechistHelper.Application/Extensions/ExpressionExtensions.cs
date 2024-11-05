@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using CatechistHelper.Application.Repositories;
+using System.Linq.Expressions;
 
 namespace CatechistHelper.Application.Extensions
 {
