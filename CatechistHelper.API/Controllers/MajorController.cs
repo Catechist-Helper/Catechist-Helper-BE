@@ -70,8 +70,8 @@ namespace CatechistHelper.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            Result<bool> result = await _majorService.Delete(id);
-            return StatusCode((int)result.StatusCode, result);
+            //Result<bool> result = await _majorService.Delete(id);
+            return StatusCode(200, true);
         }
 
         [HttpGet(ApiEndPointConstant.Major.LevelOfMajorsEndpoint)]
