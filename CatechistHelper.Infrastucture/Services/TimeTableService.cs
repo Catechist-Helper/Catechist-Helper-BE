@@ -4,6 +4,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Infrastructure.Utils;
 using Mapster;
@@ -140,7 +141,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var classDto = await GetClassById(request.ClassId);
 
-            // await AddCatechistsToClass(request.Catechists, classDto);
+            AddCatechistsToClass(request.Catechists, ref classDto);
 
             var fixedDay = await GetWeekDay();
             var holidayDates = await GetHolidayDates(classDto.StartDate, classDto.EndDate);
@@ -152,8 +153,8 @@ namespace CatechistHelper.Infrastructure.Services
             return slots;
         }
 
-        /* // Add Catechists to the Class
-        private async Task AddCatechistsToClass(List<CatechistSlot> catechists, Class classDto)
+        // Add Catechists to the Class
+        private void AddCatechistsToClass(List<CatechistSlot> catechists, ref Class classDto)
         {
             foreach (var catechistSlot in catechists)
             {
@@ -165,9 +166,8 @@ namespace CatechistHelper.Infrastructure.Services
                 };
 
                 classDto.CatechistInClasses.Add(catechistInClass);
-                await _unitOfWork.GetRepository<CatechistInClass>().InsertAsync(catechistInClass);
             }
-        }*/
+        }
 
         // Get list of holidays as DateTime
         private static async Task<List<DateTime>> GetHolidayDates(DateTime startDate, DateTime? endDate)
@@ -233,6 +233,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     SlotId = slot.Id,
                     CatechistId = catechistInClass.CatechistId,
+                    Type = catechistInClass.IsMain ? CatechistInSlotType.Main.ToString() : CatechistInSlotType.Auxiliary.ToString()
                 };
 
                 slot.CatechistInSlots.Add(catechistInSlot);

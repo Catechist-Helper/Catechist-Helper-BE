@@ -64,7 +64,7 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _majorService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
         }
-
+        
         [HttpGet(ApiEndPointConstant.Major.LevelOfMajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetLevelResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLevelOfMajor([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
