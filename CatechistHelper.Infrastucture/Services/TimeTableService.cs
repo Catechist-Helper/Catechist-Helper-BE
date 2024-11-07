@@ -20,7 +20,7 @@ namespace CatechistHelper.Infrastructure.Services
     {
         private readonly IPastoralYearService _pastoralYearService;
 
-        private readonly ISystemConfiguration _systemConfiguration;
+        private readonly ISystemConfigurationService _systemConfiguration;
 
         public TimeTableService(
             IUnitOfWork<ApplicationDbContext> unitOfWork,
@@ -28,7 +28,7 @@ namespace CatechistHelper.Infrastructure.Services
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IPastoralYearService pastoralYearService,
-            ISystemConfiguration systemConfiguration
+            ISystemConfigurationService systemConfiguration
         ) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _pastoralYearService = pastoralYearService;

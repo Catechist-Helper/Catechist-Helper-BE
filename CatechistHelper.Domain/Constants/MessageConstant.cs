@@ -17,6 +17,8 @@ namespace CatechistHelper.Domain.Constants
         {
             public const string InvalidPhoneNumber = "Không đúng định dạng số điện thoại!";
             public const string DeleteFail = "Không thể xóa dữ liệu đang được sử dụng!";
+            public const string RestrictedDateManagingCatechism = "Không thể cập nhật khi bắt đầu niên khóa mới!";
+            public const string InvalidEndTime = "Giờ kết thúc phải lớn hơn giờ bắt đầu!";
         }
         public static class Account
         {
@@ -469,6 +471,8 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateTrainingList = String.Format(UpdateFailTemplate, TrainingListMessage);
                 public static string DeleteTrainingList = String.Format(DeleteFailTemplate, TrainingListMessage);
                 public static string NotFoundTrainingList = String.Format(NotFoundTemplate, TrainingListMessage);
+                public static string InvalidLevel = "Cấp tiếp theo phải lớn hơn cấp cũ!";
+                public static string InvalidGreaterLevel = "Chỉ được tăng 1 cấp!";
             }
         }
         public static class Event

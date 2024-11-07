@@ -1,11 +1,14 @@
-﻿using CatechistHelper.Application.Extensions;
+﻿using CatechistHelper.API.Utils;
+using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
+using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Slot;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -14,6 +17,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -45,7 +49,6 @@ namespace CatechistHelper.Infrastructure.Services
             }
             return null!;
         }
-
 
         public async Task<IPaginate<Class>> GetAll(ClassFilter? filter, int page, int size)
         {
@@ -128,6 +131,22 @@ namespace CatechistHelper.Infrastructure.Services
             {
             }
             return null!;
+        }
+
+        private async Task CheckRestrictionDateAsync()
+        {
+            var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedDateManagingCatechism));
+
+            if (configEntry == null || !DateTime.TryParseExact(configEntry.Value, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var restrictionDate))
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
+
+            if (DateTime.Now >= restrictionDate)
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
         }
     }
 }

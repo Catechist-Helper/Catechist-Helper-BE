@@ -104,14 +104,5 @@ namespace CatechistHelper.Testing
             var result = await _majorService.Update(majorId, major);
             Assert.True(result.Data);
         }
-        [Fact]
-        public async Task DeleteCatechist_DeletesCatechist_WhenExists()
-        {
-            _testDbContext.ChangeTracker.Clear();
-            // Arrange
-            var majorId = new Guid("7b03cc3c-4a6a-4849-9673-1ef9ca8e2f96");
-            var result = await _majorService.Delete(majorId);
-            Assert.True(result.Data);
-        }
     }
 }

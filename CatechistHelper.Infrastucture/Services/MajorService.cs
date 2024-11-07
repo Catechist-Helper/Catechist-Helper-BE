@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.API.Utils;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -7,13 +8,17 @@ using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -68,6 +73,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                await CheckRestrictionDateAsync();
                 Major major = request.Adapt<Major>();
                 Major result = await _unitOfWork.GetRepository<Major>().InsertAsync(major);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -87,6 +93,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                await CheckRestrictionDateAsync();
                 Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
                     predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
                 request.Adapt(major);
@@ -197,6 +204,22 @@ namespace CatechistHelper.Infrastructure.Services
             {
             }
             return null!;
+        }
+
+        private async Task CheckRestrictionDateAsync()
+        {
+            var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedDateManagingCatechism));
+
+            if (configEntry == null || !DateTime.TryParseExact(configEntry.Value, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var restrictionDate))
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
+
+            if (DateTime.Now >= restrictionDate)
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
         }
     }
 }
