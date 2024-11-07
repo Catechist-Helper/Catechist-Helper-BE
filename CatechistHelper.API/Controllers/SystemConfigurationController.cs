@@ -9,9 +9,9 @@ namespace CatechistHelper.API.Controllers
 {
     public class SystemConfigurationController : BaseController<SystemConfigurationController>
     {
-        private readonly ISystemConfiguration _systemConfigurationService;
+        private readonly ISystemConfigurationService _systemConfigurationService;
 
-        public SystemConfigurationController(ILogger<SystemConfigurationController> logger, ISystemConfiguration systemConfiguration) : base(logger)
+        public SystemConfigurationController(ILogger<SystemConfigurationController> logger, ISystemConfigurationService systemConfiguration) : base(logger)
         {
             _systemConfigurationService = systemConfiguration;
         }
@@ -32,30 +32,12 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpPost(ApiEndPointConstant.SystemConfiguration.SystemConfigurationsEndpoint)]
-        [ProducesResponseType(typeof(Result<GetSystemConfigurationResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateSystemConfigurationRequest request)
-        {
-            Result<GetSystemConfigurationResponse> result = await _systemConfigurationService.Create(request);
-            return StatusCode((int)result.StatusCode, result);
-        }
-
         [HttpPut(ApiEndPointConstant.SystemConfiguration.SystemConfigurationEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateSystemConfigurationRequest request)
         {
             Result<bool> result = await _systemConfigurationService.Update(id, request);
-            return StatusCode((int)result.StatusCode, result);
-        }
-
-        [HttpDelete(ApiEndPointConstant.SystemConfiguration.SystemConfigurationEndpoint)]
-        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
-            Result<bool> result = await _systemConfigurationService.Delete(id);
             return StatusCode((int)result.StatusCode, result);
         }
     }

@@ -32,8 +32,23 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Level previouseLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: l => l.Id == request.PreviousLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                Level nextLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: l => l.Id == request.NextLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                if (previouseLevel.HierarchyLevel >= nextLevel.HierarchyLevel)
+                {
+                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidLevel);
+                }
+                if (nextLevel.HierarchyLevel > previouseLevel.HierarchyLevel + 1)
+                {
+                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidGreaterLevel);
+                }
+                if (request.StartTime < request.EndTime)
+                {
+                    throw new Exception(MessageConstant.Common.InvalidEndTime);
+                }
                 TrainingList trainingList = request.Adapt<TrainingList>();
-
                 TrainingList result = await _unitOfWork.GetRepository<TrainingList>().InsertAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)

@@ -1,10 +1,12 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.API.Utils;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Interview;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Infrastructure.Utils;
 using Mapster;
@@ -17,8 +19,6 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class InterviewService : BaseService<InterviewService>, IInterviewService
     {
-        private Guid systemConfigIdForRestrictedUpdateDaysBeforeInterview = Guid.Parse("351f2dc9-0bac-42b0-9005-b07d2b7b63f4");
-
         public InterviewService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<InterviewService> logger, IMapper mapper,
            IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
@@ -30,8 +30,9 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
+
                 var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
-                    .SingleOrDefaultAsync(predicate: sc => sc.Id == systemConfigIdForRestrictedUpdateDaysBeforeInterview);
+                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
                 _ = int.TryParse(configEntry.Value, out var days);
                 int minDaysBeforeInterview = days;
                 DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
@@ -75,7 +76,7 @@ namespace CatechistHelper.Infrastructure.Services
                     , include: a => a.Include(x => x.Registration)) 
                     ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
                 var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
-                    .SingleOrDefaultAsync(predicate: sc => sc.Id == systemConfigIdForRestrictedUpdateDaysBeforeInterview);
+                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
                 _ = int.TryParse(configEntry.Value, out var days);
                 int minDaysBeforeInterview = days;
                 DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);

@@ -6,13 +6,11 @@ using System.Linq.Expressions;
 
 namespace CatechistHelper.Application.Services
 {
-    public interface ISystemConfiguration
+    public interface ISystemConfigurationService
     {
         Task<PagingResult<GetSystemConfigurationResponse>> GetPagination(Expression<Func<SystemConfiguration, bool>>? predicate, int page, int size);
         Task<Result<GetSystemConfigurationResponse>> Get(Guid id);
-        Task<Result<GetSystemConfigurationResponse>> Create(CreateSystemConfigurationRequest request);
         Task<Result<bool>> Update(Guid id, UpdateSystemConfigurationRequest request);
-        Task<Result<bool>> Delete(Guid id);
         Task<SystemConfiguration> GetConfigByKey(string key);
     }
 }

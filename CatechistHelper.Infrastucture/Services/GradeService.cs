@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Extensions;
+﻿using CatechistHelper.API.Utils;
+using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
@@ -9,6 +10,7 @@ using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -35,6 +38,7 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<GetGradeResponse>> Create(CreateGradeRequest request)
         {
+            await CheckRestrictionDateAsync();
             Major major = await _unitOfWork.GetRepository<Major>().SingleOrDefaultAsync(
                 predicate: m => m.Id.Equals(request.MajorId)) ?? throw new Exception(MessageConstant.Major.Fail.NotFoundMajor);
             Grade grade = request.Adapt<Grade>();
@@ -51,6 +55,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                await CheckRestrictionDateAsync();
                 Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
                     predicate: g => g.Id.Equals(id)) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
                 _unitOfWork.GetRepository<Grade>().DeleteAsync(grade);
@@ -177,6 +182,22 @@ namespace CatechistHelper.Infrastructure.Services
             {
             }
             return null!;
+        }
+
+        private async Task CheckRestrictionDateAsync()
+        {
+            var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedDateManagingCatechism));
+
+            if (configEntry == null || !DateTime.TryParseExact(configEntry.Value, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var restrictionDate))
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
+
+            if (DateTime.Now >= restrictionDate)
+            {
+                throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
         }
     }
 }

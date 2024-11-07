@@ -15,7 +15,7 @@ using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {
-    public class SystemConfigurationService : BaseService<SystemConfigurationService>, ISystemConfiguration
+    public class SystemConfigurationService : BaseService<SystemConfigurationService>, ISystemConfigurationService
     {
         public SystemConfigurationService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<SystemConfigurationService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
@@ -59,26 +59,6 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        public async Task<Result<GetSystemConfigurationResponse>> Create(CreateSystemConfigurationRequest request)
-        {
-            try
-            {
-                SystemConfiguration systemConfiguration = request.Adapt<SystemConfiguration>();
-
-                SystemConfiguration result = await _unitOfWork.GetRepository<SystemConfiguration>().InsertAsync(systemConfiguration);
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.SystemConfiguration.Fail.CreateSystemConfiguration);
-                }
-                return Success(result.Adapt<GetSystemConfigurationResponse>());
-            }
-            catch (Exception ex)
-            {
-                return Fail<GetSystemConfigurationResponse>(ex.Message);
-            }
-        }
-
         public async Task<Result<bool>> Update(Guid id, UpdateSystemConfigurationRequest request)
         {
             try
@@ -93,26 +73,6 @@ namespace CatechistHelper.Infrastructure.Services
                 if (!isSuccessful)
                 {
                     throw new Exception(MessageConstant.ChristianName.Fail.UpdateChristianName);
-                }
-                return Success(isSuccessful);
-            }
-            catch (Exception ex)
-            {
-                return Fail<bool>(ex.Message);
-            }
-        }
-
-        public async Task<Result<bool>> Delete(Guid id)
-        {
-            try
-            {
-                SystemConfiguration systemConfiguration = await _unitOfWork.GetRepository<SystemConfiguration>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.SystemConfiguration.Fail.NotFoundSystemConfiguration);
-                _unitOfWork.GetRepository<SystemConfiguration>().DeleteAsync(systemConfiguration);
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.SystemConfiguration.Fail.DeleteSystemConfiguration);
                 }
                 return Success(isSuccessful);
             }
