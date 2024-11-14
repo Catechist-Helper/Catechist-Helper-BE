@@ -40,6 +40,7 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<ParticipantInEvent> ParticipantInEvents { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
+        public DbSet<AbsenceRequest> AbsentRequests { get; set; }
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -242,6 +243,32 @@ namespace CatechistHelper.Infrastructure.Database
                 .WithMany(l => l.PreviousLevelTrainings)
                 .HasForeignKey(tl => tl.PreviousLevelId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AbsenceRequest>(entity =>
+            {
+                entity.HasKey(ar => ar.Id);
+
+                entity.HasOne(ar => ar.Slot)
+                    .WithMany()
+                    .HasForeignKey(ar => ar.SlotId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ar => ar.Catechist)
+                    .WithMany()
+                    .HasForeignKey(ar => ar.CatechistId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ar => ar.ReplacementCatechist)
+                    .WithMany()
+                    .HasForeignKey(ar => ar.ReplacementCatechistId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(ar => ar.Approver)
+                    .WithMany()
+                    .HasForeignKey(ar => ar.ApproverId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
             #endregion
         }
     }

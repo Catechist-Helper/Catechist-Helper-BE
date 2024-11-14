@@ -602,5 +602,33 @@ namespace CatechistHelper.Domain.Constants
 
             }
         }
+
+        public static class AbsentRequest
+        {
+            #region
+            private const string Message = "Đơn xin nghỉ";
+            private const string Name = "Tên đơn";
+            private const string Description = "Mô tả";
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+                public const string DescriptionRequired = Description + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string Create = String.Format(CreateSuccessTemplate, Message);
+                public static string Delete = String.Format(DeleteSuccessTemplate, Message);
+            }
+            public static class Fail
+            {
+                public static string Create = String.Format(CreateFailTemplate, Message);
+                public static string Update = String.Format(UpdateFailTemplate, Message);
+                public static string Delete = String.Format(DeleteFailTemplate, Message);
+                public static string NotFound = String.Format(NotFoundTemplate, Message);
+                public static string NotApproved = "Đơn xin nghỉ không được chấp thuận";
+                public static string NotValid = "Chỉ được nộp đơn trước {0} ngày !!!";
+            }
+        }
     }
 }

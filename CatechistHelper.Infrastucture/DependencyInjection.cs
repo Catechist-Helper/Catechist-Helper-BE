@@ -12,6 +12,7 @@ using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Requests.Room;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Infrastructure.Services;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -88,6 +89,23 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.Account, src => src.Account)
                 .Map(dest => dest.Certificates, src => src.Certificates)
                 .Map(dest => dest.Level, src => src.Level);
+
+            config.NewConfig<AbsenceRequest, Domain.Dtos.Responses.AbsenceRequest.GetAbsentRequest>()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.CatechistId, src => src.CatechistId)
+                .Map(dest => dest.SlotId, src => src.SlotId)
+                .Map(dest => dest.Reason, src => src.Reason)
+                .Map(dest => dest.Status, src => src.Status)
+                .Map(dest => dest.ReplacementCatechistId, src => src.ReplacementCatechistId)
+                .Map(dest => dest.ApproverId, src => src.ApproverId)
+                .Map(dest => dest.Comment, src => src.Comment)
+                .Map(dest => dest.ApprovalDate, src => src.ApprovalDate)
+                .Map(dest => dest.CreateAt, src => src.CreateAt)
+                .Map(dest => dest.UpdateAt, src => src.UpdateAt)
+                .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
+                .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
+                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null)
+                .Map(dest => dest.Slot, src => src.Slot);
             return config;
         }
     }
