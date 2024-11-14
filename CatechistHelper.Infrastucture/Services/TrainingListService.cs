@@ -42,7 +42,7 @@ namespace CatechistHelper.Infrastructure.Services
                 }
                 if (nextLevel.HierarchyLevel > previouseLevel.HierarchyLevel + 1)
                 {
-                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidGreaterLevel);
+                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidNextLevel);
                 }
                 if (request.StartTime < request.EndTime)
                 {
@@ -130,6 +130,9 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<TrainingList> trainingLists =
                     await _unitOfWork.GetRepository<TrainingList>()
                     .GetPagingListAsync(
+                            predicate: tl => tl.IsDeleted == false,
+                            include:  tl => tl.Include(tl => tl.PreviousLevel)
+                                              .Include(tl => tl.NextLevel),
                             page: page,
                             size: size
                         );

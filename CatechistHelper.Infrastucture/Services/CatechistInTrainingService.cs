@@ -4,6 +4,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInTraining;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Infrastructure.Database;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,9 @@ namespace CatechistHelper.Infrastructure.Services
                 var trainingListFromDb = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
                     predicate: tl => tl.Id == trainingListId,
                     include: tl => tl.Include(tl => tl.CatechistInTrainings)
+                                     .Include(tl => tl.NextLevel)
                 ) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
+                bool isTrainingFinished = trainingListFromDb.TrainingListStatus == TrainingListStatus.Finished;
                 var requestedCatechists = await _unitOfWork.GetRepository<Catechist>().GetListAsync(
                     predicate: c => request.Select(cit => cit.Id).Contains(c.Id));
                 if (requestedCatechists.Count != request.Count)
@@ -54,8 +57,15 @@ namespace CatechistHelper.Infrastructure.Services
                         predicate: cit => cit.CatechistId == catechist.Id);
                     if (catechistFromDb != null)
                     {
-                        catechistFromDb.CatechistInTrainingStatus = catechist.Status;
-                        catechistsToUpdate.Add(catechistFromDb);
+                        if (isTrainingFinished || catechist.Status == CatechistInTrainingStatus.Cancelled)
+                        {
+                            catechistFromDb.CatechistInTrainingStatus = catechist.Status;
+                            catechistsToUpdate.Add(catechistFromDb);
+                        }
+                        else
+                        {
+                            throw new Exception(MessageConstant.TrainingList.Fail.NotFinished);
+                        }
                     }
                     else
                     {
@@ -65,6 +75,22 @@ namespace CatechistHelper.Infrastructure.Services
                             CatechistId = catechist.Id,
                             CatechistInTrainingStatus = catechist.Status,
                         });
+                    }
+
+                    if (catechist.Status == CatechistInTrainingStatus.Completed)
+                    {
+                        var catechistEntity = requestedCatechists.FirstOrDefault(c => c.Id == catechist.Id);
+                        if (catechistEntity != null)
+                        {
+                            catechistEntity.LevelId = trainingListFromDb.NextLevelId;
+                            await _unitOfWork.GetRepository<CertificateOfCatechist>().InsertAsync(new CertificateOfCatechist
+                            {
+                                CatechistId = catechistEntity.Id,
+                                CertificateId = catechist.Id,
+                                GrantedDate = DateTime.UtcNow,
+                            });
+                            _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechistEntity);
+                        }
                     }
                 }
                 // Batch inserts and updates
