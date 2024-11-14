@@ -12,15 +12,18 @@ using Microsoft.Extensions.Logging;
 
 namespace CatechistHelper.Infrastructure.Services
 {
-    internal class CatechistInClassService : BaseService<CatechistInClassService>, ICatechistInClassService
+    public class CatechistInClassService : BaseService<CatechistInClassService>, ICatechistInClassService
     {
+
         public CatechistInClassService(
             IUnitOfWork<ApplicationDbContext> unitOfWork, 
             ILogger<CatechistInClassService> logger, 
             IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor) 
+            IHttpContextAccessor httpContextAccessor
+            ) 
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+           
         }
 
         public async Task<Result<bool>> AddCatechistToClass(CreateCatechistInClassRequest request)
@@ -74,5 +77,14 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
+        
+        
     }
+
+
+
+    
+
+    
 }
