@@ -3,7 +3,7 @@
     public enum CatechistInSlotType : byte
     {
         Main,
-        Auxiliary,
-        Replaced
+        Assistant,
+        Substitute
     }
 }

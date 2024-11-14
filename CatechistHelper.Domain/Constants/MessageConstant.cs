@@ -472,7 +472,8 @@ namespace CatechistHelper.Domain.Constants
                 public static string DeleteTrainingList = String.Format(DeleteFailTemplate, TrainingListMessage);
                 public static string NotFoundTrainingList = String.Format(NotFoundTemplate, TrainingListMessage);
                 public static string InvalidLevel = "Cấp tiếp theo phải lớn hơn cấp cũ!";
-                public static string InvalidGreaterLevel = "Chỉ được tăng 1 cấp!";
+                public static string InvalidNextLevel = "Chỉ được tăng 1 cấp!";
+                public static string NotFinished = "Khóa đào tạo chưa kết thúc!";
             }
         }
         public static class Event
