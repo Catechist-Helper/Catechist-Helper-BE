@@ -1,3 +1,5 @@
+using System.Xml.Linq;
+
 namespace CatechistHelper.Domain.Constants
 {
     public static class MessageConstant
@@ -458,7 +460,12 @@ namespace CatechistHelper.Domain.Constants
         {
             #region TrainingList Field
             private const string TrainingListMessage = "Training list";
+            private const string Name = "Tên training list";
             #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
             public static class Success
             {
                 public static string CreateTrainingList = String.Format(CreateSuccessTemplate, TrainingListMessage);

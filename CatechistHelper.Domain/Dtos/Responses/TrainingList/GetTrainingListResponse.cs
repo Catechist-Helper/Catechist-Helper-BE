@@ -5,6 +5,8 @@ namespace CatechistHelper.Domain.Dtos.Responses.TrainingList
 {
     public class GetTrainingListResponse
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
         public Guid Id { get; set; }
         public required GetLevelResponse PreviousLevel { get; set; }
         public required GetLevelResponse NextLevel { get; set; }
