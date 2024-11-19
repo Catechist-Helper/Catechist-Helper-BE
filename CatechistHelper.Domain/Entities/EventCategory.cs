@@ -18,7 +18,7 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(500)]
         public string? Description { get; set; }
 
-        [InverseProperty(nameof(Event))]
+        [InverseProperty(nameof(EventCategory))]
         public ICollection<Event> Events { get; } = new List<Event>();
     }
 }
