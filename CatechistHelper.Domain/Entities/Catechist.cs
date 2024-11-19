@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Common;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,7 +11,7 @@ namespace CatechistHelper.Domain.Entities
         [Column("code")]
         public string Code { get; set; } = null!;
 
-        [Column("fullname")]
+        [Column("full_name")]
         [StringLength(50)]
         [Required]
         public string FullName { get; set; } = null!;
@@ -32,30 +33,32 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(50)]
         public string? FatherName { get; set; }
 
-        [Column("father_phone")]
-        [StringLength(11)]
+        [Column("father_phone", TypeName = "varchar")]
+        [StringLength(10)]
         public string? FatherPhone { get; set; }
 
         [Column("mother_name")]
         [StringLength(50)]
         public string? MotherName { get; set; }
 
-        [Column("mother_phone")]
-        [StringLength(11)]
+        [Column("mother_phone", TypeName = "varchar")]
+        [StringLength(10)]
         public string? MotherPhone { get; set; }
 
-        [Column("image_url")]
+        [Column("image_url", TypeName = "varchar")]
+        [StringLength(500)]
         public string? ImageUrl { get; set; }
 
         [Column("address")]
         [StringLength(200)]
         public string? Address { get; set; }
 
-        [Column("phone")]
+        [Column("phone", TypeName = "varchar")]
         [StringLength(10)]
         public string? Phone { get; set; }
 
         [Column("qualification")]
+        [StringLength(50)]
         public string? Qualification { get; set; }
 
         [Column("is_teaching")]
@@ -92,5 +95,8 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<TrainingList> TrainingLists { get; set; } = new List<TrainingList>();
         public virtual ICollection<CatechistInTraining> CatechistInTrainings { get; set; } = new List<CatechistInTraining>();
+
+        public virtual ICollection<AbsenceRequest> AbsenceRequests { get; set; } = new List<AbsenceRequest>();
+        public virtual ICollection<AbsenceRequest> ReplacementAbsenceRequests { get; set; } = new List<AbsenceRequest>();
     }
 }

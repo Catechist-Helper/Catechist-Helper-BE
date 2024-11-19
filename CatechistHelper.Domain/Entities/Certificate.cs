@@ -18,7 +18,8 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(100)]
         public string? Description { get; set; }
 
-        [Column("image")]
+        [Column("image_url", TypeName = "varchar")]
+        [StringLength(500)]
         public string? Image {  get; set; }
 
         [Column("level_id")]

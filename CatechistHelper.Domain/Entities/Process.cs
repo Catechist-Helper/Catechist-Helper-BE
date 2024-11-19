@@ -15,6 +15,7 @@ namespace CatechistHelper.Domain.Entities
         public string Name { get; set; } = null!;
 
         [Column("description")]
+        [StringLength(500)]
         public string Description { get; set; } = null!;
 
         [Column("duration")]

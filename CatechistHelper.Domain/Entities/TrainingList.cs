@@ -9,9 +9,11 @@ namespace CatechistHelper.Domain.Entities
     public class TrainingList : BaseEntity
     {
         [Column("name")]
+        [StringLength(50)]
         public string Name { get; set; } = null!;
 
         [Column("description")]
+        [StringLength(500)]
         public string Description { get; set; } = null!;
 
         [Column("previous_level_id")]

@@ -1,6 +1,6 @@
 ﻿namespace CatechistHelper.Domain.Enums
 {
-    public enum RegistrationProcessStatus
+    public enum RegistrationProcessStatus : byte
     {
         Pending,
         Approved,

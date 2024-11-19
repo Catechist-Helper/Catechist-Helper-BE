@@ -1,26 +1,38 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CatechistHelper.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
 {
-    [Table("absent_request")]
-    public class AbsenceRequest
+    [Table("absence_request")]
+    public class AbsenceRequest : BaseEntity
     {
-        [Key]
-        [Column("id")]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [Column("catechist_id")]
         public Guid CatechistId { get; set; }
+
+        [Column("slot_id")]
         public Guid SlotId { get; set; }
-        public string Reason { get; set; } = string.Empty;
+
+        [Column("reason")]
+        [StringLength(100)]
+        [Required]
+        public string Reason { get; set; } = null!;
+
+        [Column("status")]
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
+
+        [Column("replacement_catechist_id")]
         public Guid? ReplacementCatechistId { get; set; }
 
-        public Guid? ApproverId { get; set; } 
-        public string Comment { get; set; } = string.Empty; 
-        public DateTime? ApprovalDate { get; set; }
+        [Column("approver_id")]
+        public Guid? ApproverId { get; set; }
 
-        public DateTime CreateAt { get; set; } = DateTime.Now;
-        public DateTime UpdateAt { get; set; } = DateTime.Now;
+        [Column("comment")]
+        [StringLength(100)]
+        public string? Comment { get; set; }
+
+        [Column("approval_date")]
+        public DateTime? ApprovalDate { get; set; }
 
         public virtual Slot Slot { get; set; } = null!;
         public virtual Catechist Catechist { get; set; } = null!;
@@ -28,7 +40,7 @@ namespace CatechistHelper.Domain.Entities
         public virtual Account? Approver { get; set; } 
     }
 
-    public enum RequestStatus
+    public enum RequestStatus : byte
     {
         Pending,
         Approved,

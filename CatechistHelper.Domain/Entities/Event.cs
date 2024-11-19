@@ -32,12 +32,17 @@ namespace CatechistHelper.Domain.Entities
         [Column("end_time")]
         public DateTime EndTime { get; set; }
 
-        [Column("cuurent_budget")]
+        [Column("current_budget")]
         public double current_budget { get; set; } = 0;
 
         [Column("status")]
         [EnumDataType(typeof(EventStatus))]
         public EventStatus EventStatus { get; set; }
+
+        [Column("event_category_id")]
+        [ForeignKey(nameof(EventCategory))]
+        public Guid EventCategoryId { get; set; }
+        public virtual EventCategory EventCategory { get; set; } = null!;
 
         public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
         public virtual ICollection<Member> Members { get; set; } = new List<Member>();

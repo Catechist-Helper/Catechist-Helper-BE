@@ -15,7 +15,7 @@ namespace CatechistHelper.Domain.Entities
         [Column("id")]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Column("role")]
+        [Column("role_name")]
         [StringLength(20)]
         [Required]
         public string RoleName { get; set; } = null!;

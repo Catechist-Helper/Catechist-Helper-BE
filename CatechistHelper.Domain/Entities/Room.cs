@@ -7,7 +7,7 @@ namespace CatechistHelper.Domain.Entities
     [Table("room")]
     public class Room : BaseEntity
     {
-        [Column("room")]
+        [Column("name")]
         [StringLength(10)]
         public string Name { get; set; } = null!;
 
@@ -15,7 +15,8 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(50)]
         public string? Description { get; set; }
 
-        [Column("image")]
+        [Column("image_url", TypeName = "varchar")]
+        [StringLength(500)]
         public string? Image { get; set; }
 
         [InverseProperty(nameof(Room))]

@@ -10,7 +10,8 @@ namespace CatechistHelper.Domain.Entities
         [Column("id")]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Column("image_url")]
+        [Column("image_url", TypeName = "varchar")]
+        [StringLength(500)]
         public string ImageUrl { get; set; } = null!;
 
         [Column("registration_id")]

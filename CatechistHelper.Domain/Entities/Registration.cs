@@ -8,7 +8,7 @@ namespace CatechistHelper.Domain.Entities
     [Table("registration")]
     public class Registration : BaseEntity
     {
-        [Column("fullname")]
+        [Column("full_name")]
         [StringLength(50)]
         [Required]
         public string FullName { get; set; } = null!;
@@ -32,7 +32,7 @@ namespace CatechistHelper.Domain.Entities
         [Required]
         public string Email { get; set; } = null!;
 
-        [Column("phone")]
+        [Column("phone", TypeName = "varchar")]
         [StringLength(10)]
         [Required]
         public string Phone { get; set; } = null!;
@@ -44,6 +44,7 @@ namespace CatechistHelper.Domain.Entities
         public int YearOfTeaching { get; set; }
 
         [Column("note")]
+        [StringLength(1000)]
         public string? Note { get; set; }
 
         [InverseProperty(nameof(Registration))]
