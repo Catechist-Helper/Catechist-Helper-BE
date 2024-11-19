@@ -11,9 +11,11 @@ namespace CatechistHelper.Domain.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Column("key")]
+        [StringLength(100)] 
         public string Key { get; set; } = null!;
 
         [Column("value")]
+        [StringLength(100)]
         public string Value { get; set; } = null!;
     }
 }

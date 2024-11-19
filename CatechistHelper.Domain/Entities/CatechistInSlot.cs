@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
 {
@@ -14,6 +15,7 @@ namespace CatechistHelper.Domain.Entities
         public virtual Catechist Catechist { get; set; } = null!;
 
         [Column("type")]
+        [StringLength(20)]
         public string Type { get; set; } = null!;
     }
 }

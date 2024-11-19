@@ -17,7 +17,7 @@ namespace CatechistHelper.Domain.Entities
         [Required]
         public string HashedPassword { get; set; } = null!;
 
-        [Column("fullname")]
+        [Column("full_name")]
         [StringLength(50)]
         [Required]
         public string FullName { get; set; } = null!;
@@ -26,11 +26,12 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(10)]
         public string? Gender { get; set; }
 
-        [Column("phone")]
+        [Column("phone", TypeName = "varchar")]
         [StringLength(10)]
         public string Phone { get; set; } = null!;
 
-        [Column("avatar")]
+        [Column("avatar", TypeName = "varchar")]
+        [StringLength(500)]
         public string? Avatar { get; set; }
 
         [Column("role_id")]
@@ -54,5 +55,7 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Interview> Interviews { get; set; } = new List<Interview>();
         public virtual ICollection<RecruiterInInterview> RecruiterInInterviews { get; set; } = new List<RecruiterInInterview>();
+
+        public virtual ICollection<AbsenceRequest> AbsenceRequests { get; set; } = new List<AbsenceRequest>();
     }
 }

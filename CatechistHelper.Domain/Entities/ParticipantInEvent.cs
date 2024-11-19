@@ -15,8 +15,8 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(50)]
         public string Email { get; set; } = null!;
 
-        [Column("phone")]
-        [StringLength(11)]
+        [Column("phone", TypeName = "varchar")]
+        [StringLength(10)]
         public string Phone { get; set; } = null!;
 
         [Column("gender")]

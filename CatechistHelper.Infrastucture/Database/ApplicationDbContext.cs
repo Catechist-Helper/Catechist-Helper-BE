@@ -40,7 +40,7 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<ParticipantInEvent> ParticipantInEvents { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
-        public DbSet<AbsenceRequest> AbsentRequests { get; set; }
+        public DbSet<AbsenceRequest> AbsenceRequests { get; set; }
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -197,6 +197,12 @@ namespace CatechistHelper.Infrastructure.Database
                   l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Members).OnDelete(DeleteBehavior.Restrict),
                   r => r.HasOne<Event>(e => e.Event).WithMany(e => e.Members).OnDelete(DeleteBehavior.Restrict));
 
+            modelBuilder.Entity<Event>()
+               .HasOne(e => e.EventCategory)
+               .WithMany(ec => ec.Events)
+               .HasForeignKey(p => p.EventCategoryId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<BudgetTransaction>()
              .HasOne(bt => bt.Event)
              .WithMany(e => e.BudgetTransactions)
@@ -246,29 +252,26 @@ namespace CatechistHelper.Infrastructure.Database
 
             modelBuilder.Entity<AbsenceRequest>(entity =>
             {
-                entity.HasKey(ar => ar.Id);
-
                 entity.HasOne(ar => ar.Slot)
-                    .WithMany()
+                    .WithMany(s => s.AbsenceRequests)
                     .HasForeignKey(ar => ar.SlotId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(ar => ar.Catechist)
-                    .WithMany()
+                    .WithMany(c => c.AbsenceRequests)
                     .HasForeignKey(ar => ar.CatechistId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(ar => ar.ReplacementCatechist)
-                    .WithMany()
+                    .WithMany(c => c.ReplacementAbsenceRequests)
                     .HasForeignKey(ar => ar.ReplacementCatechistId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(ar => ar.Approver)
-                    .WithMany()
+                    .WithMany(a => a.AbsenceRequests)
                     .HasForeignKey(ar => ar.ApproverId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-
             #endregion
         }
     }

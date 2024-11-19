@@ -123,7 +123,6 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 absenceRequest.ReplacementCatechistId = assignCatechistRequest.ReplacementCatechistId;
-                absenceRequest.UpdateAt = DateTime.Now;
 
                 _unitOfWork.GetRepository<AbsenceRequest>().UpdateAsync(absenceRequest);
 

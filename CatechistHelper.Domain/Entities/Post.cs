@@ -17,6 +17,7 @@ namespace CatechistHelper.Domain.Entities
         public string Content { get; set; } = null!;
 
         [Column("module")]
+        [StringLength(20)]
         [Required]
         public string Module { get; set; } = null!;
 
