@@ -33,12 +33,13 @@ namespace CatechistHelper.API.Controllers
         [HttpGet(ApiEndPointConstant.Grade.CatechistsInGradeEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInGradeResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistsByGradeId(
-            [FromRoute] Guid id, 
+            [FromRoute] Guid id,
+            [FromQuery] Guid? pastoralYearId,
             [FromQuery] int page = 1, 
             [FromQuery] int size = 100, 
             [FromQuery] bool excludeClassAssigned = false)
         {
-            PagingResult<GetCatechistInGradeResponse> result = await _gradeService.GetCatechistsByGradeId(id, page, size, excludeClassAssigned);
+            PagingResult<GetCatechistInGradeResponse> result = await _gradeService.GetCatechistsByGradeId(id, pastoralYearId, page, size, excludeClassAssigned);
             return StatusCode((int)result.StatusCode, result);
         }
 

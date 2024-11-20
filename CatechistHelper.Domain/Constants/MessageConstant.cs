@@ -610,7 +610,6 @@ namespace CatechistHelper.Domain.Constants
 
             }
         }
-
         public static class AbsentRequest
         {
             #region
@@ -636,6 +635,33 @@ namespace CatechistHelper.Domain.Constants
                 public static string NotFound = String.Format(NotFoundTemplate, Message);
                 public static string NotApproved = "Đơn xin nghỉ không được chấp thuận";
                 public static string NotValid = "Chỉ được nộp đơn trước {0} ngày !!!";
+            }
+        }
+        public static class EventCategory
+        {
+            #region EventCategory Field
+            private const string EventCategoryMessage = "Danh mục sự kiện";
+            private const string Name = "Tên danh mục sự kiện";
+
+            #endregion
+            public static class Require
+            {
+                public const string NameRequired = Name + RequiredSuffix;
+            }
+            public static class Success
+            {
+                public static string CreateEventCategory = String.Format(CreateSuccessTemplate, EventCategoryMessage);
+                public static string UpdateEventCategory = String.Format(UpdateSuccessTemplate, EventCategoryMessage);
+                public static string DeleteEventCategory = String.Format(UpdateSuccessTemplate, EventCategoryMessage);
+
+            }
+            public static class Fail
+            {
+                public static string CreateEventCategory = String.Format(CreateFailTemplate, EventCategoryMessage);
+                public static string UpdateEventCategory = String.Format(UpdateFailTemplate, EventCategoryMessage);
+                public static string DeleteEventCategory = String.Format(DeleteFailTemplate, EventCategoryMessage);
+                public static string NotFoundEventCategory = String.Format(NotFoundTemplate, EventCategoryMessage);
+
             }
         }
     }

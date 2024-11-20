@@ -18,9 +18,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Room.RoomsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetRoomResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetAllPagination([FromQuery] Guid? pastoralYearId, [FromQuery] int page = 1, [FromQuery] int size = 100, [FromQuery] bool excludeRoomAssigned = false)
         {
-            PagingResult<GetRoomResponse> result = await _roomService.GetPagination(x => false, page, size);
+            PagingResult<GetRoomResponse> result = await _roomService.GetPagination(pastoralYearId, page, size, excludeRoomAssigned);
             return StatusCode((int)result.StatusCode, result);
         }
 

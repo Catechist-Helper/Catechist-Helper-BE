@@ -44,7 +44,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.TrainingList.Fail.InvalidNextLevel);
                 }
-                if (request.StartTime < request.EndTime)
+                if (request.StartTime > request.EndTime)
                 {
                     throw new Exception(MessageConstant.Common.InvalidEndTime);
                 }

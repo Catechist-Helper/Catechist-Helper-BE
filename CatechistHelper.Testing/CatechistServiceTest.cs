@@ -143,7 +143,6 @@ namespace CatechistHelper.Testing
             // Arrange
             var catechist = new CreateCatechistRequest
             {
-                Code = "CH001",
                 FullName = "John Doe",
                 Gender = "Male",
                 AccountId = new Guid("55549961-bb82-4d04-923d-9b631c0b2e4f"),
@@ -171,7 +170,6 @@ namespace CatechistHelper.Testing
             var catechistId = new Guid("7b03cc3c-4a6a-4849-9673-1ef9ca8e2f96");
             var catechist = new UpdateCatechistRequest { 
                 FullName = "New Catechist",
-                Code = "CH001",
                 Gender = "Male",
                 AccountId = new Guid("55549961-bb82-4d04-923d-9b631c0b2e4f"),
                 LevelId = new Guid("55549961-bb82-4d04-923d-9b631c0b2e4f"),

@@ -2,7 +2,6 @@
 {
     public class UpdateCatechistRequest 
     {
-        public string Code { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public DateTime DateOfBirth { get; set; }

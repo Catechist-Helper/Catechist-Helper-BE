@@ -259,14 +259,26 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/members/{eventId}"</summary>
             public const string MemberOfProcessEndpoint = MemberOfProcessesEndpoint + "/{processId}";
         }
-
         public static class AbsenceRequest
         {
             public const string Endpoint = ApiEndpoint + "/absences";
             public const string Submit = Endpoint + "/submit";
             public const string AbsenceProcess = Endpoint + "/process";
             public const string AssignCatechist = Endpoint + "/assign";
-
+        }
+        public static class RecruiterInInterview
+        {
+            /// <summary>"api/v1/members"</summary>
+            public const string RecruiterInInterviewsEndpoint = ApiEndpoint + "/recruiter-in-interviews";
+            /// <summary>"api/v1/members/{eventId}"</summary>
+            public const string RecruiterInInterviewEndpoint = RecruiterInInterviewsEndpoint + "/{interviewId}";
+        }
+        public static class EventCategory
+        {
+            /// <summary>"api/v1/event-categories"</summary>
+            public const string EventCategoriesEndpoint = ApiEndpoint + "/event-categories";
+            /// <summary>"api/v1/event-categories/{id}"</summary>
+            public const string EventCategoryEndpoint = EventCategoriesEndpoint + ByIdRoute;
         }
     }
 }
