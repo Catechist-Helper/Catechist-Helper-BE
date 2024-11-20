@@ -142,6 +142,7 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<PagingResult<GetCatechistInGradeResponse>> GetCatechistsByGradeId(
             Guid id,
+            Guid? pastoralYearId,
             int page, 
             int size, 
             bool excludeClassAssigned = false)
@@ -150,12 +151,17 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Grade grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(
                     predicate: g => g.Id == id) ?? throw new Exception(MessageConstant.Grade.Fail.NotFoundGrade);
+                if (pastoralYearId != null)
+                {
+                    PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
+                        predicate: py => py.Id == pastoralYearId) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                }
                 ICollection<Guid> assignedCatechistInClassIds = new List<Guid>();
-                if (excludeClassAssigned)
+                if (excludeClassAssigned && pastoralYearId != null)
                 {
                     assignedCatechistInClassIds = await _unitOfWork.GetRepository<CatechistInClass>()
                         .GetListAsync(
-                            predicate: cic => cic.Class.GradeId == id,
+                            predicate: cic => cic.Class.GradeId == id && cic.Class.PastoralYearId == pastoralYearId,
                             selector: cic => cic.CatechistId);
                 }
                 IPaginate<CatechistInGrade> catechists = await _unitOfWork.GetRepository<CatechistInGrade>()
@@ -180,8 +186,8 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                throw;
             }
-            return null!;
         }
 
         private async Task CheckRestrictionDateAsync()

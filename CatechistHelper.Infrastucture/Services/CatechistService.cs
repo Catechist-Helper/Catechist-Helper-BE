@@ -46,10 +46,22 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
+
         public async Task<Catechist> CreateAsync(CreateCatechistRequest request)
         {
             var catechist = request.Adapt<Catechist>();
-
+            var codes = await _unitOfWork.GetRepository<Catechist>().GetListAsync(
+                selector: x => x.Code);
+            string convertName = ConvertName(request.FullName);
+            // Check for uniqueness in the database
+            string code = convertName;
+            int counter = 1;
+            while (codes.Contains(code))
+            {
+                code = convertName + counter;
+                counter++;
+            }
+            catechist.Code = code;
             if (request.ImageUrl != null)
             {
                 string avatar = await _firebaseService.UploadImageAsync(request.ImageUrl, $"catechist/");
@@ -63,6 +75,22 @@ namespace CatechistHelper.Infrastructure.Services
                 throw new Exception(MessageConstant.Catechist.Fail.CreateCatechist);
             }
             return result;
+        }
+
+        static string ConvertName(string fullName)
+        {
+            // Split the full name into parts
+            string[] nameParts = fullName.Split(' ');
+            // Get the first name
+            string firstName = nameParts[nameParts.Length - 1];
+            // Get the initials from the other names (excluding the first name)
+            string initials = "";
+            for (int i = 0; i < nameParts.Length - 1; i++)
+            {
+                initials += nameParts[i][0];
+            }
+            // Combine the first name with the initials
+            return firstName + initials;
         }
 
         public async Task<Result<bool>> Delete(Guid id)

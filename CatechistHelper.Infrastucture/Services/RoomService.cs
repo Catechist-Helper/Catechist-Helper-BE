@@ -12,8 +12,8 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -103,14 +103,28 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<GetRoomResponse>> GetPagination(Expression<Func<Room, bool>>? predicate, int page, int size)
+        public async Task<PagingResult<GetRoomResponse>> GetPagination(Guid? pastoralYearId, int page, int size, bool excludeRoomAssigned = false)
         {
             try
             {
-
+                if (pastoralYearId != null)
+                {
+                    PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
+                        predicate: py => py.Id == pastoralYearId) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                }
+                ICollection<Guid> assignedRoomIds = new List<Guid>();
+                if (excludeRoomAssigned && pastoralYearId != null)
+                {
+                    assignedRoomIds = await _unitOfWork.GetRepository<Slot>()
+                        .GetListAsync(
+                            predicate: s => s.Class.PastoralYearId == pastoralYearId,
+                            selector: s => s.RoomId);
+                }
                 IPaginate<Room> rooms =
                     await _unitOfWork.GetRepository<Room>()
                     .GetPagingListAsync(
+                            predicate: r => r.IsDeleted == false
+                                            && (!excludeRoomAssigned || !assignedRoomIds.Contains(r.Id)),
                             page: page,
                             size: size
                         );
@@ -122,8 +136,8 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                throw;
             }
-            return null!;
         }
 
         public async Task<Result<bool>> Update(Guid id, UpdateRoomRequest request)

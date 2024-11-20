@@ -18,7 +18,12 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class PostCategoryService : BaseService<PostCategoryService>, IPostCategoryService
     {
-        public PostCategoryService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<PostCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+        public PostCategoryService(
+            IUnitOfWork<ApplicationDbContext> unitOfWork, 
+            ILogger<PostCategoryService> logger, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor) 
+            : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
         }
 
@@ -26,9 +31,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-
                 PostCategory postCategory = request.Adapt<PostCategory>();
-
                 PostCategory result = await _unitOfWork.GetRepository<PostCategory>().InsertAsync(postCategory);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -48,8 +51,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 PostCategory postCategory = await _unitOfWork.GetRepository<PostCategory>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.PostCategory.Fail.NotFoundPostCategory);
                 _unitOfWork.GetRepository<PostCategory>().DeleteAsync(postCategory);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -77,8 +79,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 PostCategory postCategory = await _unitOfWork.GetRepository<PostCategory>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.PostCategory.Fail.NotFoundPostCategory);
                 return Success(postCategory.Adapt<GetPostCategoryResponse>());
             }
             catch (Exception ex)
@@ -91,7 +92,6 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-
                 IPaginate<PostCategory> postCategorys =
                     await _unitOfWork.GetRepository<PostCategory>()
                     .GetPagingListAsync(
@@ -115,10 +115,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 PostCategory postCategory = await _unitOfWork.GetRepository<PostCategory>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-
+                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.PostCategory.Fail.NotFoundPostCategory);
                 request.Adapt(postCategory);
-
                 _unitOfWork.GetRepository<PostCategory>().UpdateAsync(postCategory);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
