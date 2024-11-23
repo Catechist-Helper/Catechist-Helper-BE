@@ -33,6 +33,8 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<GetEventResponse>> Create(CreateEventRequest request)
         {
+            EventCategory eventCategory = await _unitOfWork.GetRepository<EventCategory>().SingleOrDefaultAsync(
+                    predicate: ec => ec.Id.Equals(request.EventCategoryId)) ?? throw new Exception(MessageConstant.EventCategory.Fail.NotFoundEventCategory);
             Event newEvent = request.Adapt<Event>();
             Event result = await _unitOfWork.GetRepository<Event>().InsertAsync(newEvent);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

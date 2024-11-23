@@ -1,22 +1,17 @@
 ﻿using CatechistHelper.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatechistHelper.Domain.Constants;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Process
 {
-    public class CreateProcessRequest
+    public class CreateProcessRequest : IValidatableObject
     {
         [Required(ErrorMessage = MessageConstant.Process.Require.NameRequired)]
         [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage = MessageConstant.Process.Require.DescriptionRequired)]
+        [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Description { get; set; } = null!;
 
         public TimeSpan Duration { get; set; }
@@ -25,10 +20,23 @@ namespace CatechistHelper.Domain.Dtos.Requests.Process
 
         public DateTime EndTime { get; set; }
 
+        [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
         public double Fee { get; set; }
 
         public ProcessStatus Status { get; set; }
 
         public Guid EventId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (StartTime > EndTime)
+            {
+                results.Add(new ValidationResult(MessageConstant.Common.InvalidStartEndTimeError, [nameof(StartTime), nameof(EndTime)]));
+            }
+
+            return results;
+        }
     }
 }

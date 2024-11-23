@@ -7,11 +7,12 @@ namespace CatechistHelper.Domain.Dtos.Requests.PastoralYear
     public class CreatePastoralYearRequest
     {
         [Required(ErrorMessage = MessageConstant.PastoralYear.Require.NameRequired)]
+        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Note { get; set; }
 
-        [Required(ErrorMessage = MessageConstant.PastoralYear.Require.StatusRequired)]
         public PastoralYearStatus PastoralYearStatus { get; set; }
     }
 }

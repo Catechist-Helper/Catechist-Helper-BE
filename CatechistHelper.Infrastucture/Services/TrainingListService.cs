@@ -44,10 +44,6 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.TrainingList.Fail.InvalidNextLevel);
                 }
-                if (request.StartTime > request.EndTime)
-                {
-                    throw new Exception(MessageConstant.Common.InvalidEndTime);
-                }
                 TrainingList trainingList = request.Adapt<TrainingList>();
                 TrainingList result = await _unitOfWork.GetRepository<TrainingList>().InsertAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;

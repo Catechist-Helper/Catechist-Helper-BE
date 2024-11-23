@@ -57,6 +57,10 @@ namespace CatechistHelper.Infrastructure.Services
                         predicate: cit => cit.CatechistId == catechist.Id);
                     if (catechistFromDb != null)
                     {
+                        if (catechistFromDb.CatechistInTrainingStatus == catechist.Status)
+                        {
+                            continue;
+                        }
                         if (isTrainingFinished || catechist.Status == CatechistInTrainingStatus.Cancelled)
                         {
                             catechistFromDb.CatechistInTrainingStatus = catechist.Status;

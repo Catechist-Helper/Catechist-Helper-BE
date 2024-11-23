@@ -14,7 +14,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Registration
         [MaxLength(10, ErrorMessage = "Tối đa {1} kí tự")]
         public string Gender { get; set; } = null!;
 
-        [Required]
         public DateTime DateOfBirth { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Registration.Require.AddresseRequired)]
@@ -30,12 +29,12 @@ namespace CatechistHelper.Domain.Dtos.Requests.Registration
         [RegularExpression(@"^(\d{10})$", ErrorMessage = "không đúng định dạng số điện thoại")]
         public string Phone { get; set; } = null!;
 
-        [Required]
         public bool IsTeachingBefore { get; set; }
 
-        [Required]
-        public int YearOfTeaching { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
+        public int YearOfTeaching { get; set; } = 0;
 
+        [MaxLength(1000, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Note { get; set; }
         public List<IFormFile>? CertificateOfCandidates { get; set; }
     }
