@@ -168,7 +168,6 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
         {
-
             try
             {
                 var account = await ValidateLoginRequest(request.Email, request.Password);

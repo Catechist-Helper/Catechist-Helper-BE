@@ -7,18 +7,19 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
     public class CreateAccountRequest
     {
         [Required(ErrorMessage = MessageConstant.Account.Require.EmailRequired)]
-        [EmailAddress(ErrorMessage = "Không đúng định dạng email!")]
-        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự")]
+        [EmailAddress(ErrorMessage = MessageConstant.Common.InvalidEmail)]
+        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = MessageConstant.Account.Require.PasswordRequired)]
-        [StringLength(50, ErrorMessage = "Tối thiểu {2} đến {1} kí tự", MinimumLength = 6)]
+        [StringLength(50, ErrorMessage = "Tối thiểu {2} đến {1} kí tự!", MinimumLength = 6)]
         public string Password { get; set; } = null!;
 
         [Required(ErrorMessage = MessageConstant.Account.Require.FullNameRequired)]
-        [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
+        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string FullName { get; set; } = null!;
 
+        [MaxLength(10, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.Require.PhoneRequired)]
@@ -27,7 +28,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
 
         public IFormFile? Avatar { get; set; }
 
-        [Required]
         public Guid RoleId { get; set; }
     }
 }

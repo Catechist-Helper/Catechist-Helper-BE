@@ -10,6 +10,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
         [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
         public string FullName { get; set; } = null!;
 
+        [MaxLength(10, ErrorMessage = "Vượt quá {1} kí tự")]
         public string? Gender { get; set; }
 
         [Required(ErrorMessage = MessageConstant.Account.Require.PhoneRequired)]

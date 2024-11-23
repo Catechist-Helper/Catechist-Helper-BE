@@ -84,7 +84,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
                 }
-                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Duyet_Don
+                if (interview.Registration.Status == RegistrationStatus.Approved_Duyet_Don
                     && !interview.IsPassed
                     && request.MeetingTime != interview.MeetingTime)
                 {
@@ -102,7 +102,7 @@ namespace CatechistHelper.Infrastructure.Services
                     );
                 }
 
-                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Approved_Phong_Van
+                if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
                     && request.IsPassed)
                 {
                     MailUtil.SendEmail(
@@ -115,7 +115,7 @@ namespace CatechistHelper.Infrastructure.Services
                     );
                 }
 
-                if (interview.Registration.Status == Domain.Enums.RegistrationStatus.Rejected_Phong_Van
+                if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
                     && !request.IsPassed)
                 {
                     MailUtil.SendEmail(

@@ -9,6 +9,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.RegistrationProcess
         [Required(ErrorMessage = MessageConstant.RegistrationProcess.Require.NameRequired)]
         [MaxLength(20, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Name { get; set; } = null!;
+
         public RegistrationProcessStatus Status { get; set; }
     }
 }
