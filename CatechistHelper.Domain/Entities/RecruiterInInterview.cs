@@ -12,5 +12,6 @@ namespace CatechistHelper.Domain.Entities
         [Column("interview_id")]
         public Guid InterviewId { get; set; }
         public virtual Interview Interview { get; set; } = null!;
+        public string? RoomUrl { get; set; }
     }
 }
