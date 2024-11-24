@@ -5,6 +5,7 @@
         In_Process,
         Not_Started,
         Completed,
-        Cancelled
+        Cancelled,
+        Failed
     }
 }
