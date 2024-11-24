@@ -14,7 +14,10 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Globalization;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -49,19 +52,27 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Catechist> CreateAsync(CreateCatechistRequest request)
         {
-            var catechist = request.Adapt<Catechist>();
-            var codes = await _unitOfWork.GetRepository<Catechist>().GetListAsync(
-                selector: x => x.Code);
+            var catechist = request.Adapt<Catechist>();     
             string convertName = ConvertName(request.FullName);
-            // Check for uniqueness in the database
-            string code = convertName;
-            int counter = 1;
-            while (codes.Contains(code))
+            var maxCodeWithNumber = await _unitOfWork.GetRepository<Catechist>().SingleOrDefaultAsync(
+                predicate: x => x.Code.StartsWith(convertName),
+                selector: x => x.Code,
+                orderBy: x => x.OrderByDescending(x => x.Code));
+            // Extract the numeric part of the code (if any)
+            int nextNumber = 1; // Default starting number
+            if (maxCodeWithNumber != null && maxCodeWithNumber.Length > convertName.Length)
             {
-                code = convertName + counter;
-                counter++;
+                // Parse the numeric part
+                string numericPart = maxCodeWithNumber.Substring(convertName.Length);
+                if (int.TryParse(numericPart, out int lastNumber))
+                {
+                    nextNumber = lastNumber + 1;
+                }
             }
-            catechist.Code = code;
+
+            // Generate the next unique code
+            string uniqueCode = $"{convertName}{nextNumber}";
+            catechist.Code = uniqueCode;
             if (request.ImageUrl != null)
             {
                 string avatar = await _firebaseService.UploadImageAsync(request.ImageUrl, $"catechist/");
@@ -77,18 +88,50 @@ namespace CatechistHelper.Infrastructure.Services
             return result;
         }
 
-        static string ConvertName(string fullName)
+        private static string ConvertName(string fullName)
         {
+            string RemoveDiacritics(string text)
+            {
+                if (string.IsNullOrEmpty(text))
+                    return text;
+
+                // Normalize to FormD, which separates base characters and diacritics
+                var normalizedText = text.Normalize(NormalizationForm.FormD);
+
+                // Use a StringBuilder to construct the text without diacritics
+                var stringBuilder = new StringBuilder();
+                foreach (char c in normalizedText)
+                {
+                    // Only include characters that are not combining marks
+                    if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(c);
+                    }
+                }
+
+                // Return the normalized string to FormC (standard form)
+                return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            }
+
             // Split the full name into parts
             string[] nameParts = fullName.Split(' ');
+
+            // Remove diacritics from each part of the name
+            for (int i = 0; i < nameParts.Length; i++)
+            {
+                nameParts[i] = RemoveDiacritics(nameParts[i]);
+            }
+
             // Get the first name
             string firstName = nameParts[nameParts.Length - 1];
+
             // Get the initials from the other names (excluding the first name)
             string initials = "";
             for (int i = 0; i < nameParts.Length - 1; i++)
             {
                 initials += nameParts[i][0];
             }
+
             // Combine the first name with the initials
             return firstName + initials;
         }

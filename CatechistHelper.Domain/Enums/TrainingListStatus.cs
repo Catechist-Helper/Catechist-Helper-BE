@@ -4,6 +4,5 @@
     {
         Training,
         Finished,
-        Quit
     }
 }
