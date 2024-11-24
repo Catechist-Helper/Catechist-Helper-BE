@@ -34,7 +34,7 @@ namespace CatechistHelper.Domain.Entities
 
     public enum InterviewType
     {
-        Online,
-        Offline
+        Offline,
+        Online
     }
 }
