@@ -4,6 +4,7 @@ using CatechistHelper.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatechistHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124152018_Update_24_11")]
+    partial class Update_24_11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1041,9 +1044,6 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("registration_id");
 
-                    b.Property<string>("RoomUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("AccountId", "RegistrationId");
 
                     b.HasIndex("RegistrationId");
@@ -1060,6 +1060,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Property<Guid>("InterviewId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("interview_id");
+
+                    b.Property<string>("RoomUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountId", "InterviewId");
 
