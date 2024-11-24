@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Domain.Enums;
+﻿using CatechistHelper.Domain.Dtos.Responses.EventCategory;
+using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Domain.Dtos.Responses.Event
 {
@@ -14,5 +15,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Event
         public DateTime EndTime { get; set; }
         public double current_budget { get; set; } = 0;
         public EventStatus EventStatus { get; set; }
+        public GetEventCategoryResponse? EventCategory { get; set; }
+
     }
 }
