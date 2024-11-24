@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CatechistHelper.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
@@ -25,7 +26,16 @@ namespace CatechistHelper.Domain.Entities
         public Guid RegistrationId { get; set; }
         public Registration Registration { get; set; } = null!;
 
+        [Column("interview_type")]
+        [EnumDataType(typeof(InterviewType))]
+        public InterviewType InterviewType { get; set; } = InterviewType.Offline;
         public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
         public virtual ICollection<RecruiterInInterview> RecruiterInInterviews { get; set; } = new List<RecruiterInInterview>();
+    }
+
+    public enum InterviewType
+    {
+        Online,
+        Offline
     }
 }

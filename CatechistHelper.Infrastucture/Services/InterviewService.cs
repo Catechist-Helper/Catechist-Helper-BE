@@ -14,14 +14,21 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Azure.Communication.Rooms;
+using Azure.Communication.Identity;
+using Azure.Communication;
 
 namespace CatechistHelper.Infrastructure.Services
 {
     public class InterviewService : BaseService<InterviewService>, IInterviewService
     {
+        private readonly IConfiguration _configuration;
+
         public InterviewService(IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<InterviewService> logger, IMapper mapper,
-           IHttpContextAccessor httpContextAccessor) : base(unitOfWork, logger, mapper, httpContextAccessor)
+           IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _configuration = configuration;
         }
 
         public async Task<Result<GetInterviewResponse>> Create(CreateInterviewRequest request)
@@ -41,18 +48,31 @@ namespace CatechistHelper.Infrastructure.Services
                     throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
                 }
                 Interview interview = request.Adapt<Interview>();
-                Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);           
-                string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
-                MailUtil.SendEmail(
-                    registration.Email,
-                    ContentMailUtil.Title_AnnounceInterviewSchedule,
-                    ContentMailUtil.AnnounceInterviewSchedule(
-                        registration.FullName,
-                        formattedMeetingTime,
-                        ContentMailUtil.INTERVIEW_ADDRESS
-                    ),
-                    ""
-                );
+
+                interview.Registration = registration;
+
+                var interviewAddress = ContentMailUtil.INTERVIEW_ADDRESS;
+
+                if (request.InterviewType == InterviewType.Online)
+                {
+                    interview = await CreateRoom(request.MeetingTime, interview);
+                }
+                else
+                {
+                    string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
+                    MailUtil.SendEmail(
+                        registration.Email,
+                        ContentMailUtil.Title_AnnounceInterviewSchedule,
+                        ContentMailUtil.AnnounceInterviewSchedule(
+                            registration.FullName,
+                            formattedMeetingTime,
+                            interviewAddress
+                        ),
+                        ""
+                    );
+                }
+
+                Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);
 
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
@@ -73,7 +93,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id)
-                    , include: a => a.Include(x => x.Registration)) 
+                    , include: a => a.Include(x => x.Registration))
                     ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
                 var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
                     .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
@@ -164,5 +184,117 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
+        public async Task<Interview> CreateRoom(DateTimeOffset validFrom, Interview interview)
+        {
+            var connectionString = _configuration["AzureCommunication:ConnectionString"];
+            var roomsClient = new RoomsClient(connectionString);
+            var identityClient = new CommunicationIdentityClient(connectionString);
+
+            var candidate = await CreateCandidate(identityClient);
+            var identifiers = await CreateIdentifiersForRecruiters(interview.RecruiterInInterviews, identityClient);
+
+            var participants = CreateRoomParticipants(identifiers, candidate);
+            var roomId = await CreateCommunicationRoom(validFrom, participants, roomsClient);
+
+            await AssignRoomUrlsToRecruiters(interview.RecruiterInInterviews, identifiers, roomId, identityClient);
+
+            var candidateUrl = await GenerateCandidateUrl(candidate, roomId, identityClient);
+            NotifyCandidate(interview.Registration.Email, candidateUrl);
+
+            return interview;
+        }
+
+        private async Task<CommunicationUserIdentifier> CreateCandidate(CommunicationIdentityClient identityClient)
+        {
+            return await identityClient.CreateUserAsync();
+        }
+
+        private async Task<List<CommunicationUserIdentifier>> CreateIdentifiersForRecruiters(
+            ICollection<RecruiterInInterview> recruiters,
+            CommunicationIdentityClient identityClient)
+        {
+            var identifiers = new List<CommunicationUserIdentifier>();
+
+            foreach (var recruiter in recruiters)
+            {
+                var user = await identityClient.CreateUserAsync();
+                identifiers.Add(user);
+            }
+
+            return identifiers;
+        }
+
+        private List<RoomParticipant> CreateRoomParticipants(
+            List<CommunicationUserIdentifier> identifiers,
+            CommunicationUserIdentifier candidate)
+        {
+            var participants = identifiers
+                .Select(identifier => new RoomParticipant(identifier) { Role = ParticipantRole.Presenter })
+                .ToList();
+
+            participants.Add(new RoomParticipant(candidate));
+            return participants;
+        }
+
+        private async Task<string> CreateCommunicationRoom(
+            DateTimeOffset validFrom,
+            List<RoomParticipant> participants,
+            RoomsClient roomsClient)
+        {
+            DateTimeOffset validUntil = validFrom.AddDays(1);
+            CommunicationRoom createdRoom = await roomsClient.CreateRoomAsync(
+                options : new CreateRoomOptions
+                {
+                    ValidFrom = validFrom,
+                    ValidUntil = validUntil,
+                    Participants = participants
+                }
+            );
+
+            return createdRoom.Id;
+        }
+
+        private async Task AssignRoomUrlsToRecruiters(
+            ICollection<RecruiterInInterview> recruiters,
+            List<CommunicationUserIdentifier> identifiers,
+            string roomId,
+            CommunicationIdentityClient identityClient)
+        {
+            var meetingUrl = _configuration["FrontendUrl:Meeting"];
+            int index = 0;
+
+            foreach (var recruiter in recruiters)
+            {
+                var token = await identityClient.GetTokenAsync(identifiers[index], new[] { CommunicationTokenScope.VoIP });
+                var interviewUrl = $"{meetingUrl}?roomid={roomId}&token={token.Value.Token}";
+                recruiter.RoomUrl = interviewUrl;
+                index++;
+            }
+        }
+
+        private async Task<string> GenerateCandidateUrl(
+            CommunicationUserIdentifier candidate,
+            string roomId,
+            CommunicationIdentityClient identityClient)
+        {
+            var meetingUrl = _configuration["FrontendUrl:Meeting"];
+            var token = await identityClient.GetTokenAsync(candidate, new[] { CommunicationTokenScope.VoIP });
+            return $"{meetingUrl}?roomid={roomId}&token={token.Value.Token}";
+        }
+
+        private void NotifyCandidate(string email, string candidateUrl)
+        {
+            MailUtil.SendEmail(
+                email,
+                ContentMailUtil.Title_AnnounceInterviewSchedule,
+                candidateUrl,
+                ""
+            );
+        }
+
+
+
+
     }
 }
