@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Extensions;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -79,6 +80,7 @@ namespace CatechistHelper.Infrastructure.Services
                    await _unitOfWork.GetRepository<Event>().GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
                             orderBy: e => e.OrderBy(e => e.CreatedAt),
+                            include: e => e.Include(x => x.EventCategory),
                             page: page,
                             size: size);
             return SuccessWithPaging(
@@ -91,10 +93,10 @@ namespace CatechistHelper.Infrastructure.Services
         private Expression<Func<Event, bool>> BuildGetPaginationQuery(EventFilter? filter)
         {
             Expression<Func<Event, bool>> filterQuery = x => x.IsDeleted == false;
-/*            if (filter.MajorId != null)
+            if (filter != null && filter.EventCategoryId != null)
             {
-                filterQuery = filterQuery.AndAlso(x => x.Grade.Major.Id.Equals(filter.MajorId));
-            }*/
+                filterQuery = filterQuery.AndAlso(x => x.EventCategoryId == filter.EventCategoryId);
+            }
             return filterQuery;
         }
 
