@@ -1,6 +1,7 @@
 ﻿using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
+using CatechistHelper.Domain.Dtos.Requests.Class;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Slot;
@@ -38,6 +39,22 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> GetSlotsByClassId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetSlotResponse> result = await _classService.GetSlotsByClassId(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpPatch(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateClass([FromRoute] Guid id, [FromBody] CatechistInClassRequest classRequest)
+        {
+            Result<bool> result = await _classService.UpdateCatechistInClass(id, classRequest);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpPatch(ApiEndPointConstant.Class.RoomOfClassEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateClassRoom([FromRoute] Guid id, [FromBody] RoomOfClassRequest request)
+        {
+            Result<bool> result = await _classService.UpdateClassRoom(id, request);
             return StatusCode((int)result.StatusCode, result);
         }
     }
