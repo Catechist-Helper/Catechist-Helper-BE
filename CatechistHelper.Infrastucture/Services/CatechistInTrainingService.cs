@@ -53,15 +53,15 @@ namespace CatechistHelper.Infrastructure.Services
                 var catechistsToUpdate = new List<CatechistInTraining>();
                 foreach (var catechist in request)
                 {
-                    var catechistFromDb = await _unitOfWork.GetRepository<CatechistInTraining>().SingleOrDefaultAsync(
-                        predicate: cit => cit.CatechistId == catechist.Id);
+                    var catechistFromDb = trainingListFromDb.CatechistInTrainings
+                        .FirstOrDefault(cit => cit.CatechistId == catechist.Id);
                     if (catechistFromDb != null)
                     {
                         if (catechistFromDb.CatechistInTrainingStatus == catechist.Status)
                         {
                             continue;
                         }
-                        if (isTrainingFinished || catechist.Status == CatechistInTrainingStatus.Cancelled)
+                        if (isTrainingFinished || catechist.Status == CatechistInTrainingStatus.Failed)
                         {
                             catechistFromDb.CatechistInTrainingStatus = catechist.Status;
                             catechistsToUpdate.Add(catechistFromDb);

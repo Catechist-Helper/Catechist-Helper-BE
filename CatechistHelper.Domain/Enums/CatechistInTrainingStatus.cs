@@ -2,10 +2,8 @@
 {
     public enum CatechistInTrainingStatus : byte
     {
-        In_Process,
-        Not_Started,
+        Training,
         Completed,
-        Cancelled,
         Failed
     }
 }
