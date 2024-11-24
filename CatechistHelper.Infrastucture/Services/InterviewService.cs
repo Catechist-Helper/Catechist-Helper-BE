@@ -49,13 +49,11 @@ namespace CatechistHelper.Infrastructure.Services
                 }
                 Interview interview = request.Adapt<Interview>();
 
-                interview.Registration = registration;
-
                 var interviewAddress = ContentMailUtil.INTERVIEW_ADDRESS;
 
                 if (request.InterviewType == InterviewType.Online)
                 {
-                    interview = await CreateRoom(request.MeetingTime, interview);
+                    interview = await CreateRoom(request.MeetingTime, interview, registration);
                 }
                 else
                 {
@@ -185,66 +183,34 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Interview> CreateRoom(DateTimeOffset validFrom, Interview interview)
+        public async Task<Interview> CreateRoom(DateTimeOffset validFrom, Interview interview, Registration registration)
         {
+            // Fetch connection string from configuration
             var connectionString = _configuration["AzureCommunication:ConnectionString"];
-            var roomsClient = new RoomsClient(connectionString);
-            var identityClient = new CommunicationIdentityClient(connectionString);
+            RoomsClient roomsClient = new(connectionString);
+            CommunicationIdentityClient identityClient = new(connectionString);
 
-            var candidate = await CreateCandidate(identityClient);
-            var identifiers = await CreateIdentifiersForRecruiters(interview.RecruiterInInterviews, identityClient);
+            // Create a candidate user
+            var candidate = await identityClient.CreateUserAsync();
 
-            var participants = CreateRoomParticipants(identifiers, candidate);
-            var roomId = await CreateCommunicationRoom(validFrom, participants, roomsClient);
-
-            await AssignRoomUrlsToRecruiters(interview.RecruiterInInterviews, identifiers, roomId, identityClient);
-
-            var candidateUrl = await GenerateCandidateUrl(candidate, roomId, identityClient);
-            NotifyCandidate(interview.Registration.Email, candidateUrl);
-
-            return interview;
-        }
-
-        private async Task<CommunicationUserIdentifier> CreateCandidate(CommunicationIdentityClient identityClient)
-        {
-            return await identityClient.CreateUserAsync();
-        }
-
-        private async Task<List<CommunicationUserIdentifier>> CreateIdentifiersForRecruiters(
-            ICollection<RecruiterInInterview> recruiters,
-            CommunicationIdentityClient identityClient)
-        {
+            // Create identifiers and participants for interviewers
             var identifiers = new List<CommunicationUserIdentifier>();
+            var participants = new List<RoomParticipant>();
 
-            foreach (var recruiter in recruiters)
+            foreach (var recruiter in registration.Recruiters)
             {
                 var user = await identityClient.CreateUserAsync();
                 identifiers.Add(user);
+                participants.Add(new RoomParticipant(user) { Role = ParticipantRole.Presenter });
             }
 
-            return identifiers;
-        }
-
-        private List<RoomParticipant> CreateRoomParticipants(
-            List<CommunicationUserIdentifier> identifiers,
-            CommunicationUserIdentifier candidate)
-        {
-            var participants = identifiers
-                .Select(identifier => new RoomParticipant(identifier) { Role = ParticipantRole.Presenter })
-                .ToList();
-
+            // Add candidate to participants
             participants.Add(new RoomParticipant(candidate));
-            return participants;
-        }
 
-        private async Task<string> CreateCommunicationRoom(
-            DateTimeOffset validFrom,
-            List<RoomParticipant> participants,
-            RoomsClient roomsClient)
-        {
-            DateTimeOffset validUntil = validFrom.AddDays(1);
+            // Define room validity period and create the room
+            var validUntil = validFrom.AddDays(1);
             CommunicationRoom createdRoom = await roomsClient.CreateRoomAsync(
-                options : new CreateRoomOptions
+                new CreateRoomOptions
                 {
                     ValidFrom = validFrom,
                     ValidUntil = validUntil,
@@ -252,48 +218,31 @@ namespace CatechistHelper.Infrastructure.Services
                 }
             );
 
-            return createdRoom.Id;
-        }
+            string roomId = createdRoom.Id;
 
-        private async Task AssignRoomUrlsToRecruiters(
-            ICollection<RecruiterInInterview> recruiters,
-            List<CommunicationUserIdentifier> identifiers,
-            string roomId,
-            CommunicationIdentityClient identityClient)
-        {
+            // Generate meeting URLs for interviewers and assign to RecruiterInInterviews
             var meetingUrl = _configuration["FrontendUrl:Meeting"];
-            int index = 0;
 
-            foreach (var recruiter in recruiters)
+            for (int i = 0; i < registration.Recruiters.Count; i++)
             {
-                var token = await identityClient.GetTokenAsync(identifiers[index], new[] { CommunicationTokenScope.VoIP });
+                var token = await identityClient.GetTokenAsync(identifiers[i], new[] { CommunicationTokenScope.VoIP });
                 var interviewUrl = $"{meetingUrl}?roomid={roomId}&token={token.Value.Token}";
-                recruiter.RoomUrl = interviewUrl;
-                index++;
+                registration.Recruiters.ElementAt(i).RoomUrl = interviewUrl;
             }
-        }
 
-        private async Task<string> GenerateCandidateUrl(
-            CommunicationUserIdentifier candidate,
-            string roomId,
-            CommunicationIdentityClient identityClient)
-        {
-            var meetingUrl = _configuration["FrontendUrl:Meeting"];
-            var token = await identityClient.GetTokenAsync(candidate, new[] { CommunicationTokenScope.VoIP });
-            return $"{meetingUrl}?roomid={roomId}&token={token.Value.Token}";
-        }
+            // Generate and send candidate URL
+            var candidateToken = await identityClient.GetTokenAsync(candidate, new[] { CommunicationTokenScope.VoIP });
+            var candidateUrl = $"{meetingUrl}?roomid={roomId}&token={candidateToken.Value.Token}";
 
-        private void NotifyCandidate(string email, string candidateUrl)
-        {
             MailUtil.SendEmail(
-                email,
+                interview.Registration.Email,
                 ContentMailUtil.Title_AnnounceInterviewSchedule,
                 candidateUrl,
                 ""
             );
+
+            return interview;
         }
-
-
 
 
     }

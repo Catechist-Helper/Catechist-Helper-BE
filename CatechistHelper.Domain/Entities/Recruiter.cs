@@ -12,5 +12,6 @@ namespace CatechistHelper.Domain.Entities
         [Column("registration_id")]
         public Guid RegistrationId { get; set; }
         public virtual Registration Registration { get; set; } = null!;
+        public string? RoomUrl { get; set; }
     }
 }
