@@ -4,6 +4,7 @@ using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
+using CatechistHelper.Domain.Dtos.Requests.Class;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Slot;
@@ -146,6 +147,121 @@ namespace CatechistHelper.Infrastructure.Services
             if (DateTime.Now >= restrictionDate)
             {
                 throw new Exception(MessageConstant.Common.RestrictedDateManagingCatechism);
+            }
+        }
+
+        public async Task<Result<bool>> UpdateCatechistInClass(Guid id, CatechistInClassRequest classRequest)
+        {
+            try
+            {
+                await CheckRestrictionDateAsync();
+
+                // Retrieve the class along with related data
+                var classToUpdate = await _unitOfWork.GetRepository<Class>()
+                    .SingleOrDefaultAsync(
+                        predicate: c => c.Id == id,
+                        include: c => c.Include(c => c.CatechistInClasses)
+                                       .Include(c => c.Slots)
+                                       .ThenInclude(s => s.CatechistInSlots)
+                    );
+
+                if (classToUpdate == null)
+                {
+                    return Fail<bool>(MessageConstant.Class.Fail.NotFoundClass);
+                }
+                // Remove existing CatechistInClasses
+                classToUpdate.CatechistInClasses.Clear();
+
+                // Remove existing CatechistInSlots for all slots
+                foreach (var slot in classToUpdate.Slots)
+                {
+                    slot.CatechistInSlots.Clear();
+                }
+
+                // Add new CatechistInClasses
+                foreach (var catechistSlot in classRequest.Catechists)
+                {
+                    classToUpdate.CatechistInClasses.Add(new CatechistInClass
+                    {
+                        ClassId = id,
+                        CatechistId = catechistSlot.CatechistId,
+                        IsMain = catechistSlot.IsMain
+                    });
+                }
+
+                // Add new CatechistInSlots
+                foreach (var slot in classToUpdate.Slots)
+                {
+                    foreach (var catechistSlot in classRequest.Catechists)
+                    {
+                        slot.CatechistInSlots.Add(new CatechistInSlot
+                        {
+                            SlotId = slot.Id,
+                            CatechistId = catechistSlot.CatechistId,
+                            Type = catechistSlot.IsMain ? CatechistInSlotType.Main.ToString() : CatechistInSlotType.Assistant.ToString()
+                        });
+                    }
+                }
+
+                // Update the class entity
+                _unitOfWork.GetRepository<Class>().UpdateAsync(classToUpdate);
+
+                // Save changes
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
+                if (!isSuccessful)
+                {
+                    throw new Exception("Commit fail");
+                }
+
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> UpdateClassRoom(Guid id, RoomOfClassRequest request)
+        {
+            try
+            {
+                await CheckRestrictionDateAsync();
+
+                // Retrieve the class along with related data
+                var classToUpdate = await _unitOfWork.GetRepository<Class>()
+                    .SingleOrDefaultAsync(
+                        predicate: c => c.Id == id,
+                        include: c => c.Include(c => c.Slots)
+                                       .ThenInclude(s => s.CatechistInSlots)
+                    );
+
+                if (classToUpdate == null)
+                {
+                    return Fail<bool>(MessageConstant.Class.Fail.NotFoundClass);
+                }
+
+                foreach (var slot in classToUpdate.Slots)
+                {
+                    slot.RoomId = request.RoomId;
+                }
+
+                // Update the class entity
+                _unitOfWork.GetRepository<Class>().UpdateAsync(classToUpdate);
+
+                // Save changes
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
+                if (!isSuccessful)
+                {
+                    throw new Exception("Commit fail");
+                }
+
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
             }
         }
     }
