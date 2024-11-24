@@ -15,6 +15,13 @@ namespace CatechistHelper.Domain.Entities
         [Column("to_budget")]
         public double ToBudget { get; set; }
 
+        [Column("transaction_at")]
+        public DateTime TransactionAt { get; set; } = DateTime.Now;
+
+        [Column("note")]
+        [StringLength(500)]
+        public string? Note { get; set; }
+
         [Column("event_id")]
         [ForeignKey(nameof(Event))]
         public Guid EventId { get; set; }

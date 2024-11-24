@@ -1,12 +1,15 @@
-﻿using CatechistHelper.Domain.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatechistHelper.Domain.Entities
 {
     [Table("slot")]
-    public class Slot : BaseEntity
+    public class Slot
     {
+        [Key]
+        [Column("id")]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Column("date")]
         public DateTime Date { get; set; }
 

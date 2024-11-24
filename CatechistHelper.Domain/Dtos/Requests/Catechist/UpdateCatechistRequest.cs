@@ -39,6 +39,8 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Qualification { get; set; }
         public bool IsTeaching { get; set; } = true;
+
+        [MaxLength(100, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Note { get; set; }
 
         // Foreign keys

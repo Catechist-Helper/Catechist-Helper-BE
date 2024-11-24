@@ -1,6 +1,4 @@
-﻿using CatechistHelper.Domain.Constants;
-using CatechistHelper.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using CatechistHelper.Domain.Entities;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Interview
 {

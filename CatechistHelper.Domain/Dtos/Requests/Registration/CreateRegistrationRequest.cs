@@ -32,7 +32,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Registration
         public bool IsTeachingBefore { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
-        public int YearOfTeaching { get; set; } = 0;
+        public int YearOfTeaching { get; set; }
 
         [MaxLength(1000, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Note { get; set; }

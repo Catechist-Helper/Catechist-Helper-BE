@@ -15,7 +15,6 @@ namespace CatechistHelper.Domain.Entities
         public DateTime MeetingTime { get; set; }
 
         [Column("note")]
-        [StringLength(500)]
         public string? Note { get; set; }
 
         [Column("is_passed")]
