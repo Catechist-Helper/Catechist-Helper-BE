@@ -27,7 +27,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Event
         public DateTime EndTime { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
-        public double current_budget { get; set; } = 0;
+        public double current_budget { get; set; }
 
         public EventStatus EventStatus { get; set; }
 

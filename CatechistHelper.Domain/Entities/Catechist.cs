@@ -9,6 +9,7 @@ namespace CatechistHelper.Domain.Entities
     public class Catechist : BaseEntity
     {
         [Column("code")]
+        [StringLength(20)]
         public string Code { get; set; } = null!;
 
         [Column("full_name")]
@@ -65,6 +66,7 @@ namespace CatechistHelper.Domain.Entities
         public bool IsTeaching { get; set; } = true;
 
         [Column("note")]
+        [StringLength(100)]
         public string? Note { get; set; }
 
         [Column("account_id")] 
