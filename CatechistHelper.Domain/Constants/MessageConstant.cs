@@ -160,6 +160,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreateCertificate = String.Format(CreateFailTemplate, CertificateMessage);
                 public static string DeleteCertificate = String.Format(DeleteFailTemplate, CertificateMessage);
                 public static string NotFoundCertificate = String.Format(NotFoundTemplate, CertificateMessage);
+                public static string UnsuitableLevel = "Chứng chỉ không dành cho cấp độ này.";
             }
         }
         public static class PastoralYear

@@ -35,7 +35,14 @@ namespace CatechistHelper.Infrastructure.Services
                 Level previouseLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
                     predicate: l => l.Id == request.PreviousLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 Level nextLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
-                    predicate: l => l.Id == request.NextLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                    predicate: l => l.Id == request.NextLevelId,
+                    include: l => l.Include(l => l.Certificates)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                Certificate certificate = await _unitOfWork.GetRepository<Certificate>().SingleOrDefaultAsync(
+                    predicate: c => c.Id == request.CertificateId) ?? throw new Exception(MessageConstant.Certificate.Fail.NotFoundCertificate);
+                if (!nextLevel.Certificates.Contains(certificate))
+                {
+                    throw new Exception(MessageConstant.Certificate.Fail.UnsuitableLevel);
+                }
                 if (previouseLevel.HierarchyLevel >= nextLevel.HierarchyLevel)
                 {
                     throw new Exception(MessageConstant.TrainingList.Fail.InvalidLevel);
