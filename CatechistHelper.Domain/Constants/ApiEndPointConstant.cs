@@ -142,6 +142,8 @@ namespace CatechistHelper.Domain.Constants
             public const string LevelEndpoint = LevelsEndpoint + ByIdRoute;
             /// <summary>"api/v1/majors/{id}/levels/"</summary>
             public const string MajorOfLevelsEndpoint = LevelEndpoint + "/majors";
+            /// <summary>"api/v1/majors/{id}/levels/"</summary>
+            public const string CertificateOfLevelsEndpoint = LevelEndpoint + "/certificates";
         }
         public static class CertificateOfCatechist
         {

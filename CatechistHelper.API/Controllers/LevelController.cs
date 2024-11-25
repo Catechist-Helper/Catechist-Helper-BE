@@ -2,6 +2,7 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Level;
+using CatechistHelper.Domain.Dtos.Responses.Certificate;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using Microsoft.AspNetCore.Mvc;
@@ -60,9 +61,17 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Level.MajorOfLevelsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetMajorResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetLevelOfMajor([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetMajorOfLevel([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetMajorResponse> result = await _levelService.GetMajorOfLevel(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Level.CertificateOfLevelsEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCertificateResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCertificateOfLevel([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetCertificateResponse> result = await _levelService.GetCertificateOfLevel(id, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }
