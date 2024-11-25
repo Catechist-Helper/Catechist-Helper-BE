@@ -44,7 +44,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
         public string? Note { get; set; }
 
         // Foreign keys
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         public Guid ChristianNameId { get; set; }
         public Guid LevelId { get; set; }
     }
