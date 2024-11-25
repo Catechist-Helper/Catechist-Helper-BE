@@ -201,7 +201,7 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 //_unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                bool isSuccessful = await _unitOfWork.CommitAsync() >= 0;
                 if (!isSuccessful)
                 {
                     throw new Exception(MessageConstant.Event.Fail.Update);
