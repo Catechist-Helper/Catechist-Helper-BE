@@ -16,6 +16,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -76,8 +77,17 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                Role role = await _unitOfWork.GetRepository<Role>().SingleOrDefaultAsync(
-                    predicate: r => r.Id.Equals(request.RoleId)) ?? throw new Exception(MessageConstant.Role.Fail.NotFoundRole); ;
+                if (!request.RoleName.IsNullOrEmpty())
+                {
+                    Role role = await _unitOfWork.GetRepository<Role>().SingleOrDefaultAsync(
+                        predicate: r => r.RoleName.Equals(request.RoleName)) ?? throw new Exception(MessageConstant.Role.Fail.NotFoundRole);
+                    request.RoleId = role.Id;
+                } 
+                else
+                {
+                    Role role = await _unitOfWork.GetRepository<Role>().SingleOrDefaultAsync(
+                        predicate: r => r.Id.Equals(request.RoleId)) ?? throw new Exception(MessageConstant.Role.Fail.NotFoundRole);
+                }
 
                 Account accountFromDb = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                     predicate: a => a.Email.Equals(request.Email));
@@ -102,6 +112,10 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.Account.Fail.CreateAccount);
                 }
+
+                MailUtil.SendEmail(request.Email, ContentMailUtil.Title_AccountInformation,
+                    ContentMailUtil.AnnounceAccountInformation(request.FullName, request.Email, request.Password), "");
+
                 return Success(result.Adapt<GetAccountResponse>());
             }
             catch (Exception ex)

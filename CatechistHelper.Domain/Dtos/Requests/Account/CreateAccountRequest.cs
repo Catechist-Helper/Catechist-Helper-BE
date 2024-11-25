@@ -28,6 +28,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
 
         public IFormFile? Avatar { get; set; }
 
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
+        public string? RoleName { get; set; }
     }
 }
