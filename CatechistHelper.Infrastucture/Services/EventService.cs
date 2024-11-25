@@ -185,7 +185,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                    predicate: m => m.Id.Equals(id), include: e => e.Include(x => x.ParticipantInEvents)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
 
                 var participants = FileHelper.ReadFileReturnParticipants(file, id);
 
