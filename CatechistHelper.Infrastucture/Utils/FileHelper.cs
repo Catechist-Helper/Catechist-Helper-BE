@@ -2,13 +2,18 @@
 using CatechistHelper.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
+using System.Globalization;
 
 namespace CatechistHelper.Infrastructure.Utils
 {
     public static class FileHelper
     {
+        public const string AllowedFormats = "dd/MM/yyyy";
+
         public static PastoralYearDto ReadFile(IFormFile file)
         {
+            CheckXLSXFile(file);
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var tempFilePath = Path.GetRandomFileName();
 
@@ -235,6 +240,123 @@ namespace CatechistHelper.Infrastructure.Utils
 
             worksheet.Cells.AutoFitColumns();
 
+            return package.GetAsByteArray();
+        }
+
+        public static List<ParticipantInEvent> ReadFileReturnParticipants(IFormFile file, Guid eventId)
+        {
+            CheckXLSXFile(file);
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var tempFilePath = Path.GetRandomFileName();
+
+            using (var stream = new FileStream(tempFilePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            var fileInfo = new FileInfo(tempFilePath);
+            return ReadFileReturnParticipants(fileInfo, eventId);
+        }
+
+        public static List<ParticipantInEvent> ReadFileReturnParticipants(FileInfo file, Guid eventId)
+        {
+
+            var participants = new List<ParticipantInEvent>();
+
+            using (var package = new ExcelPackage(file))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                int rowCount = worksheet.Dimension.Rows;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var fullName = worksheet.Cells[row, 2].Text;
+                    var email = worksheet.Cells[row, 3].Text;
+                    var phone = worksheet.Cells[row, 4].Text;
+                    var gender = worksheet.Cells[row, 5].Text;
+                    var dateOfBirthText = worksheet.Cells[row, 6].Text;
+                    var address = worksheet.Cells[row, 7].Text;
+
+
+                    if (!DateTime.TryParseExact(dateOfBirthText, AllowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth))
+                    {
+                        throw new FormatException(
+                            $"Invalid date format in row {row}, column 5. Value: '{dateOfBirthText}' does not match expected format: {string.Join(", ", AllowedFormats)}.");
+                    }
+
+
+                    var participant = new ParticipantInEvent
+                    {
+                        FullName = fullName,
+                        Email = email,
+                        Phone = phone,
+                        Gender = gender,
+                        DateOfBirth = dateOfBirth,
+                        Address = address,
+                        IsAttended = true,
+                        EventId = eventId
+                    };
+
+                    participants.Add(participant);
+                }
+            }
+
+            return participants;
+        }
+
+        public static void CheckXLSXFile(IFormFile file)
+        {
+            if (!file.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) ||
+                 file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                throw new Exception("Invalid file format. Please upload a valid .xlsx file.");
+            }
+        }
+
+
+        public static byte[] ExportParticipantsToExcel(ICollection<ParticipantInEvent> participants)
+        {
+
+            // Create an Excel package
+            using var package = new ExcelPackage();
+            // Add a worksheet
+            var worksheet = package.Workbook.Worksheets.Add("Participants");
+
+            // Define the header row
+            worksheet.Cells[1, 1].Value = "Full Name";
+            worksheet.Cells[1, 2].Value = "Email";
+            worksheet.Cells[1, 3].Value = "Phone";
+            worksheet.Cells[1, 4].Value = "Gender";
+            worksheet.Cells[1, 5].Value = "Date of Birth";
+            worksheet.Cells[1, 6].Value = "Address";
+
+            // Style the header
+            using (var range = worksheet.Cells[1, 1, 1, 6])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+            }
+
+            // Populate the data
+            int row = 2; // Start from the second row (below header)
+            foreach (var participant in participants)
+            {
+                worksheet.Cells[row, 1].Value = participant.FullName;
+                worksheet.Cells[row, 2].Value = participant.Email;
+                worksheet.Cells[row, 3].Value = participant.Phone;
+                worksheet.Cells[row, 4].Value = participant.Gender;
+                worksheet.Cells[row, 5].Value = participant.DateOfBirth.ToString(AllowedFormats);
+                worksheet.Cells[row, 6].Value = participant.Address;
+
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+            // Return the Excel file as a byte array
             return package.GetAsByteArray();
         }
 
