@@ -192,13 +192,15 @@ namespace CatechistHelper.Infrastructure.Services
                 foreach (var participant in participants)
                 {
                     // Avoid duplicates by checking if the participant already exists
-                    if (!eventFromDb.ParticipantInEvents.Any(p => p.Email == participant.Email))
+                    if (!eventFromDb.ParticipantInEvents.Any(p => p.Email == participant.Email
+                    && p.FullName.ToLower().Equals(participant.FullName.ToLower())))
                     {
                         eventFromDb.ParticipantInEvents.Add(participant);
+                        await _unitOfWork.GetRepository<ParticipantInEvent>().InsertAsync(participant);
                     }
                 }
 
-                _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
+                //_unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
