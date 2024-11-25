@@ -101,9 +101,9 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.Event.ParticipantInEventEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddParticipantToEvent([FromRoute] Guid id, [FromForm] IFormFile file)
+        public async Task<IActionResult> AddParticipantToEvent([FromForm] AddParticipantEventRequest request)
         {
-            Result<bool> result = await _eventService.AddParticipant(id, file);
+            Result<bool> result = await _eventService.AddParticipant(request.EventId, request.File);
             return StatusCode((int)result.StatusCode, result);
         }
 
