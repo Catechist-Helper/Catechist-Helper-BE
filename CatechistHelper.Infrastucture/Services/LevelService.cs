@@ -3,6 +3,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Level;
+using CatechistHelper.Domain.Dtos.Responses.Certificate;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Entities;
@@ -158,6 +159,29 @@ namespace CatechistHelper.Infrastructure.Services
                         page,
                         size,
                         majors.Total);
+            }
+            catch (Exception ex)
+            {
+            }
+            return null!;
+        }
+
+        public async Task<PagingResult<GetCertificateResponse>> GetCertificateOfLevel(Guid id, int page, int size)
+        {
+            try
+            {
+                Level level = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: c => c.Id.Equals(id)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                IPaginate<Certificate> certificates = await _unitOfWork.GetRepository<Certificate>().GetPagingListAsync(
+                                predicate: c => c.LevelId == id,
+                                page: page,
+                                size: size
+                            ); ;
+                return SuccessWithPaging(
+                        certificates.Adapt<IPaginate<GetCertificateResponse>>(),
+                        page,
+                        size,
+                        certificates.Total);
             }
             catch (Exception ex)
             {
