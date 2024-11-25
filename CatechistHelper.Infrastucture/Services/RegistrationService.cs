@@ -19,6 +19,7 @@ using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Infrastructure.Utils;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -192,6 +193,15 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     MailUtil.SendEmail(registration.Email, ContentMailUtil.Title_AnnounceRejectRegistration,
                         ContentMailUtil.AnnounceRejectRegistration(registration.FullName, request.Reason ?? ""), "");
+                }
+
+                if (!request.Reason.IsNullOrEmpty())
+                {
+                    registration.Note = request.Reason;
+                }
+                if (!request.Note.IsNullOrEmpty())
+                {
+                    registration.Note = request.Note;
                 }
 
                 _unitOfWork.GetRepository<Registration>().UpdateAsync(registration);
