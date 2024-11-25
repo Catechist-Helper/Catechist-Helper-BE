@@ -76,7 +76,7 @@ namespace CatechistHelper.Infrastructure.Services
                         catechistsToInsert.Add(new CatechistInTraining
                         {
                             TrainingListId = trainingListId,
-                            CatechistId = trainingListFromDb.CertificateId,
+                            CatechistId = catechist.Id,
                             CatechistInTrainingStatus = catechist.Status,
                         });
                     }
@@ -90,7 +90,7 @@ namespace CatechistHelper.Infrastructure.Services
                             await _unitOfWork.GetRepository<CertificateOfCatechist>().InsertAsync(new CertificateOfCatechist
                             {
                                 CatechistId = catechistEntity.Id,
-                                CertificateId = catechist.Id,
+                                CertificateId = trainingListFromDb.CertificateId,
                                 GrantedDate = DateTime.UtcNow,
                             });
                             _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechistEntity);
