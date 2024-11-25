@@ -24,6 +24,10 @@ namespace CatechistHelper.Domain.Entities
         public Guid NextLevelId { get; set; }
         public Level NextLevel { get; set; } = null!;
 
+        [Column("certificate_id")]
+        public Guid CertificateId { get; set; }
+        public Certificate Certificate { get; set; } = null!;
+
         [Column("start_time")]
         public DateTime StartTime { get; set; }
 
@@ -32,7 +36,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("status")]
         [EnumDataType(typeof(TrainingListStatus))]
-        public TrainingListStatus TrainingListStatus { get; set; } = TrainingListStatus.Training;
+        public TrainingListStatus TrainingListStatus { get; set; } = TrainingListStatus.NotStarted;
 
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
         public virtual ICollection<CatechistInTraining> CatechistInTrainings { get; set; } = new List<CatechistInTraining>();
