@@ -134,8 +134,9 @@ namespace CatechistHelper.Infrastructure.Services
                     await _unitOfWork.GetRepository<TrainingList>()
                     .GetPagingListAsync(
                             predicate: tl => tl.IsDeleted == false,
-                            include:  tl => tl.Include(tl => tl.PreviousLevel)
-                                              .Include(tl => tl.NextLevel),
+                            include: tl => tl.Include(tl => tl.PreviousLevel)
+                                             .Include(tl => tl.NextLevel)
+                                             .Include(tl => tl.Certificate),
                             page: page,
                             size: size
                         );
