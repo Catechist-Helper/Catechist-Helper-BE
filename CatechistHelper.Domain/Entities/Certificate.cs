@@ -29,5 +29,6 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
         public virtual ICollection<CertificateOfCatechist> CertificateOfCatechists { get; set; } = new List<CertificateOfCatechist>();
+        public virtual ICollection<TrainingList> TrainingLists { get; set; } = new List<TrainingList>();
     }
 }

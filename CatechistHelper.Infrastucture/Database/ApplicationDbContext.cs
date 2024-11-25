@@ -250,6 +250,12 @@ namespace CatechistHelper.Infrastructure.Database
                 .HasForeignKey(tl => tl.PreviousLevelId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<TrainingList>()
+            .HasOne(tl => tl.Certificate)
+            .WithMany(c => c.TrainingLists)
+            .HasForeignKey(tl => tl.CertificateId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<AbsenceRequest>(entity =>
             {
                 entity.HasOne(ar => ar.Slot)

@@ -13,6 +13,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.TrainingList
         [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Description { get; set; } = null!;
 
+        public Guid CertificateId { get; set; }
         public Guid PreviousLevelId { get; set; }
         public Guid NextLevelId { get; set; }
         public DateTime StartTime { get; set; }

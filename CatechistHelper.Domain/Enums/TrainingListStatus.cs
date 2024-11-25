@@ -2,6 +2,7 @@
 {
     public enum TrainingListStatus : byte
     {
+        NotStarted,
         Training,
         Finished,
     }

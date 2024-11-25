@@ -76,7 +76,7 @@ namespace CatechistHelper.Infrastructure.Services
                         catechistsToInsert.Add(new CatechistInTraining
                         {
                             TrainingListId = trainingListId,
-                            CatechistId = catechist.Id,
+                            CatechistId = trainingListFromDb.CertificateId,
                             CatechistInTrainingStatus = catechist.Status,
                         });
                     }
