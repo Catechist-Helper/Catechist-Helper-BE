@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Extensions;
+﻿using Azure.Core;
+using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
@@ -13,6 +14,7 @@ using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -63,7 +65,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                return Fail<bool>(ex.Message);      
+                return Fail<bool>(ex.Message);
             }
         }
 
@@ -176,6 +178,45 @@ namespace CatechistHelper.Infrastructure.Services
                     page,
                     size,
                     processes.Total);
+        }
+
+        public async Task<Result<bool>> AddParticipant(Guid id, IFormFile file)
+        {
+            try
+            {
+                Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
+                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+
+                var participants = FileHelper.ReadFileReturnParticipants(file, id);
+
+                foreach (var participant in participants)
+                {
+                    // Avoid duplicates by checking if the participant already exists
+                    if (!eventFromDb.ParticipantInEvents.Any(p => p.Email == participant.Email))
+                    {
+                        eventFromDb.ParticipantInEvents.Add(participant);
+                    }
+                }
+
+                _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Event.Fail.Update);
+                }
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
+
+        public async Task<byte[]> ExportParticipants(Guid id)
+        {
+            var participants = await _unitOfWork.GetRepository<ParticipantInEvent>()
+                .GetListAsync(predicate: p => p.EventId == id);
+            return FileHelper.ExportParticipantsToExcel(participants);
         }
     }
 }

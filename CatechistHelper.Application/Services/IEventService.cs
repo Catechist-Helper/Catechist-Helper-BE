@@ -6,6 +6,7 @@ using CatechistHelper.Domain.Dtos.Responses.Member;
 using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
 using CatechistHelper.Domain.Dtos.Responses.Process;
 using CatechistHelper.Domain.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace CatechistHelper.Application.Services
 {
@@ -20,5 +21,7 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetEventResponse>> Create(CreateEventRequest request);
         Task<Result<bool>> Update(Guid id, UpdateEventRequest request);
         Task<Result<bool>> Delete(Guid id);
+        Task<Result<bool>> AddParticipant(Guid id, IFormFile file);
+        Task<byte[]> ExportParticipants(Guid id);
     }
 }

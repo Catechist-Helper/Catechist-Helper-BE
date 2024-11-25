@@ -9,6 +9,7 @@ using CatechistHelper.Domain.Dtos.Responses.Member;
 using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
 using CatechistHelper.Domain.Dtos.Responses.Process;
 using CatechistHelper.Domain.Models;
+using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -95,6 +96,31 @@ namespace CatechistHelper.API.Controllers
         {
             Result<bool> result = await _eventService.Delete(id);
             return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpPost(ApiEndPointConstant.Event.ParticipantInEventEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddParticipantToEvent([FromRoute] Guid id, [FromForm] IFormFile file)
+        {
+            Result<bool> result = await _eventService.AddParticipant(id, file);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Event.ParticipantInEventEndpointExport)]
+        [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ExportParticipants([FromRoute] Guid id)
+        {
+            try
+            {
+                var result = await _eventService.ExportParticipants(id);
+                return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Participant.xlsx");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

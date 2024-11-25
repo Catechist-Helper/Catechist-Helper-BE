@@ -216,6 +216,8 @@ namespace CatechistHelper.Domain.Constants
             public const string ProcessInEventEndpoint = EventEndpoint + "/processes";
             /// <summary>"api/v1/events/{id}/participants"</summary>
             public const string ParticipantInEventEndpoint = EventEndpoint + "/participants";
+
+            public const string ParticipantInEventEndpointExport = ParticipantInEventEndpoint + "/export";
         }
         public static class ParticipantInEvent
         {
