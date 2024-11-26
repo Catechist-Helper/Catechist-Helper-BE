@@ -15,5 +15,7 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> Update(Guid id, UpdatePastoralYearRequest request);
         Task<Result<bool>> Delete(Guid id);
         Task<PastoralYear> Create(PastoralYearDto dto);
+        Task<PastoralYear> GetById(Guid id);
+        Task<PastoralYear> GetByName(string name);
     }
 }

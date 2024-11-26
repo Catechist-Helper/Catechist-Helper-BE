@@ -49,8 +49,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                PastoralYear pastoralYear = await GetById(id);
 
                 _unitOfWork.GetRepository<PastoralYear>().DeleteAsync(pastoralYear);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -78,8 +77,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                PastoralYear pastoralYear = await GetById(id);
 
                 return Success(pastoralYear.Adapt<GetPastoralYearResponse>());
             }
@@ -144,6 +142,20 @@ namespace CatechistHelper.Infrastructure.Services
             var result = await _unitOfWork.GetRepository<PastoralYear>().InsertAsync(pastoralYear);
 
             return result;
+        }
+
+        public async Task<PastoralYear> GetById(Guid id)
+        {
+            PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
+                   predicate: a => a.Id.Equals(id));
+            return pastoralYear;
+        }
+
+        public async Task<PastoralYear> GetByName(string name)
+        {
+            PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
+                  predicate: a => a.Name.Equals(name));
+            return pastoralYear;
         }
     }
 }
