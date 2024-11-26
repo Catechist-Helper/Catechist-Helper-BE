@@ -66,6 +66,11 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<List<Class>> CreateClasses(IFormFile file)
         {
             var pastoralYearDto = FileHelper.ReadFile(file);
+
+            var pastoralYearFromDb = await _pastoralYearService.GetByName(pastoralYearDto.Name);
+
+            Validator.EnsureNonExist(pastoralYearFromDb);
+
             var pastoralYear = await _pastoralYearService.Create(pastoralYearDto);
 
             string[] years = pastoralYear.Name.Split('-');

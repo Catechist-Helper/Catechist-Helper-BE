@@ -6,5 +6,13 @@
         {
             return value ?? throw new ArgumentNullException(nameof(value));
         }
+
+        public static void EnsureNonExist<T>(T? value) where T : class
+        {
+            if (value != null)
+            {
+                throw new ArgumentException($"Exist", nameof(value));
+            }
+        }
     }
 }
