@@ -128,7 +128,7 @@ namespace CatechistHelper.Infrastructure.Services
             IPaginate<Member> accounts =
                    await _unitOfWork.GetRepository<Member>().GetPagingListAsync(
                             predicate: m => m.EventId == id,
-                            include: m => m.Include(m => m.Account),
+                            include: m => m.Include(m => m.Account).Include(m => m.RoleEvent),
                             page: page,
                             size: size);
             return SuccessWithPaging(
