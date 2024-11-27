@@ -94,20 +94,23 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id)
                     , include: a => a.Include(x => x.Registration))
                     ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
-                var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
-                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
-                _ = int.TryParse(configEntry.Value, out var days);
-                int minDaysBeforeInterview = days;
-                DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
-                if (interview.MeetingTime < minimumAllowedDate)
+                if (request.MeetingTime != null)
                 {
-                    throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
-                }
+                    var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
+                    _ = int.TryParse(configEntry.Value, out var days);
+                    int minDaysBeforeInterview = days;
+                    DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
+                    if (interview.MeetingTime < minimumAllowedDate)
+                    {
+                        throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
+                    }
+                }          
                 if (interview.Registration.Status == RegistrationStatus.Approved_Duyet_Don
                     && !interview.IsPassed
                     && request.MeetingTime != interview.MeetingTime)
                 {
-                    string formattedMeetingTime = request.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
+                    string? formattedMeetingTime = request.MeetingTime?.ToString("HH:mm, dd/MM/yyyy");
                     MailUtil.SendEmail(
                         interview.Registration.Email,
                         ContentMailUtil.Title_AnnounceUpdateInterviewSchedule,
@@ -116,6 +119,32 @@ namespace CatechistHelper.Infrastructure.Services
                             request.Reason ?? "",
                             formattedMeetingTime,
                             ContentMailUtil.INTERVIEW_ADDRESS
+                        ),
+                        ""
+                    );
+                }
+
+                if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
+                    && request.IsPassed)
+                {
+                    MailUtil.SendEmail(
+                        interview.Registration.Email,
+                        ContentMailUtil.Title_AnnounceApproveInterview,
+                        ContentMailUtil.AnnounceApproveInterview(
+                            interview.Registration.FullName
+                        ),
+                        ""
+                    );
+                }
+
+                if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
+                    && !request.IsPassed)
+                {
+                    MailUtil.SendEmail(
+                        interview.Registration.Email,
+                        ContentMailUtil.Title_AnnounceRejectInterview,
+                        ContentMailUtil.AnnounceRejectInterview(
+                            interview.Registration.FullName
                         ),
                         ""
                     );

@@ -2,7 +2,7 @@
 {
     public class UpdateInterviewRequest
     {
-        public DateTime MeetingTime { get; set; }
+        public DateTime? MeetingTime { get; set; }
 
         public string? Note { get; set; }
 
