@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Azure.Communication.Rooms;
 using Azure.Communication.Identity;
 using Azure.Communication;
+using Azure.Core;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -120,8 +121,35 @@ namespace CatechistHelper.Infrastructure.Services
                     );
                 }
 
+                request.Adapt(interview);
+                _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
+
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Interview.Fail.UpdateInterview);
+                }
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> UpdatePassStatus(Guid id, bool IsPassed)
+        {
+            try
+            {
+                Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
+                    predicate: a => a.Id.Equals(id)
+                    , include: a => a.Include(x => x.Registration))
+                    ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
+
+                interview.IsPassed = IsPassed;
+
                 if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
-                    && request.IsPassed)
+                    && IsPassed)
                 {
                     MailUtil.SendEmail(
                         interview.Registration.Email,
@@ -134,7 +162,7 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
-                    && !request.IsPassed)
+                    && !IsPassed)
                 {
                     MailUtil.SendEmail(
                         interview.Registration.Email,
@@ -146,7 +174,6 @@ namespace CatechistHelper.Infrastructure.Services
                     );
                 }
 
-                request.Adapt(interview);
                 _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
 
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -243,7 +270,5 @@ namespace CatechistHelper.Infrastructure.Services
 
             return interview;
         }
-
-
     }
 }

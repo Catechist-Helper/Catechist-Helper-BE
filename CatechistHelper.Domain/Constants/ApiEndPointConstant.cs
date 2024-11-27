@@ -51,6 +51,8 @@ namespace CatechistHelper.Domain.Constants
             public const string InterviewsEndPoint = ApiEndpoint + "/interviews";
             // <summary>"api/v1/interviews/{id}"</summary>
             public const string InterviewEndPoint = InterviewsEndPoint + ByIdRoute;
+            // <summary>"api/v1/interviews/{id}/status"</summary>
+            public const string InterviewStatusEndPoint = InterviewsEndPoint + ByIdRoute + "/status";
         }
         public static class RegistrationProcess
         {
