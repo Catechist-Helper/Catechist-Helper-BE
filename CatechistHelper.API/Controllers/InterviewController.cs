@@ -34,6 +34,15 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [HttpPut(ApiEndPointConstant.Interview.InterviewStatusEndPoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdatePassStatus([FromRoute] Guid id, [FromBody] bool isPassed)
+        {
+            Result<bool> result = await _interviewService.UpdatePassStatus(id, isPassed);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpDelete(ApiEndPointConstant.Interview.InterviewEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

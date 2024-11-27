@@ -158,6 +158,25 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
+                Level previouseLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                   predicate: l => l.Id == request.PreviousLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                Level nextLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
+                    predicate: l => l.Id == request.NextLevelId,
+                    include: l => l.Include(l => l.Certificates)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
+                Certificate certificate = await _unitOfWork.GetRepository<Certificate>().SingleOrDefaultAsync(
+                    predicate: c => c.Id == request.CertificateId) ?? throw new Exception(MessageConstant.Certificate.Fail.NotFoundCertificate);
+                if (!nextLevel.Certificates.Contains(certificate))
+                {
+                    throw new Exception(MessageConstant.Certificate.Fail.UnsuitableLevel);
+                }
+                if (previouseLevel.HierarchyLevel >= nextLevel.HierarchyLevel)
+                {
+                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidLevel);
+                }
+                if (nextLevel.HierarchyLevel > previouseLevel.HierarchyLevel + 1)
+                {
+                    throw new Exception(MessageConstant.TrainingList.Fail.InvalidNextLevel);
+                }
                 request.Adapt(trainingList);
                 _unitOfWork.GetRepository<TrainingList>().UpdateAsync(trainingList);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
