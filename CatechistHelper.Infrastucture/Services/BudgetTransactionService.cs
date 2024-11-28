@@ -32,7 +32,8 @@ namespace CatechistHelper.Infrastructure.Services
 
             if (request.TransactionImages.Count > 0)
             {
-                string[] budgetTransactionImages = await _firebaseService.UploadImagesAsync(request.TransactionImages, $"event/{request.EventId}");
+                string folderName = $"event/{request.EventId}/budget-transaction/{budgetTransaction.Id}";
+                string[] budgetTransactionImages = await _firebaseService.UploadImagesAsync(request.TransactionImages, folderName);
                 foreach (var image in budgetTransactionImages)
                 {
                     await _unitOfWork.GetRepository<TransactionImage>().InsertAsync(new TransactionImage

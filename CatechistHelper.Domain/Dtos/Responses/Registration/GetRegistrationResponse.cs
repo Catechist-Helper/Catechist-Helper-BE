@@ -22,7 +22,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Registration
         public DateTime CreatedAt { get; set; }
         public RegistrationStatus Status { get; set; }
         public List<GetCertificateOfCandidateResponse> CertificateOfCandidates { get; set; }
-        public List<GetInterviewResponse> Interviews { get; set; }
+        public GetInterviewResponse Interview { get; set; }
         public List<GetRegistrationProcessResponse> RegistrationProcesses { get; set; }
         [JsonPropertyName("recruiters")]
         public List<GetAccountResponse> Accounts { get; set; }

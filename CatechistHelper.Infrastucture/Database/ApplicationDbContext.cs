@@ -71,8 +71,8 @@ namespace CatechistHelper.Infrastructure.Database
 
             modelBuilder.Entity<Interview>()
                 .HasOne(i => i.Registration)
-                .WithMany(r => r.Interviews)
-                .HasForeignKey(i => i.RegistrationId);
+                .WithOne(r => r.Interview)
+                .HasForeignKey<Interview>(i => i.RegistrationId);
 
             modelBuilder.Entity<RegistrationProcess>()
                 .HasOne(ip => ip.Registration)
