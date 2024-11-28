@@ -26,5 +26,14 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _catechistInGrade.AddCatechistToGrade(request);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [HttpPatch(ApiEndPointConstant.CatechistInGrade.CatechistInGradesEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ArrangeCatechistGrade([FromBody] ArrageCatechistGradeRequest request)
+        {
+            Result<bool> result = await _catechistInGrade.ArrangeCatechistGrade(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
 }
