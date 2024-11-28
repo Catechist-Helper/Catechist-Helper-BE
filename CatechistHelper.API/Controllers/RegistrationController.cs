@@ -45,7 +45,7 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Registration.RegistrationEndPoint)]
-        [ProducesResponseType(typeof(Result<List<GetRegistrationResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             Result<GetRegistrationResponse> result = await _registrationService.Get(id);
