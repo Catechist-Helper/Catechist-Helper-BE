@@ -79,13 +79,6 @@ namespace CatechistHelper.Infrastructure.Database
                 .WithMany(r => r.RegistrationProcesses)
                 .HasForeignKey(ip => ip.RegistrationId);
 
-            modelBuilder.Entity<Registration>()
-                .HasMany(r => r.Accounts)
-                .WithMany(a => a.Registrations)
-                .UsingEntity<Recruiter>(
-                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict),
-                    r => r.HasOne<Registration>(e => e.Registration).WithMany(e => e.Recruiters).OnDelete(DeleteBehavior.Restrict));
-
             modelBuilder.Entity<Interview>()
                 .HasMany(i => i.Accounts)
                 .WithMany(a => a.Interviews)

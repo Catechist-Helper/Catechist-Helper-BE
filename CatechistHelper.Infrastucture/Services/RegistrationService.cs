@@ -41,8 +41,7 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(id),
                     include: a => a.Include(a => a.CertificateOfCandidates)
                                    .Include(a => a.Interview)
-                                   .Include(a => a.RegistrationProcesses)
-                                   .Include(a => a.Accounts));
+                                   .Include(a => a.RegistrationProcesses));
 
                 return Success(application.Adapt<GetRegistrationResponse>());
             }
@@ -63,8 +62,7 @@ namespace CatechistHelper.Infrastructure.Services
                             orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
                                            .Include(a => a.Interview)
-                                           .Include(a => a.RegistrationProcesses)
-                                           .Include(a => a.Accounts),
+                                           .Include(a => a.RegistrationProcesses),
                             page: page,
                             size: size
                         );
@@ -147,19 +145,6 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        private string ToLowerCaseAndDashed(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return name;
-            }
-
-            name = name.ToLowerInvariant();
-            name = name.Replace(' ', '-');
-
-            return name;
-        }
-
         public async Task<Result<bool>> Update(Guid id, UpdateRegistrationRequest request)
         {
             try
@@ -169,27 +154,6 @@ namespace CatechistHelper.Infrastructure.Services
                     include: a => a.Include(x => x.Interview));
 
                 registration.Status = request.Status;
-
-                if (request.Accounts != null && request.Accounts.Count != 0)
-                {
-                    var listRecruiterOfRegistration = await _unitOfWork.GetRepository<Recruiter>().GetListAsync(predicate: r => r.RegistrationId == registration.Id);
-                    if (listRecruiterOfRegistration.Any()) _unitOfWork.GetRepository<Recruiter>().DeleteRangeAsync(listRecruiterOfRegistration);
-
-                    foreach (Guid accountId in request.Accounts)
-                    {
-                        Account account = await _unitOfWork.GetRepository<Account>()
-                            .SingleOrDefaultAsync(predicate: a => a.Id == accountId);
-
-                        if (account == null)
-                            return NotFound<bool>(MessageConstant.Account.Fail.NotFoundAccount);
-
-                        await _unitOfWork.GetRepository<Recruiter>().InsertAsync(new Recruiter
-                        {
-                            AccountId = accountId,
-                            Registration = registration,
-                        });
-                    }
-                }             
       
                 if (request.Status == Domain.Enums.RegistrationStatus.Rejected_Duyet_Don)
                 {
@@ -243,23 +207,20 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<IEnumerable<GetInterviewResponse>>> GetInterviewOfApplication(Guid id)
+        public async Task<Result<GetInterviewResponse>> GetInterviewOfRegistration(Guid id)
         {
             try
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-
-                if (registration == null) return NotFound<IEnumerable<GetInterviewResponse>>(MessageConstant.Registration.Fail.NotFoundRegistration);
-
-                IEnumerable<Interview> interviews = await _unitOfWork.GetRepository<Interview>().GetListAsync(
-                    predicate: i => i.RegistrationId == id);
-
-                return Success(interviews.Adapt<IEnumerable<GetInterviewResponse>>());
+                    predicate: r => r.Id.Equals(id)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
+                Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
+                    predicate: i => i.RegistrationId == id,
+                    include: i => i.Include(i => i.Accounts));
+                return Success(interview.Adapt<GetInterviewResponse>());
             }
             catch (Exception ex)
             {
-                return BadRequest<IEnumerable<GetInterviewResponse>>(ex.Message);
+                return BadRequest<GetInterviewResponse>(ex.Message);
             }
         }
 

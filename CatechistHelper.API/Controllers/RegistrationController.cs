@@ -29,10 +29,10 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Registration.InterviewsOfRegistrationEndPoint)]
-        [ProducesResponseType(typeof(Result<List<GetRegistrationResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetInterviewOfApplication([FromRoute] Guid id)
         {
-            Result<IEnumerable<GetInterviewResponse>> result = await _registrationService.GetInterviewOfApplication(id);
+            Result<GetInterviewResponse> result = await _registrationService.GetInterviewOfRegistration(id);
             return StatusCode((int)result.StatusCode, result);
         }
 
