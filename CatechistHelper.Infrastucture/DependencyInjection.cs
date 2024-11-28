@@ -13,6 +13,7 @@ using CatechistHelper.Domain.Dtos.Requests.Room;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Infrastructure.Services;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -106,6 +107,13 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
                 .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null)
                 .Map(dest => dest.Slot, src => src.Slot);
+
+            config.NewConfig<Catechist, SearchCatechistResponse>()
+            .Map(dest => dest.ChristianName, src => src.ChristianName != null ? src.ChristianName.Name : string.Empty) 
+            .Map(dest => dest.Level, src => src.Level.Name) 
+            .Map(dest => dest.Grade, src => src.CatechistInGrades.FirstOrDefault() != null ? src.CatechistInGrades.FirstOrDefault().Grade.Name : string.Empty) 
+            .Map(dest => dest.Major, src => src.CatechistInGrades.FirstOrDefault() != null? src.CatechistInGrades.FirstOrDefault().Grade.Major.Name : string.Empty); 
+
             return config;
         }
     }

@@ -188,8 +188,15 @@ namespace CatechistHelper.Domain.Constants
             /// <summary>"api/v1/catechist-in-classes"</summary>
             public const string CatechistInClassesEndpoint = ApiEndpoint + "/catechist-in-classes";
             public const string CatechistInClassEndpoint = CatechistInClassesEndpoint + ByIdRoute;
-
         }
+
+        public static class CatechistInSlot
+        {
+            public const string CatechistInSlotsEndpoint = ApiEndpoint + "/catechist-in-slots";
+            public const string CatechistInSlotEndpoint = CatechistInSlotsEndpoint + ByIdRoute;
+            public const string CatechistInSlotSearchEndpoint = CatechistInSlotEndpoint + "/search";
+        }
+
         public static class CatechistInTraining
         {
             /// <summary>"api/v1/catechist-in-trainings"</summary>
