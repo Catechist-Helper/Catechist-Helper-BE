@@ -1,6 +1,8 @@
 using CatechistHelper.API.Configurations;
 using CatechistHelper.API.Middlewares;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Rewrite;
+
 
 try
 {
@@ -37,7 +39,17 @@ try
     builder.Services.AddMvc()
                 .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
     ConfigFirebase.ConfigureFirebase();
+
+    builder.Services.AddRouting(options =>
+    {
+        options.LowercaseUrls = true;
+    });
+
     var app = builder.Build();
+
+    var options = new RewriteOptions()
+    .AddRedirect("^$", "/swagger/index.html");
+    app.UseRewriter(options);
 
     // Configure the HTTP request pipeline.
     //if (app.Environment.IsDevelopment())
