@@ -18,7 +18,7 @@ namespace CatechistHelper.Domain.Entities
         public string Description { get; set; } = null!;
 
         [Column("duration")]
-        public TimeSpan Duration { get; set; }
+        public long Duration { get; set; }
 
         [Column("start_time")]
         public DateTime StartTime { get; set; }
