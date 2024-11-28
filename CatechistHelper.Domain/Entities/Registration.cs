@@ -54,9 +54,7 @@ namespace CatechistHelper.Domain.Entities
         [EnumDataType(typeof(RegistrationStatus))]
         public RegistrationStatus Status { get; set; } = RegistrationStatus.Pending;
 
-
-        [InverseProperty(nameof(Registration))]
-        public virtual ICollection<Interview> Interviews { get; set; } = new List<Interview>();
+        public virtual Interview? Interview { get; set; }
 
         [InverseProperty(nameof(Registration))]
         public virtual ICollection<RegistrationProcess> RegistrationProcesses { get; set; } = new List<RegistrationProcess>();

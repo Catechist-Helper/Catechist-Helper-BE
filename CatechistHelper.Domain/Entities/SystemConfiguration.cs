@@ -15,7 +15,6 @@ namespace CatechistHelper.Domain.Entities
         public string Key { get; set; } = null!;
 
         [Column("value")]
-        [StringLength(100)]
         public string Value { get; set; } = null!;
     }
 }

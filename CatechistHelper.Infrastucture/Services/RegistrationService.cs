@@ -40,7 +40,7 @@ namespace CatechistHelper.Infrastructure.Services
                 Registration application = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id),
                     include: a => a.Include(a => a.CertificateOfCandidates)
-                                   .Include(a => a.Interviews)
+                                   .Include(a => a.Interview)
                                    .Include(a => a.RegistrationProcesses)
                                    .Include(a => a.Accounts));
 
@@ -56,14 +56,13 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-
                 IPaginate<Registration> applications =
                     await _unitOfWork.GetRepository<Registration>()
                     .GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
                             orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
                             include: a => a.Include(a => a.CertificateOfCandidates)
-                                           .Include(a => a.Interviews)
+                                           .Include(a => a.Interview)
                                            .Include(a => a.RegistrationProcesses)
                                            .Include(a => a.Accounts),
                             page: page,
@@ -83,23 +82,28 @@ namespace CatechistHelper.Infrastructure.Services
 
         private Expression<Func<Registration, bool>> BuildGetPaginationQuery(RegistrationFilter? filter)
         {
-            Expression<Func<Registration, bool>> filterQuery = x => x.IsDeleted == false;
+            Expression<Func<Registration, bool>> filterQuery = r => r.IsDeleted == false;
             if (filter.StartDate != null && filter.EndDate == null)
             {
-                filterQuery = filterQuery.AndAlso(p =>
-                    p.CreatedAt >= filter.StartDate && p.CreatedAt <= filter.StartDate.Value.AddDays(1));
+                filterQuery = filterQuery.AndAlso(r =>
+                    r.CreatedAt >= filter.StartDate && r.CreatedAt <= filter.StartDate.Value.AddDays(1));
             }
             else if (filter.StartDate != null)
             {
-                filterQuery = filterQuery.AndAlso(p => p.CreatedAt >= filter.StartDate);
+                filterQuery = filterQuery.AndAlso(r => r.CreatedAt >= filter.StartDate);
             }
             if (filter.EndDate != null)
             {
-                filterQuery = filterQuery.AndAlso(p => p.CreatedAt <= filter.EndDate);
+                filterQuery = filterQuery.AndAlso(r => r.CreatedAt <= filter.EndDate);
+            }
+            if (filter.Year != null)
+            {
+                int year = int.Parse(filter.Year);
+                filterQuery = filterQuery.AndAlso(r => r.CreatedAt.Year == year);
             }
             if (filter.Status != null)
             {
-                filterQuery = filterQuery.AndAlso(x => x.Status.Equals(filter.Status));
+                filterQuery = filterQuery.AndAlso(r => r.Status.Equals(filter.Status));
             }
 
             return filterQuery;
@@ -162,7 +166,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(id),
-                    include: a => a.Include(x => x.Interviews));
+                    include: a => a.Include(x => x.Interview));
 
                 registration.Status = request.Status;
 
