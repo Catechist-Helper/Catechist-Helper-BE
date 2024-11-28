@@ -7,7 +7,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Process
         public Guid Id { get; set; } 
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public TimeSpan Duration { get; set; }
+        public long Duration { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double Fee { get; set; }

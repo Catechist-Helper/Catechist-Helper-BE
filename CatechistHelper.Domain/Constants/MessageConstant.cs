@@ -160,7 +160,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string CreateCertificate = String.Format(CreateFailTemplate, CertificateMessage);
                 public static string DeleteCertificate = String.Format(DeleteFailTemplate, CertificateMessage);
                 public static string NotFoundCertificate = String.Format(NotFoundTemplate, CertificateMessage);
-                public static string UnsuitableLevel = "Chứng chỉ không dành cho cấp độ này.";
+                public static string UnsuitableLevel = "Chứng chỉ này không áp dụng cho cấp độ hiện tại.";
             }
         }
         public static class PastoralYear
@@ -186,6 +186,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdatePastoralYear = String.Format(UpdateFailTemplate, PastoralYearMessage);
                 public static string DeletePastoralYear = String.Format(DeleteFailTemplate, PastoralYearMessage);
                 public static string NotFoundPastoralYear = String.Format(NotFoundTemplate, PastoralYearMessage);
+                public static string ClassNotFinish = "Không thể hoàn tất niên khóa vì vẫn còn lớp học đang hoạt động. Vui lòng kết thúc tất cả các lớp học trước khi cập nhật trạng thái.";
             }
         }
         public static class ChristianName
@@ -330,7 +331,7 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateCatechist = String.Format(UpdateFailTemplate, CatechistMessage);
                 public static string DeleteCatechist = String.Format(DeleteFailTemplate, CatechistMessage);
                 public static string NotFoundCatechist = String.Format(NotFoundTemplate, CatechistMessage);
-                public static string UnqualifiedCatechist = "Giáo lý viên không đúng khối ngành.";
+                public static string UnqualifiedCatechist = "Giáo lý viên không thuộc khối ngành.";
 
             }
         }
@@ -512,9 +513,9 @@ namespace CatechistHelper.Domain.Constants
                 public static string UpdateTrainingList = String.Format(UpdateFailTemplate, TrainingListMessage);
                 public static string DeleteTrainingList = String.Format(DeleteFailTemplate, TrainingListMessage);
                 public static string NotFoundTrainingList = String.Format(NotFoundTemplate, TrainingListMessage);
-                public static string InvalidLevel = "Cấp tiếp theo phải lớn hơn cấp cũ.";
-                public static string InvalidNextLevel = "Chỉ được tăng 1 cấp.";
-                public static string NotFinished = "Khóa đào tạo chưa kết thúc.";
+                public static string InvalidLevel = "Cấp tiếp theo không hợp lệ. Vui lòng chọn một cấp cao hơn cấp hiện tại.";
+                public static string InvalidNextLevel = "Cấp mới chỉ được phép lớn hơn cấp hiện tại 1 cấp.";
+                public static string NotFinished = "Khóa đào tạo vẫn đang diễn ra.";
             }
         }
         public static class Event
