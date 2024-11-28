@@ -3,6 +3,7 @@ using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Application.Services
@@ -16,7 +17,7 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> Update(Guid id, UpdateCatechistRequest request);
         Task<Result<bool>> Delete(Guid id);
         Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request);
-        Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear,int page, int size);
+        Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear,int page, int size, ClassStatus status);
         Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, int page, int size);
     }
 }

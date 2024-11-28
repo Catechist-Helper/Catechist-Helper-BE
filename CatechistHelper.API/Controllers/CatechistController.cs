@@ -4,6 +4,7 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -79,9 +80,9 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.Catechist.ClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<ClassOfCatechist>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCatechistClasses([FromRoute] Guid id, [FromQuery] string pastoralYear, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetCatechistClasses([FromRoute] Guid id, [FromQuery] string pastoralYear, [FromQuery] int page = 1, [FromQuery] int size = 100, [FromQuery] ClassStatus status = ClassStatus.Active)
         {
-            PagingResult<ClassOfCatechist> result = await _catechistService.GetCatechistClasses(id, pastoralYear, page, size);
+            PagingResult<ClassOfCatechist> result = await _catechistService.GetCatechistClasses(id, pastoralYear, page, size, status);
             return StatusCode((int)result.StatusCode, result);
         }
         [HttpGet(ApiEndPointConstant.Catechist.GradesEndpoint)]
