@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Constants;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Requests.BudgetTransaction
@@ -15,5 +16,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.BudgetTransaction
         public string? Note { get; set; }
 
         public Guid EventId { get; set; }
+
+        public List<IFormFile> TransactionImages { get; set; } = [];
     }
 }
