@@ -11,7 +11,7 @@ namespace CatechistHelper.Application.Services
     {
         Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationFilter? filter, int page, int size);
         Task<Result<GetRegistrationResponse>> Get(Guid id);
-        Task<Result<IEnumerable<GetInterviewResponse>>> GetInterviewOfApplication(Guid id);
+        Task<Result<GetInterviewResponse>> GetInterviewOfRegistration(Guid id);
         Task<Result<IEnumerable<GetRegistrationProcessResponse>>> GetRegistrationProcessOfApplication(Guid id);
         Task<Result<GetRegistrationResponse>> Create(CreateRegistrationRequest request);
         Task<Result<bool>> Update(Guid id, UpdateRegistrationRequest request);

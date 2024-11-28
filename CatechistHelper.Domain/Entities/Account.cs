@@ -42,9 +42,6 @@ namespace CatechistHelper.Domain.Entities
         [InverseProperty(nameof(Account))]
         public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
-        public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
-        public virtual ICollection<Recruiter> Recruiters { get; set; } = new List<Recruiter>();
-
         public virtual Catechist? Catechist { get; set; }
 
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();

@@ -24,7 +24,5 @@ namespace CatechistHelper.Domain.Dtos.Responses.Registration
         public List<GetCertificateOfCandidateResponse> CertificateOfCandidates { get; set; }
         public GetInterviewResponse Interview { get; set; }
         public List<GetRegistrationProcessResponse> RegistrationProcesses { get; set; }
-        [JsonPropertyName("recruiters")]
-        public List<GetAccountResponse> Accounts { get; set; }
     }
 }

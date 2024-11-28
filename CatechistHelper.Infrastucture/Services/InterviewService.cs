@@ -32,29 +32,52 @@ namespace CatechistHelper.Infrastructure.Services
             _configuration = configuration;
         }
 
+        private async Task ValidateInterviewScheduling(DateTime meetingTime)
+        {
+            // Get the restricted update days from configuration using the enum key.
+            var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
+                .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
+            _ = int.TryParse(configEntry.Value, out var days);
+            int minDaysBeforeInterview = days;
+            DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
+            // Ensure the requested meeting time meets the minimum scheduling requirement.
+            if (meetingTime < minimumAllowedDate)
+            {
+                throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
+            }
+        }
+
         public async Task<Result<GetInterviewResponse>> Create(CreateInterviewRequest request)
         {
             try
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-
-                var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
-                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
-                _ = int.TryParse(configEntry.Value, out var days);
-                int minDaysBeforeInterview = days;
-                DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
-                if (request.MeetingTime < minimumAllowedDate)
-                {
-                    throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
-                }
+                await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
+                // Add recruiters
+                if (request.Accounts != null && request.Accounts.Count != 0)
+                {
+                    /*var recruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(predicate: r => r.InterviewId == registration.Id);
+                    if (recruiters.Any()) _unitOfWork.GetRepository<RecruiterInInterview>().DeleteRangeAsync(recruiters);*/
+                    foreach (Guid accountId in request.Accounts)
+                    {
+                        Account account = await _unitOfWork.GetRepository<Account>()
+                            .SingleOrDefaultAsync(predicate: a => a.Id == accountId) ?? throw new Exception(MessageConstant.Account.Fail.NotFoundAccount);
+
+                        await _unitOfWork.GetRepository<RecruiterInInterview>().InsertAsync(new RecruiterInInterview
+                        {
+                            Interview = interview,
+                            AccountId = accountId
+                        });
+                    }
+                }
 
                 var interviewAddress = ContentMailUtil.INTERVIEW_ADDRESS;
 
                 if (request.InterviewType == InterviewType.Online)
                 {
-                    interview = await CreateRoom(request.MeetingTime, interview, registration);
+                    //interview = await CreateRoom(request.MeetingTime, interview, registration);
                 }
                 else
                 {
@@ -72,7 +95,6 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 Interview result = await _unitOfWork.GetRepository<Interview>().InsertAsync(interview);
-
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
@@ -96,16 +118,27 @@ namespace CatechistHelper.Infrastructure.Services
                     ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
                 if (request.MeetingTime != null)
                 {
-                    var configEntry = await _unitOfWork.GetRepository<SystemConfiguration>()
-                    .SingleOrDefaultAsync(predicate: sc => sc.Key == EnumUtil.GetDescriptionFromEnum(SystemConfigurationEnum.RestrictedUpdateDaysBeforeInterview));
-                    _ = int.TryParse(configEntry.Value, out var days);
-                    int minDaysBeforeInterview = days;
-                    DateTime minimumAllowedDate = DateTime.UtcNow.AddDays(minDaysBeforeInterview);
-                    if (interview.MeetingTime < minimumAllowedDate)
+                    await ValidateInterviewScheduling((DateTime)request.MeetingTime);
+                }
+
+                // Add recruiters
+                if (request.Accounts != null && request.Accounts.Count != 0)
+                {
+                    var recruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(predicate: r => r.InterviewId == id);
+                    if (recruiters.Any()) _unitOfWork.GetRepository<RecruiterInInterview>().DeleteRangeAsync(recruiters);
+                    foreach (Guid accountId in request.Accounts)
                     {
-                        throw new Exception($"Interviews must be scheduled at least {minDaysBeforeInterview} days in advance.");
+                        Account account = await _unitOfWork.GetRepository<Account>()
+                            .SingleOrDefaultAsync(predicate: a => a.Id == accountId) ?? throw new Exception(MessageConstant.Account.Fail.NotFoundAccount);
+
+                        await _unitOfWork.GetRepository<RecruiterInInterview>().InsertAsync(new RecruiterInInterview
+                        {
+                            InterviewId = interview.Id,
+                            AccountId = accountId
+                        });
                     }
-                }          
+                }
+
                 if (interview.Registration.Status == RegistrationStatus.Approved_Duyet_Don
                     && !interview.IsPassed
                     && request.MeetingTime != interview.MeetingTime)
@@ -123,7 +156,6 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-
                 if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
                     && request.IsPassed)
                 {
@@ -136,7 +168,6 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-
                 if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
                     && !request.IsPassed)
                 {
@@ -149,62 +180,9 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-
+                
                 request.Adapt(interview);
                 _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
-
-                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.Interview.Fail.UpdateInterview);
-                }
-                return Success(isSuccessful);
-            }
-            catch (Exception ex)
-            {
-                return Fail<bool>(ex.Message);
-            }
-        }
-
-        public async Task<Result<bool>> UpdatePassStatus(Guid id, bool IsPassed)
-        {
-            try
-            {
-                Interview interview = await _unitOfWork.GetRepository<Interview>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)
-                    , include: a => a.Include(x => x.Registration))
-                    ?? throw new Exception(MessageConstant.Interview.Fail.NotFoundInterview);
-
-                interview.IsPassed = IsPassed;
-
-                if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
-                    && IsPassed)
-                {
-                    MailUtil.SendEmail(
-                        interview.Registration.Email,
-                        ContentMailUtil.Title_AnnounceApproveInterview,
-                        ContentMailUtil.AnnounceApproveInterview(
-                            interview.Registration.FullName
-                        ),
-                        ""
-                    );
-                }
-
-                if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
-                    && !IsPassed)
-                {
-                    MailUtil.SendEmail(
-                        interview.Registration.Email,
-                        ContentMailUtil.Title_AnnounceRejectInterview,
-                        ContentMailUtil.AnnounceRejectInterview(
-                            interview.Registration.FullName
-                        ),
-                        ""
-                    );
-                }
-
-                _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
-
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
@@ -239,7 +217,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Interview> CreateRoom(DateTimeOffset validFrom, Interview interview, Registration registration)
+       /* public async Task<Interview> CreateRoom(DateTimeOffset validFrom, Interview interview, Registration registration)
         {
             // Fetch connection string from configuration
             var connectionString = _configuration["AzureCommunication:ConnectionString"];
@@ -298,6 +276,6 @@ namespace CatechistHelper.Infrastructure.Services
             );
 
             return interview;
-        }
+        }*/
     }
 }

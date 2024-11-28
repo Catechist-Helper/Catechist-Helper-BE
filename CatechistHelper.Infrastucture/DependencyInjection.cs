@@ -12,9 +12,9 @@ using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Requests.Room;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
-using CatechistHelper.Infrastructure.Services;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
+using CatechistHelper.Domain.Dtos.Requests.Interview;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -117,7 +117,10 @@ namespace CatechistHelper.Infrastructure.Extensions
 
             config.NewConfig<CreateBudgetTransactionRequest, BudgetTransaction>()
                 .Ignore(x => x.TransactionImages);
-
+            config.NewConfig<CreateInterviewRequest, Interview>()
+                .Ignore(x => x.Accounts);
+            config.NewConfig<UpdateInterviewRequest, Interview>()
+                .Ignore(x => x.Accounts);
             return config;
         }
     }

@@ -9,5 +9,7 @@
         public bool IsPassed { get; set; }
 
         public string? Reason { get; set; }
+
+        public List<Guid>? Accounts { get; set; }
     }
 }
