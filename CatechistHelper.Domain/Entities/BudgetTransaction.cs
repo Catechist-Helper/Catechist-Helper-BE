@@ -26,5 +26,7 @@ namespace CatechistHelper.Domain.Entities
         [ForeignKey(nameof(Event))]
         public Guid EventId { get; set; }
         public Event Event { get; set; } = null!;
+
+        public ICollection<TransactionImage> TransactionImages { get; set; } = [];
     }
 }

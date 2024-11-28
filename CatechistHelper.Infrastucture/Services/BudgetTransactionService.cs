@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -15,17 +16,33 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class BudgetTransactionService : BaseService<BudgetTransactionService>, IBudgetTransactionService
     {
+        private readonly IFirebaseService _firebaseService;
         public BudgetTransactionService(
             IUnitOfWork<ApplicationDbContext> unitOfWork,
             ILogger<BudgetTransactionService> logger, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IFirebaseService firebaseService)
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<GetBudgetTransactionResponse>> Create(CreateBudgetTransactionRequest request)
         {
             BudgetTransaction budgetTransaction = request.Adapt<BudgetTransaction>();
+
+            if (request.TransactionImages.Count > 0)
+            {
+                string[] budgetTransactionImages = await _firebaseService.UploadImagesAsync(request.TransactionImages, $"event/{request.EventId}");
+                foreach (var image in budgetTransactionImages)
+                {
+                    await _unitOfWork.GetRepository<TransactionImage>().InsertAsync(new TransactionImage
+                    {
+                        BudgetTransaction = budgetTransaction,
+                        ImageUrl = image
+                    });
+                }
+            }
+
             BudgetTransaction result = await _unitOfWork.GetRepository<BudgetTransaction>().InsertAsync(budgetTransaction);
             bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
             if (!isSuccessful)

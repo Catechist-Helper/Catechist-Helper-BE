@@ -41,6 +41,7 @@ namespace CatechistHelper.Infrastructure.Database
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<SystemConfiguration> SystemConfigurations { get; set; }
         public DbSet<AbsenceRequest> AbsenceRequests { get; set; }
+        public DbSet<TransactionImage> TransactionImages { get; set; }
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -278,6 +279,12 @@ namespace CatechistHelper.Infrastructure.Database
                     .HasForeignKey(ar => ar.ApproverId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<TransactionImage>()
+            .HasOne(ti => ti.BudgetTransaction) 
+            .WithMany(bt => bt.TransactionImages)  
+            .HasForeignKey(ti => ti.BudgetTransactionId)  
+            .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
     }
