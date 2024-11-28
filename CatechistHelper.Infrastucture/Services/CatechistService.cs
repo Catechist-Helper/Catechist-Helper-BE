@@ -7,6 +7,7 @@ using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
@@ -214,6 +215,22 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 var catechist = await GetById(id);
 
+                if (catechist.IsTeaching && !request.IsTeaching)
+                {
+                    var classes = await _unitOfWork.GetRepository<CatechistInClass>()
+                        .GetListAsync(predicate: c => c.CatechistId == id && c.Class.ClassStatus == ClassStatus.Active,
+                                      include: c => c.Include(c => c.Class));
+
+                    if (classes.Count > 0)
+                    {
+                        // Get the class names
+                        var classNames = string.Join(", ", classes.Select(c => c.Class.Name));
+
+                        // Throw an exception with the class names listed
+                        throw new Exception($"Catechist has slots in active classes: {classNames}");
+                    }
+                }
+
                 request.Adapt(catechist);
                 _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
 
@@ -223,6 +240,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.Catechist.Fail.UpdateCatechist);
                 }
+
                 return Success(isSuccessful);
             }
             catch (Exception ex)
@@ -230,6 +248,7 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
 
         public async Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request)
         {
@@ -288,13 +307,13 @@ namespace CatechistHelper.Infrastructure.Services
             return null!;
         }
 
-        public async Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear, int page, int size)
+        public async Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear, int page, int size, ClassStatus status)
         {
             try
             {
                 IPaginate<CatechistInClass> catechistInClasses = await _unitOfWork.GetRepository<CatechistInClass>()
                     .GetPagingListAsync(
-                        predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear,
+                        predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear && c.Class.ClassStatus == status,
                         include: c => c.Include(cl => cl.Class)
                                        .ThenInclude(y => y.PastoralYear),
                         page: page,
