@@ -15,11 +15,10 @@ namespace CatechistHelper.Domain.Entities
         public string Name { get; set; } = null!;
 
         [Column("description")]
-        [StringLength(500)]
         public string Description { get; set; } = null!;
 
         [Column("duration")]
-        public TimeSpan Duration { get; set; }
+        public long Duration { get; set; }
 
         [Column("start_time")]
         public DateTime StartTime { get; set; }
@@ -29,6 +28,13 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("fee")]
         public double Fee { get; set; }
+
+        [Column("actual_fee")]
+        public double ActualFee { get; set; }
+
+        [Column("note")]
+        [StringLength(500)]
+        public double Note { get; set; }
 
         [Column("status")]
         [EnumDataType(typeof(ProcessStatus))]

@@ -6,13 +6,15 @@ using CatechistHelper.Domain.Dtos.Requests.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.PastoralYear;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 
 namespace CatechistHelper.Infrastructure.Services
@@ -115,7 +117,21 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 PastoralYear pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
+                    predicate: py => py.Id.Equals(id),
+                    include: py => py.Include(py => py.Classes))
+                    ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                bool success = DateTime.Now < new DateTime(2024, 9, 5);
+                if (request.PastoralYearStatus == PastoralYearStatus.Finished)
+                {
+                    if (pastoralYear.Classes.Any(c => DateTime.Now < c.EndDate))
+                    {
+                        throw new Exception(MessageConstant.PastoralYear.Fail.ClassNotFinish);
+                    }
+                    foreach (var classEntity in pastoralYear.Classes)
+                    {
+                        classEntity.ClassStatus = ClassStatus.Finished;
+                    }
+                }
 
                 request.Adapt(pastoralYear);
 

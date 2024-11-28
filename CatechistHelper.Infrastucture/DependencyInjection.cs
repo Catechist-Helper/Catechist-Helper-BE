@@ -14,6 +14,7 @@ using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Infrastructure.Services;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
+using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -112,7 +113,10 @@ namespace CatechistHelper.Infrastructure.Extensions
             .Map(dest => dest.ChristianName, src => src.ChristianName != null ? src.ChristianName.Name : string.Empty) 
             .Map(dest => dest.Level, src => src.Level.Name) 
             .Map(dest => dest.Grade, src => src.CatechistInGrades.FirstOrDefault() != null ? src.CatechistInGrades.FirstOrDefault().Grade.Name : string.Empty) 
-            .Map(dest => dest.Major, src => src.CatechistInGrades.FirstOrDefault() != null? src.CatechistInGrades.FirstOrDefault().Grade.Major.Name : string.Empty); 
+            .Map(dest => dest.Major, src => src.CatechistInGrades.FirstOrDefault() != null? src.CatechistInGrades.FirstOrDefault().Grade.Major.Name : string.Empty);
+
+            config.NewConfig<CreateBudgetTransactionRequest, BudgetTransaction>()
+                .Ignore(x => x.TransactionImages);
 
             return config;
         }

@@ -111,11 +111,9 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = request.Adapt<Registration>();
 
-                string folderCandidateName = ToLowerCaseAndDashed(request.FullName);
-
                 if (request.CertificateOfCandidates != null)
                 {
-                    string[] certificateOfCandidates = await _firebaseService.UploadImagesAsync(request.CertificateOfCandidates, $"registration/{folderCandidateName}");
+                    string[] certificateOfCandidates = await _firebaseService.UploadImagesAsync(request.CertificateOfCandidates, $"registration/{registration.Id}");
 
                     foreach (string certificateOfCandidate in certificateOfCandidates)
                     {

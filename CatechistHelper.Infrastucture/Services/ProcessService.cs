@@ -52,14 +52,23 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<GetProcessResponse>> Create(CreateProcessRequest request)
         {
-            Process process = request.Adapt<Process>();
-            Process result = await _unitOfWork.GetRepository<Process>().InsertAsync(process);
-            bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-            if (!isSuccessful)
+            try
             {
-                throw new Exception(MessageConstant.Process.Fail.Create);
+                Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
+                    predicate: e => e.Id == request.EventId) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                Process process = request.Adapt<Process>();
+                Process result = await _unitOfWork.GetRepository<Process>().InsertAsync(process);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Process.Fail.Create);
+                }
+                return Success(result.Adapt<GetProcessResponse>());
             }
-            return Success(result.Adapt<GetProcessResponse>());
+            catch (Exception ex)
+            {
+                return Fail<GetProcessResponse>(ex.Message);
+            }
         }
 
         public async Task<Result<bool>> Delete(Guid id)
@@ -93,6 +102,8 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
+                    predicate: e => e.Id == request.EventId) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
                 Process process = await _unitOfWork.GetRepository<Process>().SingleOrDefaultAsync(
                     predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Process.Fail.NotFound);
                 request.Adapt(process);

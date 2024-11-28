@@ -14,7 +14,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Process
         [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Description { get; set; } = null!;
 
-        public TimeSpan Duration { get; set; }
+        public long Duration { get; set; }
 
         public DateTime StartTime { get; set; }
 
