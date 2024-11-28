@@ -6,4 +6,10 @@
         public required List<Guid> CatechistIds { get; set; }
         public Guid MainCatechistId { get; set; }
     }
+
+    public class ArrageCatechistGradeRequest
+    {
+        public List<Guid> CatechistIds { get; set; } = [];
+        public Guid GradeId { get; set; }
+    }
 }

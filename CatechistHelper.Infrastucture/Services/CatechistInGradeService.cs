@@ -7,6 +7,7 @@ using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -84,5 +85,33 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
+        public async Task<Result<bool>> ArrangeCatechistGrade(ArrageCatechistGradeRequest request)
+        {
+            try
+            {
+                var catechistsInGrade = await _unitOfWork.GetRepository<CatechistInGrade>()
+                    .GetListAsync(predicate : c => request.CatechistIds.Contains(c.CatechisteId));
+
+                if (catechistsInGrade == null || catechistsInGrade.Count == 0)
+                {
+                    return Fail<bool>("No catechists found for the given IDs.");
+                }
+
+                foreach (var catechistInGrade in catechistsInGrade)
+                {
+                    catechistInGrade.GradeId = request.GradeId; 
+                }
+
+                await _unitOfWork.CommitAsync();
+
+                return Success(true);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
+
     }
 }
