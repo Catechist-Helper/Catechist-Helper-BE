@@ -14,6 +14,7 @@ using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -26,12 +27,15 @@ namespace CatechistHelper.Infrastructure.Services
 {
     public class ClassService : BaseService<ClassService>, IClassService
     {
+
+        private readonly ITimetableService _timetableService;
         public ClassService(
             IUnitOfWork<ApplicationDbContext> unitOfWork,
             ILogger<ClassService> logger, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, ITimetableService timetableService)
             : base(unitOfWork, logger, mapper, httpContextAccessor)
         {
+            _timetableService = timetableService;
         }
 
         public async Task<PagingResult<GetClassResponse>> GetPagination(ClassFilter? filter, int page, int size)
@@ -284,6 +288,72 @@ namespace CatechistHelper.Infrastructure.Services
                 if (!isSuccessful)
                 {
                     throw new Exception("Commit fail");
+                }
+
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> CreateClass(ClassRequest request)
+        {
+            try
+            {
+                await CheckRestrictionDateAsync();
+                var pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(predicate: y => y.Id == request.PastoralYearId);
+
+                Validator.EnsureNonNull(pastoralYear);
+
+                if (pastoralYear.PastoralYearStatus == PastoralYearStatus.Finished)
+                {
+                    throw new Exception("Pastoral year finished, cannot add class");
+                }
+
+                var grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(predicate: g => g.Id == request.GradeId);
+
+                Validator.EnsureNonNull(grade);
+
+                string[] years = pastoralYear.Name.Split('-');
+                var startDate = await _timetableService.GetStartDate(years[0]);
+                var endDate = await _timetableService.GetEndDate(years[1]);
+
+                var classEntity = request.Adapt<Class>();
+                classEntity.StartDate = startDate;
+                classEntity.EndDate = endDate;
+
+                await _unitOfWork.GetRepository<Class>().InsertAsync(classEntity);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
+                if (!isSuccessful)
+                {
+                    throw new Exception("Commit fail");
+                }
+
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(MessageConstant.Class.Fail.CreateClass + ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> UpdateClass(Guid id, ClassRequest request)
+        {
+            try
+            {
+                var classEntity = await _unitOfWork.GetRepository<Class>().SingleOrDefaultAsync(predicate: c => c.Id == id);
+
+                request.Adapt(classEntity);
+
+                _unitOfWork.GetRepository<Class>().UpdateAsync(classEntity);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Class.Fail.UpdateClass);
                 }
 
                 return Success(isSuccessful);

@@ -14,5 +14,7 @@ namespace CatechistHelper.Application.Services
         Task<PagingResult<GetSlotResponse>> GetSlotsByClassId(Guid id, int page, int size);
         Task<Result<bool>> UpdateCatechistInClass(Guid id, CatechistInClassRequest classRequest);
         Task<Result<bool>> UpdateClassRoom(Guid id, RoomOfClassRequest request);
+        Task<Result<bool>> CreateClass(ClassRequest request);
+        Task<Result<bool>> UpdateClass(Guid id, ClassRequest request);
     }
 }

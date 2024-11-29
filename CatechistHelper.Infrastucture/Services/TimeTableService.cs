@@ -175,7 +175,7 @@ namespace CatechistHelper.Infrastructure.Services
         }
 
         // Get list of holidays as DateTime
-        private static async Task<List<DateTime>> GetHolidayDates(DateTime startDate, DateTime? endDate)
+        public static async Task<List<DateTime>> GetHolidayDates(DateTime startDate, DateTime? endDate)
         {
             var holidays = await HolidayService.GetHolidaysInRange(startDate, endDate);
             return holidays.Select(h => HolidayService.ParseDate(h.Start.Date, "yyyy-MM-dd")).ToList();
