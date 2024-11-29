@@ -42,7 +42,6 @@ namespace CatechistHelper.Infrastructure.Services
                     include: a => a.Include(a => a.CertificateOfCandidates)
                                    .Include(a => a.Interview)
                                    .Include(a => a.RegistrationProcesses));
-
                 return Success(application.Adapt<GetRegistrationResponse>());
             }
             catch (Exception ex)
@@ -103,7 +102,6 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 filterQuery = filterQuery.AndAlso(r => r.Status.Equals(filter.Status));
             }
-
             return filterQuery;
         }
 
@@ -112,7 +110,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Registration registration = request.Adapt<Registration>();
-
+                // Add certificates
                 if (request.CertificateOfCandidates != null)
                 {
                     string[] certificateOfCandidates = await _firebaseService.UploadImagesAsync(request.CertificateOfCandidates, $"registration/{registration.Id}");
@@ -126,17 +124,15 @@ namespace CatechistHelper.Infrastructure.Services
                         });
                     }
                 }
-
                 Registration result = await _unitOfWork.GetRepository<Registration>().InsertAsync(registration);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
                     throw new Exception(MessageConstant.Registration.Fail.CreateRegistration);
                 }
-
+                // Send mail after regis
                 MailUtil.SendEmail(request.Email, ContentMailUtil.Title_ThankingForRegistration,
                     ContentMailUtil.ThankingForRegistration(request.FullName), "");
-
                 return Success(_mapper.Map<GetRegistrationResponse>(result));
             }
             catch (Exception ex)
@@ -191,9 +187,12 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id));
-                registration.IsDeleted = true;
-                _unitOfWork.GetRepository<Registration>().UpdateAsync(registration);
+                    predicate: a => a.Id.Equals(id),
+                    include: r => r.Include(r => r.Interview).ThenInclude(i => i.RecruiterInInterviews)
+                                   .Include(r => r.CertificateOfCandidates)
+                                   .Include(r => r.RegistrationProcesses)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
+                _unitOfWork.GetRepository<Registration>().DeleteAsync(registration);
+                await _firebaseService.DeleteImagesAsync(registration.CertificateOfCandidates.Select(coc => coc.ImageUrl).ToList());
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {

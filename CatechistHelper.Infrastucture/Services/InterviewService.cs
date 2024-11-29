@@ -58,8 +58,6 @@ namespace CatechistHelper.Infrastructure.Services
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
                 {
-                    /*var recruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(predicate: r => r.InterviewId == registration.Id);
-                    if (recruiters.Any()) _unitOfWork.GetRepository<RecruiterInInterview>().DeleteRangeAsync(recruiters);*/
                     foreach (Guid accountId in request.Accounts)
                     {
                         Account account = await _unitOfWork.GetRepository<Account>()

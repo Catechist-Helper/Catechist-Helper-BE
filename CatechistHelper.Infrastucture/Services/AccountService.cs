@@ -1,28 +1,29 @@
-using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
-using CatechistHelper.Domain.Dtos.Requests.Account;
-using CatechistHelper.Domain.Dtos.Requests.Authentication;
-using CatechistHelper.Domain.Dtos.Responses.Account;
-using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
-using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
+using CatechistHelper.Application.GoogleServices;
+using CatechistHelper.Infrastructure.Utils;
+using Microsoft.IdentityModel.Tokens;
+using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Requests.Account;
+using CatechistHelper.Domain.Dtos.Responses.Authentication;
+using CatechistHelper.Domain.Dtos.Requests.Authentication;
 
 namespace CatechistHelper.Infrastructure.Services
 {
     public class AccountService : BaseService<AccountService>, IAccountService
     {
+        private const int bufferMinutes = 30;
         private readonly IFirebaseService _firebaseService;
 
         public AccountService(IFirebaseService firebaseService, IUnitOfWork<ApplicationDbContext> unitOfWork, ILogger<AccountService> logger, IMapper mapper,
@@ -225,6 +226,40 @@ namespace CatechistHelper.Infrastructure.Services
         {
             return await _unitOfWork.GetRepository<Account>()
                 .SingleOrDefaultAsync(predicate: a => a.Email.Equals(email), include: query => query.Include(a => a.Role));
+        }
+
+        public async Task<PagingResult<GetAccountResponse>> GetFreeRecruiter(DateTime meetingTime, int page, int size)
+        {
+            try
+            {
+                DateTime bufferStart = meetingTime.AddMinutes(-bufferMinutes);
+                DateTime bufferEnd = meetingTime.AddMinutes(bufferMinutes);
+
+                // Get busy recruiters
+                var busyRecruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(
+                        predicate: ri => ri.Interview.MeetingTime >= bufferStart && ri.Interview.MeetingTime <= bufferEnd,
+                        include: ri => ri.Include(ri => ri.Interview),
+                        selector: ri => ri.Account.Id
+                    );
+                // Get free recruiters
+                IPaginate<Account> recruiters =
+                    await _unitOfWork.GetRepository<Account>()
+                    .GetPagingListAsync(
+                            predicate: a => !a.IsDeleted && !busyRecruiters.Contains(a.Id),
+                            orderBy: a => a.OrderByDescending(x => x.CreatedAt),
+                            page: page,
+                            size: size
+                        );
+                return SuccessWithPaging(
+                        recruiters.Adapt<IPaginate<GetAccountResponse>>(),
+                        page,
+                        size,
+                        recruiters.Total);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }
