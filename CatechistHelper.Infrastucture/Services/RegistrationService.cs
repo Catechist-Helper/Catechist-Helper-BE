@@ -37,12 +37,12 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                Registration application = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id),
-                    include: a => a.Include(a => a.CertificateOfCandidates)
-                                   .Include(a => a.Interview)
-                                   .Include(a => a.RegistrationProcesses));
-                return Success(application.Adapt<GetRegistrationResponse>());
+                Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
+                    predicate: r => r.Id.Equals(id),
+                    include: r => r.Include(r => r.CertificateOfCandidates)
+                                   .Include(r => r.Interview).ThenInclude(i => i.Accounts)
+                                   .Include(r => r.RegistrationProcesses));
+                return Success(registration.Adapt<GetRegistrationResponse>());
             }
             catch (Exception ex)
             {
@@ -54,22 +54,22 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                IPaginate<Registration> applications =
+                IPaginate<Registration> registrations =
                     await _unitOfWork.GetRepository<Registration>()
                     .GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
-                            orderBy: a => a.OrderBy(x => x.Status).ThenByDescending(x => x.CreatedAt),
-                            include: a => a.Include(a => a.CertificateOfCandidates)
-                                           .Include(a => a.Interview)
-                                           .Include(a => a.RegistrationProcesses),
+                            orderBy: r => r.OrderBy(r => r.Status).ThenByDescending(r => r.CreatedAt),
+                            include: r => r.Include(r => r.CertificateOfCandidates)
+                                           .Include(r => r.Interview).ThenInclude(i => i.Accounts)
+                                           .Include(r => r.RegistrationProcesses),
                             page: page,
                             size: size
                         );
                 return SuccessWithPaging(
-                        applications.Adapt<IPaginate<GetRegistrationResponse>>(),
+                        registrations.Adapt<IPaginate<GetRegistrationResponse>>(),
                         page,
                         size,
-                        applications.Total);
+                        registrations.Total);
             }
             catch (Exception ex)
             {
