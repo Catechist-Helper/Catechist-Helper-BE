@@ -72,19 +72,22 @@ namespace CatechistHelper.Infrastructure.Database
             modelBuilder.Entity<Interview>()
                 .HasOne(i => i.Registration)
                 .WithOne(r => r.Interview)
-                .HasForeignKey<Interview>(i => i.RegistrationId);
+                .HasForeignKey<Interview>(i => i.RegistrationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<RegistrationProcess>()
                 .HasOne(ip => ip.Registration)
                 .WithMany(r => r.RegistrationProcesses)
-                .HasForeignKey(ip => ip.RegistrationId);
+                .HasForeignKey(ip => ip.RegistrationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Interview>()
                 .HasMany(i => i.Accounts)
                 .WithMany(a => a.Interviews)
                 .UsingEntity<RecruiterInInterview>(
-                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Restrict),
-                    r => r.HasOne<Interview>(e => e.Interview).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Restrict));
+                    l => l.HasOne<Account>(e => e.Account).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Cascade),
+                    r => r.HasOne<Interview>(e => e.Interview).WithMany(e => e.RecruiterInInterviews).OnDelete(DeleteBehavior.Cascade));
 
             modelBuilder.Entity<CertificateOfCandidate>()
                 .HasOne(coc => coc.Registration)

@@ -26,6 +26,8 @@ namespace CatechistHelper.Domain.Constants
             public const string AccountsEndPoint = ApiEndpoint + "/accounts";
             // <summary>"api/v1/accounts/{id}"</summary>
             public const string AccountEndPoint = AccountsEndPoint + ByIdRoute;
+            /// <summary>"api/v1/accounts"</summary>
+            public const string RecruitersEndPoint = AccountsEndPoint + "/recruiters";
         }
         public static class Certificate
         {

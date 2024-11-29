@@ -69,5 +69,13 @@ namespace CatechistHelper.API.Controllers
             Result<LoginResponse> result = await _accountService.LoginAsync(request);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [HttpGet(ApiEndPointConstant.Account.RecruitersEndPoint)]
+        [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFreeRecruiter([FromQuery] DateTime meetingTime, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetAccountResponse> result = await _accountService.GetFreeRecruiter(meetingTime, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
 }
