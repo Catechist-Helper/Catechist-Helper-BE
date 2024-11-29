@@ -26,6 +26,22 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [HttpPost(ApiEndPointConstant.Class.ClassesEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateClass([FromBody] ClassRequest request)
+        {
+            Result<bool> result = await _classService.CreateClass(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpPut(ApiEndPointConstant.Class.ClassEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateClass([FromRoute] Guid id, [FromBody] ClassRequest request)
+        {
+            Result<bool> result = await _classService.UpdateClass(id, request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpGet(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -44,7 +60,7 @@ namespace CatechistHelper.API.Controllers
 
         [HttpPatch(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateClass([FromRoute] Guid id, [FromBody] CatechistInClassRequest classRequest)
+        public async Task<IActionResult> UpdateClassCatechists([FromRoute] Guid id, [FromBody] CatechistInClassRequest classRequest)
         {
             Result<bool> result = await _classService.UpdateCatechistInClass(id, classRequest);
             return StatusCode((int)result.StatusCode, result);

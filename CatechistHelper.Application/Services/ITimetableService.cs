@@ -11,5 +11,9 @@ namespace CatechistHelper.Application.Services
         Task<byte[]> ExportSlotsToExcel(Guid classId);
         Task<byte[]> ExportPastoralYearToExcel(string pastoralYear);
         Task<byte[]> ExportCatechists();
+        Task<DateTime> GetStartTime();
+        Task<DateTime> GetEndTime();
+        Task<DateTime> GetStartDate(string year);
+        Task<DateTime> GetEndDate(string year);
     }
 }
