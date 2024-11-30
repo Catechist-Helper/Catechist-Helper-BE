@@ -53,6 +53,7 @@ namespace CatechistHelper.Infrastructure.Services
                 await _unitOfWork.GetRepository<CatechistInSlot>().InsertAsync(newCatechistInSlot);
                 slot.CatechistInSlots.Add(newCatechistInSlot);
 
+                _unitOfWork.GetRepository<Slot>().UpdateAsync(slot);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
 
                 return isSuccessful
@@ -119,8 +120,9 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                return NotFounds<SearchCatechistResponse>(ex.Message);
             }
-            return null!;
+            
         }
 
 

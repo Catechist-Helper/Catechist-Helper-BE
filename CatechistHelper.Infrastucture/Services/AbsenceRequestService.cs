@@ -68,7 +68,7 @@ namespace CatechistHelper.Infrastructure.Services
         private static void ValidateSlotAvailability(Slot slot, int absenceDateConfig)
         {
             var allowedDate = slot.Date.AddDays(absenceDateConfig);
-            if (DateTime.Now < allowedDate)
+            if (DateTime.Now > allowedDate)
             {
                 throw new Exception(string.Format(MessageConstant.AbsentRequest.Fail.NotValid, absenceDateConfig));
             }
@@ -140,19 +140,15 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus? requestStatus = null)
+        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus requestStatus)
         {
             try
             {
                 var absenceRequests = await _unitOfWork.GetRepository<AbsenceRequest>()
-                    .GetListAsync(include: ar => ar.Include(ar => ar.Catechist)
+                    .GetListAsync(predicate : a => a.Status == requestStatus,
+                                  include: ar => ar.Include(ar => ar.Catechist)
                                                    .Include(ar => ar.ReplacementCatechist)
                                                    .Include(ar => ar.Slot));
-
-                if (requestStatus.HasValue)
-                {
-                    absenceRequests = absenceRequests.Where(ar => ar.Status == requestStatus.Value).ToList();
-                }
 
                 var result = absenceRequests.Adapt<List<GetAbsentRequest>>();
 

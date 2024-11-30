@@ -10,6 +10,7 @@ using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -195,6 +196,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                Validator.CheckPageInput(page, size);
                 var result = await GetAll(page, size);
                 return SuccessWithPaging(
                             result.Adapt<IPaginate<GetCatechistResponse>>(),
