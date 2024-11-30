@@ -231,30 +231,23 @@ namespace CatechistHelper.Infrastructure.Services
                 .SingleOrDefaultAsync(predicate: a => a.Email.Equals(email), include: query => query.Include(a => a.Role));
         }
 
-        public async Task<PagingResult<GetAccountResponse>> GetFreeRecruiter(DateTime meetingTime, int page, int size)
+        public async Task<PagingResult<GetRecruiterResponse>> GetFreeRecruiter(DateTime meetingTime, int page, int size)
         {
             try
             {
-                DateTime bufferStart = meetingTime.AddMinutes(-bufferMinutes);
-                DateTime bufferEnd = meetingTime.AddMinutes(bufferMinutes);
-
-                // Get busy recruiters
-                var busyRecruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(
-                        predicate: ri => ri.Interview.MeetingTime >= bufferStart && ri.Interview.MeetingTime <= bufferEnd,
-                        include: ri => ri.Include(ri => ri.Interview),
-                        selector: ri => ri.Account.Id
-                    );
-                // Get free recruiters
+                int day = meetingTime.Day;
                 IPaginate<Account> recruiters =
                     await _unitOfWork.GetRepository<Account>()
                     .GetPagingListAsync(
-                            predicate: a => !a.IsDeleted && !busyRecruiters.Contains(a.Id),
+                            predicate: a => !a.IsDeleted,
+                            include: a => a.Include(a => a.Interviews.Where(i => i.MeetingTime.Day == day))
+                                           .Include(a => a.Role),
                             orderBy: a => a.OrderByDescending(x => x.CreatedAt),
                             page: page,
                             size: size
                         );
                 return SuccessWithPaging(
-                        recruiters.Adapt<IPaginate<GetAccountResponse>>(),
+                        recruiters.Adapt<IPaginate<GetRecruiterResponse>>(),
                         page,
                         size,
                         recruiters.Total);
