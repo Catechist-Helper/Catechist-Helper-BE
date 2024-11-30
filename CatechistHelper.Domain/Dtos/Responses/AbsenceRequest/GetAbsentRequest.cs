@@ -13,8 +13,6 @@ namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
 
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
-
-        public virtual Entities.Slot Slot { get; set; } = null!;
         public string CatechistName { get; set; } = string.Empty;
         public string? ReplacementCatechistName { get; set; }
         public string? Approver { get; set; }

@@ -52,7 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-
+                Validator.CheckPageInput(page, size);
                 IPaginate<Account> accounts =
                     await _unitOfWork.GetRepository<Account>()
                     .GetPagingListAsync(
@@ -70,8 +70,8 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                return NotFounds<GetAccountResponse>(ex.Message);
             }
-            return null!;
         }
 
         public async Task<Result<GetAccountResponse>> Create(CreateAccountRequest request)
@@ -212,7 +212,10 @@ namespace CatechistHelper.Infrastructure.Services
         {
             var account = await GetAccountByEmailAsync(email);
 
-            ArgumentNullException.ThrowIfNull(account);
+            if(account == null)
+            {
+                throw new Exception(MessageConstant.Login.Fail.InvalidAccount);
+            }
 
             if (!PasswordUtil.VerifyPassword(password, account.HashedPassword))
             {

@@ -10,6 +10,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> SubmitAbsentRequest(AbsenceRequestDto requestDto);
         Task<Result<bool>> ProcessAbsentRequest(AbsenceApproveRequest absenceApprove);
         Task<Result<bool>> AssignNewCatechist(AssignCatechistRequest assignCatechistRequest);
-        Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus? requestStatus = null);
+        Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus requestStatus);
     }
 }

@@ -15,6 +15,7 @@ using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Requests.Interview;
+using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -106,8 +107,7 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.UpdateAt, src => src.UpdatedAt)
                 .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
                 .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
-                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null)
-                .Map(dest => dest.Slot, src => src.Slot);
+                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
 
             config.NewConfig<Catechist, SearchCatechistResponse>()
             .Map(dest => dest.ChristianName, src => src.ChristianName != null ? src.ChristianName.Name : string.Empty) 
@@ -121,6 +121,7 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Accounts);
             config.NewConfig<UpdateInterviewRequest, Interview>()
                 .Ignore(x => x.Accounts);
+
             return config;
         }
     }

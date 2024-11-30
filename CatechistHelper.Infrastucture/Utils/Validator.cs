@@ -14,5 +14,25 @@
                 throw new ArgumentException($"Exist", nameof(value));
             }
         }
+
+        public static void CheckPageInput(params int[] values)
+        {
+            if (values.Length == 0)
+            {
+                throw new ArgumentException("At least one value must be provided.");
+            }
+
+            foreach (var value in values)
+            {
+                if (value < 1)
+                {
+                    throw new ArgumentException("All values must be greater than or equal to 1.");
+                }
+            }
+        }
+
+
+
+
     }
 }
