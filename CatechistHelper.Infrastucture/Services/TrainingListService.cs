@@ -165,7 +165,7 @@ namespace CatechistHelper.Infrastructure.Services
                     include: l => l.Include(l => l.Certificates)) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 Certificate certificate = await _unitOfWork.GetRepository<Certificate>().SingleOrDefaultAsync(
                     predicate: c => c.Id == request.CertificateId) ?? throw new Exception(MessageConstant.Certificate.Fail.NotFoundCertificate);
-                if (!nextLevel.Certificates.Contains(certificate))
+                if (!nextLevel.Certificates.Any(c => c.LevelId == certificate.LevelId))
                 {
                     throw new Exception(MessageConstant.Certificate.Fail.UnsuitableLevel);
                 }
