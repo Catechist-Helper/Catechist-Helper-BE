@@ -92,7 +92,10 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
+                    predicate: a => a.Id.Equals(id),
+                    include: tl => tl.Include(tl => tl.PreviousLevel)
+                                     .Include(tl => tl.NextLevel)
+                                     .Include(tl => tl.Certificate)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
 
                 return Success(trainingList.Adapt<GetTrainingListResponse>());
             }
