@@ -11,6 +11,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Data.Entity;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -76,7 +77,9 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Result<GetBudgetTransactionResponse>> Get(Guid id)
         {
             BudgetTransaction budgetTransaction = await _unitOfWork.GetRepository<BudgetTransaction>().SingleOrDefaultAsync(
-                predicate: bt => bt.Id == id) ?? throw new Exception(MessageConstant.BudgetTransaction.Fail.NotFound);
+                predicate: bt => bt.Id == id,
+                include: bt => (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<BudgetTransaction, object>)bt.Include(bt => bt.TransactionImages)) 
+                ?? throw new Exception(MessageConstant.BudgetTransaction.Fail.NotFound);
             return Success(budgetTransaction.Adapt<GetBudgetTransactionResponse>());
         }
 

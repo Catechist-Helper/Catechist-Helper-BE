@@ -142,6 +142,7 @@ namespace CatechistHelper.Infrastructure.Services
             IPaginate<BudgetTransaction> budgetTransaction =
                    await _unitOfWork.GetRepository<BudgetTransaction>().GetPagingListAsync(
                             predicate: bt => bt.EventId == id,
+                            include: bt => bt.Include(bt => bt.TransactionImages),
                             page: page,
                             size: size);
             return SuccessWithPaging(

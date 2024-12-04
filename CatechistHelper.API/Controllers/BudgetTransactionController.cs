@@ -30,7 +30,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.BudgetTransaction.BudgetTransactionsEndpoint)]
         [ProducesResponseType(typeof(Result<GetBudgetTransactionResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateBudgetTransactionRequest request)
+        public async Task<IActionResult> Create([FromForm] CreateBudgetTransactionRequest request)
         {
             Result<GetBudgetTransactionResponse> result = await _budgetTransactionService.Create(request);
             return StatusCode((int)result.StatusCode, result);
@@ -39,7 +39,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPut(ApiEndPointConstant.BudgetTransaction.BudgetTransactionEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateBudgetTransactionRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateBudgetTransactionRequest request)
         {
             Result<bool> result = await _budgetTransactionService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);

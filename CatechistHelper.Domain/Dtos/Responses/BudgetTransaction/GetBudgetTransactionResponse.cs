@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Dtos.Responses.Event;
+using CatechistHelper.Domain.Dtos.Responses.TransactionImages;
 
 namespace CatechistHelper.Domain.Dtos.Responses.BudgetTransaction
 {
@@ -10,5 +11,6 @@ namespace CatechistHelper.Domain.Dtos.Responses.BudgetTransaction
         public DateTime TransactionAt { get; set; }
         public string Note { get; set; } = string.Empty;
         public GetEventResponse? Event { get; set; }
+        public List<GetTransactionImagesResponse> TransactionImages { get; set; }
     }
 }

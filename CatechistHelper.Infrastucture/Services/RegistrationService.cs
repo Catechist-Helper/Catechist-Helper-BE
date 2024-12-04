@@ -102,6 +102,14 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 filterQuery = filterQuery.AndAlso(r => r.Status.Equals(filter.Status));
             }
+            if (filter.InterviewStartDate != null)
+            {
+                filterQuery = filterQuery.AndAlso(r => r.Interview != null && r.Interview.MeetingTime >= filter.InterviewStartDate);
+            }
+            if (filter.InterviewEndDate != null)
+            {
+                filterQuery = filterQuery.AndAlso(r => r.Interview != null && r.Interview.MeetingTime <= filter.InterviewEndDate);
+            }
             return filterQuery;
         }
 

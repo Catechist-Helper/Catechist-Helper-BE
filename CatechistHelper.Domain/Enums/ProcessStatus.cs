@@ -2,5 +2,8 @@
 {
     public enum ProcessStatus : byte
     {
+        Pending,
+        Completed,
+        Cancelled
     }
 }

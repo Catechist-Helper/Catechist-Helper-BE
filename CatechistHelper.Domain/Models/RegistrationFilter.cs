@@ -8,5 +8,7 @@ namespace CatechistHelper.Domain.Models
         public DateTime? EndDate { get; set; }
         public string? Year { get; set; }
         public RegistrationStatus? Status { get; set; }
+        public DateTime? InterviewStartDate { get; set; }
+        public DateTime? InterviewEndDate { get; set; }
     }
 }
