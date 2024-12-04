@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using Azure.Core;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -6,6 +7,7 @@ using CatechistHelper.Domain.Dtos.Requests.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -117,12 +119,40 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: ar => ar.Id == assignCatechistRequest.RequestId
                 );
 
-                if (absenceRequest.Status == RequestStatus.Rejected)
+                if (absenceRequest.Status != RequestStatus.Approved)
                 {
                     throw new Exception(MessageConstant.AbsentRequest.Fail.NotApproved);
                 }
 
                 absenceRequest.ReplacementCatechistId = assignCatechistRequest.ReplacementCatechistId;
+
+                var slot = await _unitOfWork.GetRepository<Slot>()
+                    .SingleOrDefaultAsync(
+                        predicate: s => s.Id == absenceRequest.SlotId,
+                        include: s => s.Include(s => s.CatechistInSlots)
+                    );
+
+                Validator.EnsureNonNull(slot);
+
+                var catechistToReplace = slot.CatechistInSlots
+                    .FirstOrDefault(c => c.CatechistId == absenceRequest.CatechistId);
+
+                Validator.EnsureNonNull(catechistToReplace);
+
+                slot.CatechistInSlots.Remove(catechistToReplace);
+                _unitOfWork.GetRepository<CatechistInSlot>().DeleteAsync(catechistToReplace);
+
+                var newCatechistInSlot = new CatechistInSlot
+                {
+                    CatechistId = assignCatechistRequest.ReplacementCatechistId,
+                    Type = assignCatechistRequest.Type.ToString(),
+                    SlotId = absenceRequest.SlotId
+                };
+
+                await _unitOfWork.GetRepository<CatechistInSlot>().InsertAsync(newCatechistInSlot);
+                slot.CatechistInSlots.Add(newCatechistInSlot);
+
+                _unitOfWork.GetRepository<Slot>().UpdateAsync(slot);
 
                 _unitOfWork.GetRepository<AbsenceRequest>().UpdateAsync(absenceRequest);
 
