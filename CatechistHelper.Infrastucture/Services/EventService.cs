@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using CatechistHelper.Application.Extensions;
+﻿using CatechistHelper.Application.Extensions;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
