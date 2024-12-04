@@ -34,7 +34,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("note")]
         [StringLength(500)]
-        public double Note { get; set; }
+        public string Note { get; set; } = string.Empty;
 
         [Column("status")]
         [EnumDataType(typeof(ProcessStatus))]

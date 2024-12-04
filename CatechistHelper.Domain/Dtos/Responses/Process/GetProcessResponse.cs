@@ -11,6 +11,8 @@ namespace CatechistHelper.Domain.Dtos.Responses.Process
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double Fee { get; set; }
+        public double ActualFee { get; set; }
+        public string Note { get; set; }
         public ProcessStatus Status { get; set; }
         public Guid EventId { get; set; }
     }
