@@ -6,7 +6,7 @@ namespace CatechistHelper.Infrastructure.Utils
 {
     public static class MailUtil
     {
-        public static string SendEmail(string to, string subject, string body, string attachFile)
+        public static string SendEmail(string to, string subject, string body, string? attachFile = null)
         {
             try
             {
