@@ -2,6 +2,8 @@
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
+using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -22,6 +24,15 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> AddCatechistToGrade([FromBody] CreateCatechistInClassRequest request)
         {
             Result<bool> result = await _catechistInClassService.AddCatechistToClass(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassSearchEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SearchCatechists([FromRoute] Guid id, [FromQuery] Guid excludeId, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<SearchCatechistResponse> result = await _catechistInClassService.SearchAvailableCatechists(id, excludeId, page, size);
             return StatusCode((int)result.StatusCode, result);
         }
     }

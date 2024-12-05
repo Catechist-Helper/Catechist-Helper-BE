@@ -5,6 +5,7 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using CatechistHelper.Infrastructure.Utils;
@@ -97,7 +98,7 @@ namespace CatechistHelper.Infrastructure.Services
                     .And(c => c.CatechistInGrades.Any(g => g.GradeId == gradeId || g.Grade.MajorId == majorId)) // Same grade or major
                     .And(c => c.Id != excludeId)  // Exclude the current catechist
                     .And(c => !c.CatechistInSlots
-                        .Any(cs => cs.Slot.Date == date));  // Exclude catechists with the same date
+                        .Any(cs => cs.Slot.Date == date && cs.Type == CatechistInSlotType.Main.ToString()));  // Exclude catechists with the same date
 
                 IPaginate<Catechist> catechists = await _unitOfWork.GetRepository<Catechist>()
                     .GetPagingListAsync(
