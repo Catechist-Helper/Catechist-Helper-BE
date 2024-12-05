@@ -142,6 +142,18 @@ namespace CatechistHelper.Infrastructure.Services
                 slot.CatechistInSlots.Remove(catechistToReplace);
                 _unitOfWork.GetRepository<CatechistInSlot>().DeleteAsync(catechistToReplace);
 
+
+                var existCatechistInSlot = await _unitOfWork.GetRepository<CatechistInSlot>().SingleOrDefaultAsync(
+                    predicate: c => c.CatechistId == assignCatechistRequest.ReplacementCatechistId
+                    && c.Slot.Date == slot.Date,
+                    include: c => c.Include(s => s.Slot)
+                );
+
+                if (existCatechistInSlot != null)
+                {
+                    _unitOfWork.GetRepository<CatechistInSlot>().DeleteAsync(existCatechistInSlot);
+                }
+
                 var newCatechistInSlot = new CatechistInSlot
                 {
                     CatechistId = assignCatechistRequest.ReplacementCatechistId,
@@ -170,7 +182,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus requestStatus)
+        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus requestStatus, Guid? cId)
         {
             try
             {
@@ -179,6 +191,11 @@ namespace CatechistHelper.Infrastructure.Services
                                   include: ar => ar.Include(ar => ar.Catechist)
                                                    .Include(ar => ar.ReplacementCatechist)
                                                    .Include(ar => ar.Slot));
+                
+                if(cId != null)
+                {
+                    absenceRequests = absenceRequests.Where(a => a.Catechist.Id == cId).ToList();
+                }
 
                 var result = absenceRequests.Adapt<List<GetAbsentRequest>>();
 
