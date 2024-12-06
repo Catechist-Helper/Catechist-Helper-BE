@@ -7,6 +7,7 @@ namespace CatechistHelper.Application.Services
     public interface ICatechistInClassService
     {
         Task<Result<bool>> AddCatechistToClass(CreateCatechistInClassRequest request);
+        Task<Result<bool>> ReplaceCatechistInClass(ReplaceCatechistInClassRequest request);
         Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid excludeId, int page, int size);
     }
 }

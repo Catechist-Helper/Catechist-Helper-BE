@@ -193,7 +193,7 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistInClassSearchEndpoint = CatechistInClassEndpoint + "/search";
         }
 
-        public static class CatechistInSlot
+        public static class CatechistInSlots
         {
             public const string CatechistInSlotsEndpoint = ApiEndpoint + "/catechist-in-slots";
             public const string CatechistInSlotEndpoint = CatechistInSlotsEndpoint + ByIdRoute;
@@ -297,6 +297,15 @@ namespace CatechistHelper.Domain.Constants
             public const string EventCategoriesEndpoint = ApiEndpoint + "/event-categories";
             /// <summary>"api/v1/event-categories/{id}"</summary>
             public const string EventCategoryEndpoint = EventCategoriesEndpoint + ByIdRoute;
+        }
+
+
+        public static class LeaveRequestEndpoint
+        {
+            public const string Endpoint = ApiEndpoint + "/leavers";
+            public const string Submit = Endpoint + "/submit";
+            public const string AbsenceProcess = Endpoint + "/process";
+            public const string AssignCatechist = Endpoint + "/assign";
         }
     }
 }

@@ -473,7 +473,7 @@ namespace CatechistHelper.Domain.Constants
         public static class CatechistInSlot
         {
             #region CatechistInClass Field
-            private const string CatechistInSlotMessage = "CatechistInSlot";
+            private const string CatechistInSlotMessage = "CatechistInSlots";
             #endregion
             public static class Success
             {
