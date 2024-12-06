@@ -28,7 +28,7 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 var process = await _unitOfWork.GetRepository<Process>().SingleOrDefaultAsync(
-                    predicate: p => p.Id == processId,
+                    predicate: p => p.Id.Equals(processId),
                     include: p => p.Include(p => p.MemberOfProcesses)
                 ) ?? throw new Exception(MessageConstant.Process.Fail.NotFound);
                 var requestedAccounts = await _unitOfWork.GetRepository<Account>().GetListAsync(
@@ -51,7 +51,7 @@ namespace CatechistHelper.Infrastructure.Services
                 foreach (var account in request)
                 {
                     var accountFromDb = await _unitOfWork.GetRepository<MemberOfProcess>().SingleOrDefaultAsync(
-                        predicate: mop => mop.AccountId == account.Id);
+                        predicate: mop => mop.ProcessId == mop.ProcessId && mop.AccountId == account.Id);
                     if (accountFromDb != null)
                     {
                         accountFromDb.IsMain = account.IsMain;

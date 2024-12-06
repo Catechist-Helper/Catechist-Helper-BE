@@ -4,6 +4,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Member;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
@@ -44,6 +45,7 @@ namespace CatechistHelper.Infrastructure.Services
                 if (accountsToRemove.Any())
                 {
                     _unitOfWork.GetRepository<Member>().DeleteRangeAsync(accountsToRemove);
+                    await _unitOfWork.CommitAsync();
                 }
                 // Lists for inserts and updates
                 var accountsToInsert = new List<Member>();
@@ -51,7 +53,7 @@ namespace CatechistHelper.Infrastructure.Services
                 foreach (var account in request)
                 {
                     var accountFromDb = await _unitOfWork.GetRepository<Member>().SingleOrDefaultAsync(
-                        predicate: m => m.AccountId == account.Id);
+                        predicate: m => m.EventId == eventId && m.AccountId == account.Id);
                     if (accountFromDb != null)
                     {
                         accountFromDb.RoleEventId = account.RoleEventId;
@@ -71,10 +73,12 @@ namespace CatechistHelper.Infrastructure.Services
                 if (accountsToInsert.Any())
                 {
                     await _unitOfWork.GetRepository<Member>().InsertRangeAsync(accountsToInsert);
+                    await _unitOfWork.CommitAsync();
                 }
                 if (accountsToUpdate.Any())
                 {
                     _unitOfWork.GetRepository<Member>().UpdateRange(accountsToUpdate);
+                    await _unitOfWork.CommitAsync();
                 }
                 await _unitOfWork.CommitAsync();
                 return Success(true);
