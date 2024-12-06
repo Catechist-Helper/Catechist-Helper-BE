@@ -16,5 +16,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.CatechistInClass
         public Guid ClassId { get; set; }
         public Guid ReplaceCatechistId { get; set; }
         public CatechistInSlotType Type { get; set; }
+
+        public Guid? RequestId { get; set; }
     }
 }
