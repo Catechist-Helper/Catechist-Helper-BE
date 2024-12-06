@@ -21,7 +21,7 @@ namespace CatechistHelper.API.Controllers
 
         [HttpGet(ApiEndPointConstant.MemberOfProcess.MemberOfProcessEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetMemberOfProcessRepsonse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> GetCatechistInClasses([FromQuery] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetMemberOfProcessRepsonse> result = await _processService.GetMembersByProcessId(id, page, size);
             return StatusCode((int)result.StatusCode, result);

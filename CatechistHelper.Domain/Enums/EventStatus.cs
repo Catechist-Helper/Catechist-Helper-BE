@@ -2,7 +2,8 @@
 {
     public enum EventStatus : byte
     {
-        Pending,
+        Not_Started,
+        In_Progress,
         Completed,
         Cancelled
     }

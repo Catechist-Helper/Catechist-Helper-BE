@@ -16,6 +16,8 @@ using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Requests.Interview;
 using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
+using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -121,6 +123,9 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Accounts);
             config.NewConfig<UpdateInterviewRequest, Interview>()
                 .Ignore(x => x.Accounts);
+
+            config.NewConfig<MemberOfProcess, GetMemberOfProcessRepsonse>()
+                .Map(dest => dest.GetAccountResponse, src => src.Account);
 
             return config;
         }
