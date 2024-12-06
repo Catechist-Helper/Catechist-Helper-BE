@@ -27,6 +27,17 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+
+        [HttpPatch(ApiEndPointConstant.CatechistInClass.CatechistInClassesEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddCatechistToGrade([FromBody] ReplaceCatechistInClassRequest request)
+        {
+            Result<bool> result = await _catechistInClassService.ReplaceCatechistInClass(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+
         [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassSearchEndpoint)]
         [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

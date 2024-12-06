@@ -16,7 +16,7 @@ namespace CatechistHelper.API.Controllers
             _catechistInSlotService = catechistInSlotService;
         }
 
-        [HttpGet(ApiEndPointConstant.CatechistInSlot.CatechistInSlotSearchEndpoint)]
+        [HttpGet(ApiEndPointConstant.CatechistInSlots.CatechistInSlotSearchEndpoint)]
         [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchCatechists([FromRoute] Guid id, [FromQuery] Guid excludeId, [FromQuery] int page = 1, [FromQuery] int size = 100)

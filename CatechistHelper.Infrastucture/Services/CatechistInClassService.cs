@@ -5,8 +5,10 @@ using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
+using CatechistHelper.Infrastructure.Utils;
 using LinqKit;
 using Mapster;
 using MapsterMapper;
@@ -81,6 +83,66 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
+
+        public async Task<Result<bool>> ReplaceCatechistInClass(ReplaceCatechistInClassRequest request)
+        {
+            try
+            {
+                var catechistInClass = await _unitOfWork.GetRepository<CatechistInClass>()
+                    .SingleOrDefaultAsync(predicate : c => c.CatechistId == request.CatechistId && c.ClassId == request.ClassId);
+
+                Validator.EnsureNonNull(catechistInClass);
+
+                var otherClassesWithSamePastoralYear = await _unitOfWork.GetRepository<CatechistInClass>()
+                    .GetListAsync(predicate: c => c.CatechistId == request.CatechistId
+                                    && c.Class.PastoralYearId == catechistInClass.Class.PastoralYearId
+                                    && c.ClassId != request.ClassId && c.IsMain);
+
+                if (otherClassesWithSamePastoralYear.Count != 0)
+                {
+                    throw new Exception("Catechist is marked as main in another class within the same Pastoral Year.");
+                }
+
+                _unitOfWork.GetRepository<CatechistInClass>().DeleteAsync(catechistInClass);
+
+                var futureSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
+                    .GetListAsync(predicate:c => c.CatechistId == request.CatechistId && c.Slot.StartTime >= DateTime.Now);
+
+                    _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(futureSlots);
+
+                // Add the new catechist to the class and slots
+                var newCatechistInClass = new CatechistInClass
+                {
+                    ClassId = request.ClassId,
+                    CatechistId = request.ReplaceCatechistId,
+                    IsMain = request.Type == CatechistInSlotType.Main,
+                };
+
+                await _unitOfWork.GetRepository<CatechistInClass>().InsertAsync(newCatechistInClass);
+
+                var slotsInClass = await _unitOfWork.GetRepository<Slot>()
+                    .GetListAsync(predicate: s => s.ClassId == request.ClassId && s.StartTime >= DateTime.Now);
+
+                foreach (var slot in slotsInClass)
+                {
+                    var catechistInSlot = new CatechistInSlot
+                    {
+                        SlotId = slot.Id,
+                        CatechistId = request.ReplaceCatechistId,
+                        Type = request.Type.ToString(),
+                    };
+                    await _unitOfWork.GetRepository<CatechistInSlot>().InsertAsync(catechistInSlot);
+                }
+
+                var result = await _unitOfWork.CommitAsync();
+                return Success(result > 0); 
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
+
 
         public async Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid excludeId, int page, int size)
         {
