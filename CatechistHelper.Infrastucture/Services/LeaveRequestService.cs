@@ -56,7 +56,7 @@ namespace CatechistHelper.Infrastructure.Services
                 if (absenceRequest.Status == RequestStatus.Approved)
                 {
                     var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
-                        .GetListAsync(predicate: c => c.CatechistId == leaveRequest.CatechistId && c.Slot.StartTime > DateTime.Now);
+                        .GetListAsync(predicate: c => c.CatechistId == leaveRequest.CatechistId && c.Slot.Date >= DateTime.Now);
 
                     if (catechistInSlots.Count != 0)
                     {

@@ -363,5 +363,61 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
             }
         }
+
+        public async Task<Result<bool>> DeleteClass(Guid id)
+        {
+            try
+            {
+                // Retrieve the class along with its related data
+                var classToDelete = await _unitOfWork.GetRepository<Class>()
+                    .SingleOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(cls => cls.CatechistInClasses)
+                                                                                  .Include(cls => cls.Slots));
+
+                // Check if the class exists
+                if (classToDelete == null)
+                {
+                    return BadRequest<bool>("Class not found.");
+                }
+
+                // Remove related CatechistInClass entities
+                if (classToDelete.CatechistInClasses.Any())
+                {
+                    _unitOfWork.GetRepository<CatechistInClass>().DeleteRangeAsync(classToDelete.CatechistInClasses);
+                }
+
+                // Remove related CatechistInSlot entities (associated with Slots)
+                foreach (var slot in classToDelete.Slots)
+                {
+                    // Get the related CatechistInSlot entities for the current slot and delete them
+                    var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
+                        .GetListAsync(predicate: cis => cis.SlotId == slot.Id);
+
+                    if (catechistInSlots.Any())
+                    {
+                        _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(catechistInSlots);
+                    }
+                }
+
+                // Remove the Slot entities
+                if (classToDelete.Slots.Any())
+                {
+                    _unitOfWork.GetRepository<Slot>().DeleteRangeAsync(classToDelete.Slots);
+                }
+
+                // Delete the class itself
+                _unitOfWork.GetRepository<Class>().DeleteAsync(classToDelete);
+
+                // Commit the changes to the database
+                var result = await _unitOfWork.CommitAsync();
+
+                return Success(result > 0);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<bool>(ex.Message);
+            }
+        }
+
+
     }
 }

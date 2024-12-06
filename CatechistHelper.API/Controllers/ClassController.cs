@@ -42,6 +42,15 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+
+        [HttpDelete(ApiEndPointConstant.Class.ClassEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            Result<bool> result = await _classService.DeleteClass(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpGet(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)

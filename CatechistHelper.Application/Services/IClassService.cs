@@ -16,5 +16,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> UpdateClassRoom(Guid id, RoomOfClassRequest request);
         Task<Result<bool>> CreateClass(ClassRequest request);
         Task<Result<bool>> UpdateClass(Guid id, ClassRequest request);
+        Task<Result<bool>> DeleteClass(Guid id);
     }
 }
