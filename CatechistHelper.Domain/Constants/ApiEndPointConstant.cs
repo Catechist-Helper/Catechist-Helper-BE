@@ -191,6 +191,7 @@ namespace CatechistHelper.Domain.Constants
             public const string CatechistInClassesEndpoint = ApiEndpoint + "/catechist-in-classes";
             public const string CatechistInClassEndpoint = CatechistInClassesEndpoint + ByIdRoute;
             public const string CatechistInClassSearchEndpoint = CatechistInClassEndpoint + "/search";
+            public const string CatechistInClassRemainSlotEndpoint = CatechistInClassesEndpoint + "/catechist" + ByIdRoute + "/slots";
         }
 
         public static class CatechistInSlots

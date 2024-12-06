@@ -3,6 +3,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
+using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,15 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> SearchCatechists([FromRoute] Guid id, [FromQuery] Guid excludeId, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<SearchCatechistResponse> result = await _catechistInClassService.SearchAvailableCatechists(id, excludeId, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassRemainSlotEndpoint)]
+        [ProducesResponseType(typeof(Result<List<GetClassResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetClassesCatechistHaveSlots([FromRoute] Guid id)
+        {
+            Result<List<GetClassResponse>> result = await _catechistInClassService.GetClassesCatechistHaveSlots(id);
             return StatusCode((int)result.StatusCode, result);
         }
     }

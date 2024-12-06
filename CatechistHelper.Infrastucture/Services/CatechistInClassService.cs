@@ -3,7 +3,9 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
+using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
+using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
@@ -84,6 +86,29 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
+        public async Task<Result<List<GetClassResponse>>> GetClassesCatechistHaveSlots(Guid id)
+        {
+            try
+            {
+                var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
+                    .GetListAsync(predicate: c => c.CatechistId == id && c.Slot.Date >= DateTime.Now, include: s=> s.Include(s=> s.Slot));
+
+                var classIds = catechistInSlots.Select(c => c.Slot.ClassId).Distinct().ToList();
+
+                var classes = await _unitOfWork.GetRepository<Class>()
+                    .GetListAsync(predicate: c => classIds.Contains(c.Id));
+
+                var classResponses = classes.Adapt<List<GetClassResponse>>();
+
+                return Success(classResponses);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<List<GetClassResponse>>(ex.Message);
+            }
+        }
+
+
         public async Task<Result<bool>> ReplaceCatechistInClass(ReplaceCatechistInClassRequest request)
         {
             try
@@ -119,7 +144,7 @@ namespace CatechistHelper.Infrastructure.Services
                 }
 
                 var futureSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
-                    .GetListAsync(predicate:c => c.CatechistId == request.CatechistId && c.Slot.StartTime >= milestoneDate);
+                    .GetListAsync(predicate:c => c.CatechistId == request.CatechistId && c.Slot.Date >= milestoneDate);
 
                     _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(futureSlots);
 
@@ -134,7 +159,7 @@ namespace CatechistHelper.Infrastructure.Services
                 await _unitOfWork.GetRepository<CatechistInClass>().InsertAsync(newCatechistInClass);
 
                 var slotsInClass = await _unitOfWork.GetRepository<Slot>()
-                    .GetListAsync(predicate: s => s.ClassId == request.ClassId && s.StartTime >= milestoneDate);
+                    .GetListAsync(predicate: s => s.ClassId == request.ClassId && s.Date >= milestoneDate);
 
                 foreach (var slot in slotsInClass)
                 {
