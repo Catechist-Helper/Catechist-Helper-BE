@@ -7,7 +7,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Room
     public class CreateRoomRequest
     {
         [Required(ErrorMessage = MessageConstant.Room.Require.NameRequired)]
-        [MaxLength(10, ErrorMessage = "Tối đa {1} kí tự!")]
+        [MaxLength(20, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Name { get; set; } = null!;
 
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
