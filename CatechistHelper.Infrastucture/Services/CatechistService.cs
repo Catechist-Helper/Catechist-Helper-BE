@@ -16,7 +16,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
@@ -50,7 +49,6 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<GetCatechistResponse>(ex.Message);
             }
         }
-
 
         public async Task<Catechist> CreateAsync(CreateCatechistRequest request)
         {
@@ -170,6 +168,7 @@ namespace CatechistHelper.Infrastructure.Services
                                 .Include(n => n.Level)
                                 .Include(n => n.Account)
                                 .Include(n => n.Certificates)
+                                .Include(c => c.TrainingLists)
                 );
             ArgumentNullException.ThrowIfNull(nameof(id));
             return catechist;
@@ -230,6 +229,21 @@ namespace CatechistHelper.Infrastructure.Services
 
                         // Throw an exception with the class names listed
                         throw new Exception($"Catechist has slots in active classes: {classNames}");
+                    }
+                }
+
+                if (request.LevelId.HasValue)
+                {
+                    var trainingList = catechist.TrainingLists
+                        .OrderByDescending(x => x.CreatedAt)
+                        .Where(x => x.TrainingListStatus == TrainingListStatus.Finished)
+                        .FirstOrDefault();
+                    if (trainingList != null)
+                    {
+                        if (request.LevelId !=  trainingList.NextLevelId)
+                        {
+                            throw new Exception("Không thể cập nhật cập độ nếu chưa qua đào tạo.");
+                        }
                     }
                 }
 

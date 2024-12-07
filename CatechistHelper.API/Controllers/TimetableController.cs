@@ -25,7 +25,6 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
         [HttpPost(ApiEndPointConstant.Timetable.SlotsEndpoint)]
         [ProducesResponseType(typeof(Result<List<SlotResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -34,7 +33,6 @@ namespace CatechistHelper.API.Controllers
             Result<List<SlotResponse>> result = await _timetableService.CreateSlots(request);
             return StatusCode((int)result.StatusCode, result);
         }
-
 
         [HttpGet(ApiEndPointConstant.Timetable.ExportEndpoint)]
         [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
