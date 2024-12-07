@@ -149,14 +149,13 @@ namespace CatechistHelper.Infrastructure.Services
 
                 request.Adapt(room);
 
-                if (room.Image != null)
-                {
-                    await _firebaseService.DeleteImageAsync(room.Image);
-                    room.Image = null;
-                }
-
                 if (request.Image != null)
                 {
+                    if (room.Image != null)
+                    {
+                        await _firebaseService.DeleteImageAsync(room.Image);
+                        room.Image = null;
+                    }
                     string image = await _firebaseService.UploadImageAsync(request.Image, "room/");
                     room.Image = image;
                 }
