@@ -72,7 +72,7 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpPost(ApiEndPointConstant.Event.EventsEndpoint)]
-        [ProducesResponseType(typeof(Result<GetMajorResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<GetEventResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
         {

@@ -50,8 +50,8 @@ namespace CatechistHelper.Infrastructure.Services
                 var accountsToUpdate = new List<MemberOfProcess>();
                 foreach (var account in request)
                 {
-                    var accountFromDb = await _unitOfWork.GetRepository<MemberOfProcess>().SingleOrDefaultAsync(
-                        predicate: mop => mop.ProcessId == mop.ProcessId && mop.AccountId == account.Id);
+                    var accountFromDb = process.MemberOfProcesses
+                       .FirstOrDefault(mop => mop.AccountId == account.Id);
                     if (accountFromDb != null)
                     {
                         accountFromDb.IsMain = account.IsMain;

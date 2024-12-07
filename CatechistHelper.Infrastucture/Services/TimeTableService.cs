@@ -19,7 +19,6 @@ namespace CatechistHelper.Infrastructure.Services
     public class TimeTableService : BaseService<TimeTableService>, ITimetableService
     {
         private readonly IPastoralYearService _pastoralYearService;
-
         private readonly ISystemConfigurationService _systemConfiguration;
 
         public TimeTableService(
@@ -48,7 +47,6 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-
         public async Task<Result<ClassResponse>> CreateTimeTable(CreateTimetableRequest request)
         {
             try
@@ -61,7 +59,6 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<ClassResponse>(ex.Message);
             }
         }
-
 
         public async Task<List<Class>> CreateClasses(IFormFile file)
         {
@@ -277,7 +274,6 @@ namespace CatechistHelper.Infrastructure.Services
             throw new Exception($"Invalid weekday configuration value: {value}");
         }
 
-
         public async Task<DateTime> GetStartDate(string year)
         {
             var startDate = await _systemConfiguration.GetConfigByKey("startdate");
@@ -312,7 +308,6 @@ namespace CatechistHelper.Infrastructure.Services
                                     .ThenInclude(s => s.Catechist)
                 );
         }
-
 
         public async Task<byte[]> ExportSlotsToExcel(Guid classId)
         {

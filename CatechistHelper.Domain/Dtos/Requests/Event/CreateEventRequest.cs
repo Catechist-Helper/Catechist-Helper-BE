@@ -1,7 +1,6 @@
 ﻿using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Event
 {

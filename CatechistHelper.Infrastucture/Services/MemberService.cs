@@ -52,8 +52,8 @@ namespace CatechistHelper.Infrastructure.Services
                 var accountsToUpdate = new List<Member>();
                 foreach (var account in request)
                 {
-                    var accountFromDb = await _unitOfWork.GetRepository<Member>().SingleOrDefaultAsync(
-                        predicate: m => m.EventId == eventId && m.AccountId == account.Id);
+                    var accountFromDb = eventFromDb.Members
+                       .FirstOrDefault(m => m.AccountId == account.Id);
                     if (accountFromDb != null)
                     {
                         accountFromDb.RoleEventId = account.RoleEventId;
