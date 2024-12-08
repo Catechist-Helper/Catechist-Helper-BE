@@ -113,7 +113,10 @@ namespace CatechistHelper.Infrastructure.Services
                     await _unitOfWork.GetRepository<CatechistInTraining>()
                     .GetPagingListAsync(
                             predicate: c => c.TrainingListId.Equals(id),
-                            include: c => c.Include(c => c.Catechist),
+                            include: c => c.Include(n => n.Catechist.ChristianName)
+                                .Include(n => n.Catechist.Level)
+                                .Include(n => n.Catechist.Account)
+                                .Include(n => n.Catechist.Certificates),
                             page: page,
                             size: size
                         );
