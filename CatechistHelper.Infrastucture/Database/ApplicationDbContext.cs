@@ -274,6 +274,11 @@ namespace CatechistHelper.Infrastructure.Database
                     .WithMany(a => a.AbsenceRequests)
                     .HasForeignKey(ar => ar.ApproverId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(ar => ar.RequestImages)
+                    .WithOne(ri => ri.AbsenceRequest)
+                    .HasForeignKey(ri => ri.AbsenceRequestId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<TransactionImage>()

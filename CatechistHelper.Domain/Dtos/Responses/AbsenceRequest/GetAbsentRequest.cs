@@ -1,9 +1,16 @@
-﻿using CatechistHelper.Domain.Dtos.Requests.AbsenceRequest;
-using CatechistHelper.Domain.Entities;
+﻿using CatechistHelper.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
 {
-    public class GetAbsentRequest : AbsenceRequestDto
+    public class GetAbsentRequest
     {
+        public Guid CatechistId { get; set; }
+        public Guid SlotId { get; set; }
+
+        [MaxLength(100, ErrorMessage = "Tối đa {1} kí tự!")]
+        public string Reason { get; set; } = string.Empty;
+        public Guid? ReplacementCatechistId { get; set; }
+
         public Guid Id { get; set; } = Guid.NewGuid();
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
@@ -16,5 +23,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
         public string CatechistName { get; set; } = string.Empty;
         public string? ReplacementCatechistName { get; set; }
         public string? Approver { get; set; }
+
+        public List<string>? RequestImages { get; set; }
     }
 }

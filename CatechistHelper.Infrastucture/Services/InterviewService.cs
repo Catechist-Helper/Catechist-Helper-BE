@@ -18,7 +18,6 @@ using Microsoft.Extensions.Configuration;
 using Azure.Communication.Rooms;
 using Azure.Communication.Identity;
 using Azure.Communication;
-using Azure.Core;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -53,7 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-                //await ValidateInterviewScheduling(request.MeetingTime);
+                await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
@@ -131,10 +130,12 @@ namespace CatechistHelper.Infrastructure.Services
                         Account account = await _unitOfWork.GetRepository<Account>()
                             .SingleOrDefaultAsync(predicate: a => a.Id == accountId) ?? throw new Exception(MessageConstant.Account.Fail.NotFoundAccount);
 
+                        Validator.EnsureNonNull(account);
+
                         await _unitOfWork.GetRepository<RecruiterInInterview>().InsertAsync(new RecruiterInInterview
                         {
                             InterviewId = interview.Id,
-                            AccountId = accountId
+                            AccountId = account.Id,
                         });
                     }
                 }
@@ -275,14 +276,14 @@ namespace CatechistHelper.Infrastructure.Services
             }
 
             // Generate and send candidate URL
-            var candidateToken = await identityClient.GetTokenAsync(candidate, [CommunicationTokenScope.VoIP]);
-            var candidateUrl = $"{meetingUrl}?roomid={roomId}&token={candidateToken.Value.Token}";
+            //var candidateToken = await identityClient.GetTokenAsync(candidate, [CommunicationTokenScope.VoIP]);
+            //var candidateUrl = $"{meetingUrl}?roomid={roomId}&token={candidateToken.Value.Token}";
 
-            MailUtil.SendEmail(
-                interview.Registration.Email,
-                ContentMailUtil.Title_AnnounceInterviewSchedule,
-                candidateUrl
-            );
+            //MailUtil.SendEmail(
+            //    interview.Registration.Email,
+            //    ContentMailUtil.Title_AnnounceInterviewSchedule,
+            //    candidateUrl
+            //);
 
             return interview;
         }

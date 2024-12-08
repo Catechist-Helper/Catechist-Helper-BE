@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Requests.AbsenceRequest
 {
@@ -10,5 +11,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.AbsenceRequest
         [MaxLength(100, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Reason { get; set; } = string.Empty;
         public Guid? ReplacementCatechistId { get; set; }
+        public List<IFormFile>? RequestImages { get; set; }
     }
 }

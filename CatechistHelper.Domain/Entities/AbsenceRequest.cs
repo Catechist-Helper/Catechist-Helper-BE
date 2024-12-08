@@ -37,7 +37,9 @@ namespace CatechistHelper.Domain.Entities
         public virtual Slot Slot { get; set; } = null!;
         public virtual Catechist Catechist { get; set; } = null!;
         public virtual Catechist? ReplacementCatechist { get; set; }
-        public virtual Account? Approver { get; set; } 
+        public virtual Account? Approver { get; set; }
+
+        public ICollection<RequestImage>? RequestImages { get; set; } = [];
     }
 
     public enum RequestStatus : byte
