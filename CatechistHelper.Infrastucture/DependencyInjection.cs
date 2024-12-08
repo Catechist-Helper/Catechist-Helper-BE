@@ -109,6 +109,7 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.UpdateAt, src => src.UpdatedAt)
                 .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
                 .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
+                .Map(dest => dest.RequestImages, src => src.RequestImages ?? null)
                 .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
 
             config.NewConfig<Catechist, SearchCatechistResponse>()

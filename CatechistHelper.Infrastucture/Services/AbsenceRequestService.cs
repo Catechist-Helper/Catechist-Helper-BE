@@ -1,4 +1,4 @@
-﻿using Azure.Core;
+﻿using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
@@ -13,20 +13,22 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CatechistHelper.Infrastructure.Services
 {
     public class AbsenceRequestService: BaseService<AbsenceRequestService>, IAbsenceRequestService
     {
         private readonly ISystemConfigurationService _systemConfigurationService;
-
+        private readonly IFirebaseService _firebaseService;
         public AbsenceRequestService(IUnitOfWork<ApplicationDbContext> unitOfWork, 
             ILogger<AbsenceRequestService> logger, IMapper mapper, 
             IHttpContextAccessor httpContextAccessor,
-            ISystemConfigurationService systemConfigurationService) : 
+            ISystemConfigurationService systemConfigurationService, IFirebaseService firebaseService) : 
             base(unitOfWork, logger, mapper, httpContextAccessor)
         {
             _systemConfigurationService = systemConfigurationService;
+            _firebaseService = firebaseService;
         }
 
         public async Task<Result<bool>> SubmitAbsentRequest(AbsenceRequestDto requestDto)
@@ -39,6 +41,19 @@ namespace CatechistHelper.Infrastructure.Services
                 ValidateSlotAvailability(slot, absenceDateConfig);
 
                 var absenceRequest = requestDto.Adapt<AbsenceRequest>();
+
+                if (!requestDto.RequestImages.IsNullOrEmpty()) {
+                    string folderName = $"absence/{requestDto.ReplacementCatechistId}";
+                    string[] absenceRequestImages = await _firebaseService.UploadImagesAsync(requestDto.RequestImages, folderName);
+                    foreach (var image in absenceRequestImages)
+                    {
+                        await _unitOfWork.GetRepository<RequestImage>().InsertAsync(new RequestImage
+                        {
+                            AbsenceRequestId = absenceRequest.Id,
+                            ImageUrl = image
+                        });
+                    }
+                }
 
                 return await SaveAbsenceRequestAsync(absenceRequest)
                     ? Success(true)
