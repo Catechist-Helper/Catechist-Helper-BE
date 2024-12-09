@@ -18,6 +18,9 @@ using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Dtos.Requests.Authentication;
+using Azure.Core;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -257,5 +260,63 @@ namespace CatechistHelper.Infrastructure.Services
                 throw;
             }
         }
+
+        public async Task<Result<IEnumerable<CalendarResponse>>> GetCalendar(Guid id)
+        {
+            try
+            {
+                var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
+                    predicate: a => a.Id == id,
+                    include: e => e.Include(e => e.Events));
+
+                if (account == null)
+                {
+                    return NotFound<IEnumerable<CalendarResponse>>("Account not found.");
+                }
+
+                var slots = await _unitOfWork.GetRepository<CatechistInSlot>()
+                    .GetListAsync(predicate: s => s.Catechist.AccountId == id,
+                                  include: s => s.Include(s => s.Catechist)
+                                                 .Include(s => s.Slot)
+                                                 .ThenInclude(s => s.Class));
+
+                var interviews = await _unitOfWork.GetRepository<RecruiterInInterview>()
+                    .GetListAsync(predicate: i => i.AccountId == id,
+                                  include: i => i.Include(i => i.Interview));
+
+                var slotsTime = slots.Select(s => new CalendarResponse
+                {
+                    Title = s.Slot.Class.Name,
+                    Start = HolidayService.ApplyDateToTimes(s.Slot.Date, s.Slot.StartTime),
+                    End = HolidayService.ApplyDateToTimes(s.Slot.Date, s.Slot.EndTime),
+                });
+
+                var interviewsTime = interviews.Select(i => new CalendarResponse
+                {
+                    Title = "Interview Meeting",
+                    Start = HolidayService.TimeToString(i.Interview.MeetingTime),
+                    Description = i.OnlineRoomUrl
+                });
+
+                var eventsTime = account.Events.Select(e => new CalendarResponse
+                {
+                    Title = e.Name,
+                    Start = HolidayService.TimeToString(e.StartTime),
+                    End = HolidayService.TimeToString(e.EndTime),
+                    Description = e.Description
+                });
+
+                var calendarResponses = slotsTime.Concat(interviewsTime).Concat(eventsTime);
+
+                return Success(calendarResponses);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<IEnumerable<CalendarResponse>>(ex.Message);
+            }
+        }
+
+
+
     }
 }

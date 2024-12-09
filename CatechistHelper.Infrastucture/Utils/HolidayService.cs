@@ -49,6 +49,17 @@ namespace CatechistHelper.Infrastructure.Utils
             return DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
         }
 
+        public static string ApplyDateToTimes(DateTime date, DateTime time)
+        {
+            return $"{date:yyyy-MM-dd} {time:HH:mm:ss}";
+        }
+
+
+        public static string TimeToString(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd HH:mm:ss"); 
+        }
+
     }
 
 

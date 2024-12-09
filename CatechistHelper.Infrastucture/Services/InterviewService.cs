@@ -52,7 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-                await ValidateInterviewScheduling(request.MeetingTime);
+                //await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
@@ -77,7 +77,7 @@ namespace CatechistHelper.Infrastructure.Services
                 if (request.InterviewType == InterviewType.Online)
                 {
                     interview.RegistrationId = registration.Id;
-                    interview = await CreateOnlineInterview(request.MeetingTime, interview);
+                    interview = await CreateOnlineInterview(request.MeetingTime, interview, registration);
                 }
                 else
                 {
@@ -181,7 +181,7 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-                
+
                 request.Adapt(interview);
                 _unitOfWork.GetRepository<Interview>().UpdateAsync(interview);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
@@ -218,7 +218,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Interview> CreateOnlineInterview(DateTimeOffset validFrom, Interview interview)
+        public async Task<Interview> CreateOnlineInterview(DateTimeOffset validFrom, Interview interview, Registration registration)
         {
             // Fetch connection string from configuration
             var connectionString = _configuration["AzureCommunication:ConnectionString"];
@@ -269,21 +269,21 @@ namespace CatechistHelper.Infrastructure.Services
                     .SingleOrDefaultAsync(predicate: a => a.Id == interview.RecruiterInInterviews.ElementAt(i).AccountId);
 
                 MailUtil.SendEmail(
-                    account.Email, 
-                    ContentMailUtil.Title_AnnounceInterviewSchedule, 
+                    account.Email,
+                    ContentMailUtil.Title_AnnounceInterviewSchedule,
                     interviewUrl
                 );
             }
 
-            // Generate and send candidate URL
-            //var candidateToken = await identityClient.GetTokenAsync(candidate, [CommunicationTokenScope.VoIP]);
-            //var candidateUrl = $"{meetingUrl}?roomid={roomId}&token={candidateToken.Value.Token}";
 
-            //MailUtil.SendEmail(
-            //    interview.Registration.Email,
-            //    ContentMailUtil.Title_AnnounceInterviewSchedule,
-            //    candidateUrl
-            //);
+            var candidateToken = await identityClient.GetTokenAsync(candidate, [CommunicationTokenScope.VoIP]);
+            var candidateUrl = $"{meetingUrl}?roomid={roomId}&token={candidateToken.Value.Token}";
+
+            MailUtil.SendEmail(
+                registration.Email,
+                ContentMailUtil.Title_AnnounceInterviewSchedule,
+                candidateUrl
+            );
 
             return interview;
         }
