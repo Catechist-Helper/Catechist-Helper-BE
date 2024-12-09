@@ -48,7 +48,7 @@ namespace CatechistHelper.API.Controllers
         [HttpGet(ApiEndPointConstant.AbsenceRequest.Endpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAll([FromQuery] RequestStatus status = RequestStatus.Pending, [FromQuery] Guid? cId = null)
+        public async Task<IActionResult> GetAll([FromQuery] RequestStatus? status, [FromQuery] Guid? cId = null)
         {
             Result<List<GetAbsentRequest>> result = await _absenceRequestService.GetAll(status, cId);
             return StatusCode((int)result.StatusCode, result);
