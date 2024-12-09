@@ -5,6 +5,7 @@ using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Requests.Authentication;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -27,7 +28,7 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Account.AccountEndPoint)]
-        [ProducesResponseType(typeof(Result<List<GetAccountResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<GetAccountResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             Result<GetAccountResponse> result = await _accountService.Get(id);
@@ -75,6 +76,14 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> GetFreeRecruiter([FromQuery] DateTime meetingTime, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetRecruiterResponse> result = await _accountService.GetFreeRecruiter(meetingTime, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Account.CalendarEndPoint)]
+        [ProducesResponseType(typeof(Result<IEnumerable<CalendarResponse>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCalendar([FromRoute] Guid id)
+        {
+            Result<IEnumerable<CalendarResponse>> result = await _accountService.GetCalendar(id);
             return StatusCode((int)result.StatusCode, result);
         }
     }

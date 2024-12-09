@@ -5,6 +5,7 @@ using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Dtos.Requests.Authentication;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 
 namespace CatechistHelper.Application.Services
 {
@@ -17,5 +18,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> Update(Guid id, UpdateAccountRequest request);
         Task<Result<bool>> Delete(Guid id);
         Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
+        Task<Result<IEnumerable<CalendarResponse>>> GetCalendar(Guid id);
     }
 }
