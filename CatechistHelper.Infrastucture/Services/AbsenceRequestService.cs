@@ -197,15 +197,16 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus requestStatus, Guid? cId)
+        public async Task<Result<List<GetAbsentRequest>>> GetAll(RequestStatus? requestStatus, Guid? cId)
         {
             try
             {
                 var absenceRequests = await _unitOfWork.GetRepository<AbsenceRequest>()
-                    .GetListAsync(predicate : a => a.Status == requestStatus,
+                    .GetListAsync(predicate : a => !requestStatus.HasValue || (requestStatus.HasValue && a.Status == requestStatus),
                                   include: ar => ar.Include(ar => ar.Catechist)
                                                    .Include(ar => ar.ReplacementCatechist)
-                                                   .Include(ar => ar.Slot));
+                                                   .Include(ar => ar.Slot)
+                                                   .Include(ar => ar.Slot.Class));
                 
                 if(cId != null)
                 {

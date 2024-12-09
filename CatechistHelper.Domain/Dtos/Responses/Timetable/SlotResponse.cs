@@ -7,6 +7,7 @@
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string? Note { get; set; }
+        public string? ClassId { get; set; }
         public string? ClassName { get; set; }
         public string? RoomName { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿using CatechistHelper.Domain.Entities;
+﻿using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
 {
@@ -23,7 +25,8 @@ namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
         public string CatechistName { get; set; } = string.Empty;
         public string? ReplacementCatechistName { get; set; }
         public string? Approver { get; set; }
-
+        public SlotResponse? Slot { get; set; }
+        //public GetClassResponse? Class { get; set; }
         public List<string>? RequestImages { get; set; }
     }
 }
