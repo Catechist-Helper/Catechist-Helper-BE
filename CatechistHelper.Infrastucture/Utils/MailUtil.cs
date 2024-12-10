@@ -1555,6 +1555,286 @@ namespace CatechistHelper.Infrastructure.Utils
 ";
         }
 
+        public static string AnnounceOnlineInterviewSchedule(string fullname, string time, string onlineUrl)
+        {
+            return @"<!doctype html>
+            <html>
+              <head>
+                <title></title>
+                <meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"" />
+                <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"" />
+                <style type=""text/css"">
+                  body {
+                    font-family: sans-serif;
+                  }
+
+                  body,
+                  table,
+                  td,
+                  a {
+                    -webkit-text-size-adjust: 100%;
+                    -ms-text-size-adjust: 100%;
+                  }
+
+                  table,
+                  td {
+                    mso-table-lspace: 0pt;
+                    mso-table-rspace: 0pt;
+                  }
+
+                  img {
+                    -ms-interpolation-mode: bicubic;
+                  }
+
+                  img {
+                    border: 0;
+                    height: auto;
+                    line-height: 100%;
+                    outline: none;
+                    text-decoration: none;
+                  }
+
+                  table {
+                    border-collapse: collapse !important;
+                  }
+
+                  body {
+                    height: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: 100% !important;
+                  }
+
+                  a[x-apple-data-detectors] {
+                    color: inherit !important;
+                    text-decoration: none !important;
+                    font-size: inherit !important;
+                    font-family: inherit !important;
+                    font-weight: inherit !important;
+                    line-height: inherit !important;
+                  }
+
+                  .button {
+                    display: inline-block;
+                    padding: 15px 25px;
+                    font-size: 16px;
+                    color: #ffffff !important;
+                    background-color: #422A14;
+                    text-decoration: none !important;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                  }
+
+                  .button:hover {
+                    background-color: #5a3b1f;
+                    transform: translateY(-2px);
+                  }
+
+                  .button:active {
+                    background-color: #422A14;
+                    transform: translateY(0);
+                  }
+                </style>
+              </head>
+
+              <body style=""background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;"">
+                <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
+                  <tbody>
+                    <tr>
+                      <td bgcolor=""#422A14"" align=""center"">
+                        <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""max-width: 600px"">
+                          <tbody>
+                            <tr>
+                              <td align=""center"" valign=""top"" style=""padding: 30px 10px""></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td bgcolor=""#422A14"" align=""center"" style=""padding: 20px 10px"">
+                        <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""max-width: 800px; height: auto"">
+                          <tbody>
+                            <tr>
+                              <td bgcolor=""#ffffff"" align=""center"" valign=""top"" style=""padding: 30px 50px; border-radius: 4px 4px 0px 0px; color: #000; font-weight: 400; text-align: left;"">
+                                <h1 style=""font-weight: bolder; font-size: 24px; color: #422a14; margin: 0px; margin-bottom: 10px; text-align: left;"">
+                                  Catechist Helper
+                                </h1>
+                                <h1 style=""font-size: 18px; font-weight: 600; margin: 0px; margin-bottom: 10px; color: #422a14; text-align: left;"">
+                                  Thân gửi " + fullname + @"
+                                </h1>
+                                <p style=""margin: 0px; text-align: left; line-height: 20px"">
+                                  Chúng tôi rất vui mừng thông báo rằng bạn đã vượt qua vòng xét duyệt hồ sơ. Bạn được mời tham gia buổi phỏng vấn online với thông tin cụ thể như sau:
+                                </p>
+                                <ul>
+                                  <li style=""margin-bottom: 5px""><strong>Thời gian:</strong> " + time + @"</li>
+                                </ul>
+                                <p style=""margin: 0px; text-align: left; line-height: 20px; margin: 13px 0px;"">
+                                  Vui lòng nhấn nút bên dưới để tham gia buổi phỏng vấn:
+                                </p>
+                                <p style=""text-align: center; margin-top: 20px;"">
+                                  <a href=""" + onlineUrl + @""" target=""_blank"" class=""button"">
+                                    Tham gia phỏng vấn
+                                  </a>
+                                </p>
+                                <p style=""margin: 0; padding: 0; margin-top: 20px;"">Trân trọng,</p>
+                                <p style=""margin: 0; padding: 0; margin-top: 2px;"">Catechist Helper</p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </body>
+            </html>";}
+
+
+        public static string NotifyInterviewerSchedule(string interviewerName, string candidateName, string time, string onlineUrl)
+        {
+            return @"<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"" />
+    <style type=""text/css"">
+      body {
+        font-family: sans-serif;
+      }
+
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+
+      img {
+        -ms-interpolation-mode: bicubic;
+      }
+
+      img {
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+      }
+
+      table {
+        border-collapse: collapse !important;
+      }
+
+      body {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+
+      a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 15px 25px;
+        font-size: 16px;
+        color: #ffffff !important;
+        background-color: #422A14;
+        text-decoration: none !important;
+        border-radius: 5px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #5a3b1f;
+        transform: translateY(-2px);
+      }
+
+      .button:active {
+        background-color: #422A14;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+
+  <body style=""background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;"">
+    <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
+      <tbody>
+        <tr>
+          <td bgcolor=""#422A14"" align=""center"">
+            <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""max-width: 600px"">
+              <tbody>
+                <tr>
+                  <td align=""center"" valign=""top"" style=""padding: 30px 10px""></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor=""#422A14"" align=""center"" style=""padding: 20px 10px"">
+            <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""max-width: 800px; height: auto"">
+              <tbody>
+                <tr>
+                  <td bgcolor=""#ffffff"" align=""center"" valign=""top"" style=""padding: 30px 50px; border-radius: 4px 4px 0px 0px; color: #000; font-weight: 400; text-align: left;"">
+                    <h1 style=""font-weight: bolder; font-size: 24px; color: #422a14; margin: 0px; margin-bottom: 10px; text-align: left;"">
+                      Catechist Helper
+                    </h1>
+                    <h1 style=""font-size: 18px; font-weight: 600; margin: 0px; margin-bottom: 10px; color: #422a14; text-align: left;"">
+                      Thân gửi " + interviewerName + @",
+                    </h1>
+                    <p style=""margin: 0px; text-align: left; line-height: 20px"">
+                      Bạn được chỉ định tham gia buổi phỏng vấn ứng viên với thông tin sau:
+                    </p>
+                    <ul>
+                      <li style=""margin-bottom: 5px""><strong>Tên ứng viên:</strong> " + candidateName + @"</li>
+                      <li style=""margin-bottom: 5px""><strong>Thời gian:</strong> " + time + @"</li>
+                    </ul>
+                    <p style=""margin: 0px; text-align: left; line-height: 20px; margin: 13px 0px;"">
+                      Vui lòng nhấn nút bên dưới để tham gia buổi phỏng vấn:
+                    </p>
+                    <p style=""text-align: center; margin-top: 20px;"">
+                      <a href=""" + onlineUrl + @""" target=""_blank"" class=""button"">
+                        Tham gia phỏng vấn
+                      </a>
+                    </p>
+                    <p style=""margin: 0; padding: 0; margin-top: 20px;"">Trân trọng,</p>
+                    <p style=""margin: 0; padding: 0; margin-top: 2px;"">Catechist Helper</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>";
+        }
+
+
 
     }
 }

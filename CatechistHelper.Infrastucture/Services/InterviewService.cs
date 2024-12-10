@@ -280,7 +280,7 @@ namespace CatechistHelper.Infrastructure.Services
                 MailUtil.SendEmail(
                     account.Email,
                     ContentMailUtil.Title_AnnounceInterviewSchedule,
-                    interviewUrl
+                    ContentMailUtil.NotifyInterviewerSchedule(account.FullName, registration.FullName, HolidayService.TimeToString(interview.MeetingTime), interviewUrl)
                 );
             }
 
@@ -291,7 +291,7 @@ namespace CatechistHelper.Infrastructure.Services
             MailUtil.SendEmail(
                 registration.Email,
                 ContentMailUtil.Title_AnnounceInterviewSchedule,
-                candidateUrl
+                ContentMailUtil.AnnounceOnlineInterviewSchedule(registration.FullName, HolidayService.TimeToString(interview.MeetingTime), candidateUrl)
             );
 
             return interview;
