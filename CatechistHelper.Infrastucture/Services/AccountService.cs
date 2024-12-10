@@ -326,7 +326,5 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-
-
     }
 }
