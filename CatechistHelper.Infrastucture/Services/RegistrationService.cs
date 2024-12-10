@@ -119,6 +119,10 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                var regis = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(predicate: r=> r.Email == request.Email);
+
+                Validator.EnsureNonExist(regis);
+
                 Registration registration = request.Adapt<Registration>();
                 // Add certificates
                 if (request.CertificateOfCandidates != null)
