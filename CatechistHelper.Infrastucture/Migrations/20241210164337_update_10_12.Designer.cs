@@ -4,6 +4,7 @@ using CatechistHelper.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatechistHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241210164337_update_10_12")]
+    partial class update_10_12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -765,6 +768,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("reason");
 
+                    b.Property<Guid>("SlotId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint")
                         .HasColumnName("status");
@@ -778,6 +784,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasIndex("ApproverId");
 
                     b.HasIndex("CatechistId");
+
+                    b.HasIndex("SlotId");
 
                     b.ToTable("leave_request");
                 });
@@ -1776,9 +1784,17 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CatechistHelper.Domain.Entities.Slot", "Slot")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("SlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Approver");
 
                     b.Navigation("Catechist");
+
+                    b.Navigation("Slot");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Member", b =>
@@ -2142,6 +2158,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("AbsenceRequests");
 
                     b.Navigation("CatechistInSlots");
+
+                    b.Navigation("LeaveRequests");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.TrainingList", b =>
