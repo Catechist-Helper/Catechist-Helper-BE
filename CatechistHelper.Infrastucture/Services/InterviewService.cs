@@ -52,7 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-                //await ValidateInterviewScheduling(request.MeetingTime);
+                await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
