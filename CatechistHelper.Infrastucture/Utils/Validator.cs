@@ -11,7 +11,7 @@
         {
             if (value != null)
             {
-                throw new ArgumentException($"Exist", nameof(value));
+                throw new ArgumentException($"Tồn tại", nameof(value));
             }
         }
 
