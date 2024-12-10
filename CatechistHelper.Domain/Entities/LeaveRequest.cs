@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Entities
 {
-    [Table("absence_request")]
+    [Table("leave_request")]
     public class LeaveRequest : BaseEntity
     {
         [Column("catechist_id")]
@@ -31,7 +31,6 @@ namespace CatechistHelper.Domain.Entities
         [Column("approval_date")]
         public DateTime? ApprovalDate { get; set; }
 
-        public virtual Slot Slot { get; set; } = null!;
         public virtual Catechist Catechist { get; set; } = null!;
         public virtual Account? Approver { get; set; }
     }

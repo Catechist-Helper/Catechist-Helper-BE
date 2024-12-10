@@ -100,5 +100,7 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<AbsenceRequest> AbsenceRequests { get; set; } = new List<AbsenceRequest>();
         public virtual ICollection<AbsenceRequest> ReplacementAbsenceRequests { get; set; } = new List<AbsenceRequest>();
+        public virtual ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
+
     }
 }

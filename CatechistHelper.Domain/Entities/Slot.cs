@@ -35,7 +35,6 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
         public virtual ICollection<CatechistInSlot> CatechistInSlots { get; set; } = new List<CatechistInSlot>();
-
         public virtual ICollection<AbsenceRequest> AbsenceRequests { get; set; } = new List<AbsenceRequest>();
     }
 }
