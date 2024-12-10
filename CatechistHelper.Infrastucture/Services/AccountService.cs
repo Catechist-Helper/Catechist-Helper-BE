@@ -306,7 +306,17 @@ namespace CatechistHelper.Infrastructure.Services
                     Description = e.Description
                 });
 
-                var calendarResponses = slotsTime.Concat(interviewsTime).Concat(eventsTime);
+                var holidays = await HolidayService.GetAllHolidays();
+
+                var holidaysTime = holidays.Items.Select(e => new CalendarResponse
+                {
+                    Title = e.Summary,
+                    Description = e.Description,
+                    Start = e.Start.Date,
+                    End = e.End.Date
+                });
+
+                var calendarResponses = slotsTime.Concat(interviewsTime).Concat(eventsTime).Concat(holidaysTime);
 
                 return Success(calendarResponses);
             }
