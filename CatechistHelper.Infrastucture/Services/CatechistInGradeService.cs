@@ -98,11 +98,22 @@ namespace CatechistHelper.Infrastructure.Services
                     return Fail<bool>("No catechists found for the given IDs.");
                 }
 
+                var catechistsToAdd = new List<CatechistInGrade>();
                 foreach (var catechistInGrade in catechistsInGrade)
                 {
-                    catechistInGrade.GradeId = request.GradeId; 
+                    catechistsToAdd.Add(new CatechistInGrade
+                    {
+                        CatechisteId = catechistInGrade.CatechisteId,
+                        GradeId = request.GradeId,
+                        IsMain = false,
+                    });
+                    _unitOfWork.GetRepository<CatechistInGrade>().DeleteAsync(catechistInGrade);
                 }
 
+                if (catechistsToAdd.Any())
+                {
+                    await _unitOfWork.GetRepository<CatechistInGrade>().InsertRangeAsync(catechistsToAdd);
+                }
                 await _unitOfWork.CommitAsync();
 
                 return Success(true);
