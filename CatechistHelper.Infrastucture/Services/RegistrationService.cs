@@ -41,6 +41,7 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: r => r.Id.Equals(id),
                     include: r => r.Include(r => r.CertificateOfCandidates)
                                    .Include(r => r.Interview).ThenInclude(i => i.Accounts)
+                                           .ThenInclude(i => i.RecruiterInInterviews)
                                    .Include(r => r.RegistrationProcesses));
                 return Success(registration.Adapt<GetRegistrationResponse>());
             }
@@ -61,6 +62,7 @@ namespace CatechistHelper.Infrastructure.Services
                             orderBy: r => r.OrderBy(r => r.Status).ThenByDescending(r => r.CreatedAt),
                             include: r => r.Include(r => r.CertificateOfCandidates)
                                            .Include(r => r.Interview).ThenInclude(i => i.Accounts)
+                                           .ThenInclude(i => i.RecruiterInInterviews)
                                            .Include(r => r.RegistrationProcesses),
                             page: page,
                             size: size

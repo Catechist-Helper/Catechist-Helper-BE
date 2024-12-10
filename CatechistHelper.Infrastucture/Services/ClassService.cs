@@ -207,7 +207,7 @@ namespace CatechistHelper.Infrastructure.Services
 
             foreach (var slot in classToUpdate.Slots)
             {
-                if (slot.CatechistInSlots != null)
+                if (slot.CatechistInSlots != null && slot.Date >= DateTime.Now)
                 {
                     _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
                 }
@@ -234,17 +234,20 @@ namespace CatechistHelper.Infrastructure.Services
         {
             foreach (var slot in slots)
             {
-                foreach (var catechistSlot in catechistSlots)
+                if (slot.Date >= DateTime.Now)
                 {
-                    var newCatechistInSlot = new CatechistInSlot
+                    foreach (var catechistSlot in catechistSlots)
                     {
-                        SlotId = slot.Id,
-                        CatechistId = catechistSlot.CatechistId,
-                        Type = catechistSlot.IsMain ? CatechistInSlotType.Main.ToString() : CatechistInSlotType.Assistant.ToString()
-                    };
+                        var newCatechistInSlot = new CatechistInSlot
+                        {
+                            SlotId = slot.Id,
+                            CatechistId = catechistSlot.CatechistId,
+                            Type = catechistSlot.IsMain ? CatechistInSlotType.Main.ToString() : CatechistInSlotType.Assistant.ToString()
+                        };
 
-                    slot.CatechistInSlots.Add(newCatechistInSlot);
-                    await _unitOfWork.GetRepository<CatechistInSlot>().InsertAsync(newCatechistInSlot);
+                        slot.CatechistInSlots.Add(newCatechistInSlot);
+                        await _unitOfWork.GetRepository<CatechistInSlot>().InsertAsync(newCatechistInSlot);
+                    }
                 }
             }
         }

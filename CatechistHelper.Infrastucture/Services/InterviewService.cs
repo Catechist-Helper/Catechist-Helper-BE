@@ -124,7 +124,15 @@ namespace CatechistHelper.Infrastructure.Services
                 if (request.Accounts != null && request.Accounts.Count != 0)
                 {
                     var recruiters = await _unitOfWork.GetRepository<RecruiterInInterview>().GetListAsync(predicate: r => r.InterviewId == id);
-                    if (recruiters.Any()) _unitOfWork.GetRepository<RecruiterInInterview>().DeleteRangeAsync(recruiters);
+                    string? interviewURL = null;
+                    if (recruiters.Any()) {
+                        var recruiter = recruiters.FirstOrDefault();
+                        if (recruiter != null && !string.IsNullOrEmpty(recruiter.OnlineRoomUrl))
+                        {
+                            interviewURL = recruiter.OnlineRoomUrl;
+                        }
+                        _unitOfWork.GetRepository<RecruiterInInterview>().DeleteRangeAsync(recruiters);
+                    }
                     foreach (Guid accountId in request.Accounts)
                     {
                         Account account = await _unitOfWork.GetRepository<Account>()
@@ -136,6 +144,7 @@ namespace CatechistHelper.Infrastructure.Services
                         {
                             InterviewId = interview.Id,
                             AccountId = account.Id,
+                            OnlineRoomUrl = interviewURL,
                         });
                     }
                 }

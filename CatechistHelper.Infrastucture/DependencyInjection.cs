@@ -19,6 +19,7 @@ using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Dtos.Responses.Registration;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -116,6 +117,9 @@ namespace CatechistHelper.Infrastructure.Extensions
             config.NewConfig<SlotResponse, Domain.Dtos.Responses.AbsenceRequest.GetAbsentRequest>()
                 .Map(dest => dest.Slot, src => src);
 
+            config.NewConfig<RecruiterInInterview, GetRegistrationResponse>()
+                .Map(dest => dest.Interview.RecruiterInInterviews, src => src);
+            
             //config.NewConfig<GetClassResponse, Domain.Dtos.Responses.AbsenceRequest.GetAbsentRequest>()
             //    .Map(dest => dest.Class, src => src);
 
