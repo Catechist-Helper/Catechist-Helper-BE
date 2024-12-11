@@ -43,7 +43,7 @@ namespace CatechistHelper.API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll([FromQuery] RequestStatus status = RequestStatus.Pending, [FromQuery] Guid? cId = null)
         {
-            Result<List<GetLeaveRequest>> result = await _leaveRequestService.GetAll(status, cId);
+            Result<List<GetLeaveResponse>> result = await _leaveRequestService.GetAll(status, cId);
             return StatusCode((int)result.StatusCode, result);
         }
     }

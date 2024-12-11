@@ -9,7 +9,7 @@ namespace CatechistHelper.Application.Services
 {
     public interface ILeaveRequestService
     {
-        Task<Result<List<GetLeaveRequest>>> GetAll(RequestStatus status, Guid? cId);
+        Task<Result<List<GetLeaveResponse>>> GetAll(RequestStatus status, Guid? cId);
         Task<Result<bool>> ProcessLeaveRequest(AbsenceApproveRequest absenceRequest);
         Task<Result<bool>> SubmitLeaveRequest(LeaveRequestDto leaveRequest);
     }

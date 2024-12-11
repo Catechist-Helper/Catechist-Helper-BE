@@ -21,7 +21,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
         }
 
-        public async Task<Result<List<GetLeaveRequest>>> GetAll(RequestStatus status, Guid? cId)
+        public async Task<Result<List<GetLeaveResponse>>> GetAll(RequestStatus status, Guid? cId)
         {
             try
             {
@@ -34,13 +34,13 @@ namespace CatechistHelper.Infrastructure.Services
                     absenceRequests = absenceRequests.Where(a => a.Catechist.Id == cId).ToList();
                 }
 
-                var result = absenceRequests.Adapt<List<GetLeaveRequest>>();
+                var result = absenceRequests.Adapt<List<GetLeaveResponse>>();
 
                 return Success(result);
             }
             catch (Exception ex)
             {
-                return Fail<List<GetLeaveRequest>>(ex.Message);
+                return Fail<List<GetLeaveResponse>>(ex.Message);
             }
         }
 
@@ -62,10 +62,28 @@ namespace CatechistHelper.Infrastructure.Services
                     {
                         throw new Exception("Giao ly vien van con slot");
                     }
+
+                    var catechistProfile = await _unitOfWork.GetRepository<Catechist>()
+                    .SingleOrDefaultAsync(predicate: c => c.Id == leaveRequest.CatechistId);
+
+                    Validator.EnsureNonNull(catechistProfile);
+
+                    catechistProfile.IsTeaching = false;
+                    _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechistProfile);
+
+                    var catechistAccount = await _unitOfWork.GetRepository<Account>()
+                    .SingleOrDefaultAsync(predicate: c => c.Id == catechistProfile.AccountId);
+
+                    if (catechistAccount != null) {
+                        catechistAccount.IsDeleted = true;
+                        _unitOfWork.GetRepository<Account>().UpdateAsync(catechistAccount);
+                    }
                 }
 
                 leaveRequest.Comment = absenceRequest.Comment;
                 leaveRequest.ApproverId = absenceRequest.ApproverId;
+                leaveRequest.Status = absenceRequest.Status;
+                leaveRequest.ApprovalDate = DateTime.Now;
 
                 _unitOfWork.GetRepository<LeaveRequest>().UpdateAsync(leaveRequest);
 

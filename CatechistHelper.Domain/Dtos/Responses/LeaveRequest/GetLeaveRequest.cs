@@ -14,4 +14,9 @@ namespace CatechistHelper.Domain.Dtos.Responses.LeaveRequest
         public DateTime CreateAt { get; set; }
         public DateTime UpdateAt { get; set; }
     }
+
+    public class GetLeaveResponse : GetLeaveRequest
+    {
+        public Guid Id { get; set; }
+    }
 }
