@@ -169,10 +169,7 @@ namespace CatechistHelper.Testing
             // Arrange
             var catechistId = new Guid("7b03cc3c-4a6a-4849-9673-1ef9ca8e2f96");
             var catechist = new UpdateCatechistRequest { 
-                FullName = "New Catechist",
-                Gender = "Male",
                 AccountId = new Guid("55549961-bb82-4d04-923d-9b631c0b2e4f"),
-                LevelId = new Guid("55549961-bb82-4d04-923d-9b631c0b2e4f"),
                 ChristianNameId = new Guid("8199c6f5-8930-45a0-b812-49bec5dfe326")
             };
 
