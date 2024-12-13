@@ -1,10 +1,12 @@
-﻿using CatechistHelper.Application.GoogleServices;
+﻿using Azure.Core;
+using CatechistHelper.Application.GoogleServices;
 using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Enums;
@@ -16,6 +18,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Drawing;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
@@ -375,5 +378,28 @@ namespace CatechistHelper.Infrastructure.Services
             // In case of an exception, you can return a failure result or null
             return null!;
         }
+
+        public async Task<Result<GetTrainingInfomationResponse>> GetTrainingInformationOfCatechist(Guid id)
+        {
+            try
+            {
+                var catechist = await _unitOfWork.GetRepository<Catechist>()
+                    .SingleOrDefaultAsync(predicate: c => c.Id == id,
+                                          include: c=> c.Include(c=> c.CatechistInTrainings)
+                                                          .ThenInclude(c=> c.TrainingList)
+                                                            .ThenInclude(c=> c.NextLevel)
+                                                         .Include(c => c.CatechistInTrainings)
+                                                          .ThenInclude(c => c.TrainingList)
+                                                            .ThenInclude(c => c.PreviousLevel));
+
+                var response = catechist.Adapt<GetTrainingInfomationResponse>();
+                return Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Fail<GetTrainingInfomationResponse>(ex.Message);
+            }
+        }
+
     }
 }
