@@ -9,7 +9,6 @@ namespace CatechistHelper.Infrastructure.Utils
 {
     public static class JwtUtil
     {
-
         public static string GenerateJwtToken(Account account)
         {
             JwtSecurityTokenHandler jwtHandler = new JwtSecurityTokenHandler();
@@ -23,10 +22,8 @@ namespace CatechistHelper.Infrastructure.Utils
             new Claim(ClaimTypes.Role, account.Role.RoleName),
         ];
             var expires = DateTime.Now.AddDays(30);
-            var token = new JwtSecurityToken(AppConfig.JwtSetting.IssuerSigningKey, null, claims, notBefore: DateTime.Now, expires, credentials);
+            var token = new JwtSecurityToken(AppConfig.JwtSetting.ValidIssuer, null, claims, notBefore: DateTime.Now, expires, credentials);
             return jwtHandler.WriteToken(token);
         }
-
-
     }
 }

@@ -15,8 +15,6 @@ using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Requests.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Requests.Interview;
-using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
-using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
