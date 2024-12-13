@@ -44,6 +44,15 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [HttpPatch(ApiEndPointConstant.Account.AccountsEndPoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            Result<bool> result = await _accountService.ChangePassword(request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpPut(ApiEndPointConstant.Account.AccountEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

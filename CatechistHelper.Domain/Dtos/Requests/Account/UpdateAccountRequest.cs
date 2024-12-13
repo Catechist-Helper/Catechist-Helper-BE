@@ -18,4 +18,24 @@ namespace CatechistHelper.Domain.Dtos.Requests.Account
         public string Phone { get; set; } = null!;
         public IFormFile? Avatar { get; set; }
     }
+
+
+    public class ChangePasswordRequest
+    {
+        [Required(ErrorMessage = "Username không được trống")]
+        [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
+        [MinLength(6, ErrorMessage = "Ít hơn {1} kí tự")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password không được trống")]
+        [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
+        [MinLength(6, ErrorMessage = "Ít hơn {1} kí tự")]
+        public string NewPassword { get; set; }
+
+
+        [Required(ErrorMessage = "Password không được trống")]
+        [MaxLength(50, ErrorMessage = "Vượt quá {1} kí tự")]
+        [MinLength(6, ErrorMessage = "Ít hơn {1} kí tự")]
+        public string OldPassword { get; set; }
+    }
 }

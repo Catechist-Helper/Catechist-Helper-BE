@@ -19,5 +19,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> Delete(Guid id);
         Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
         Task<Result<IEnumerable<CalendarResponse>>> GetCalendar(Guid id);
+        Task<Result<bool>> ChangePassword(ChangePasswordRequest request);
     }
 }
