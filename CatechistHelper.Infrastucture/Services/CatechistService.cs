@@ -247,6 +247,12 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }
 
+                if (request.ImageUrl != null)
+                {
+                    string avatar = await _firebaseService.UploadImageAsync(request.ImageUrl, $"catechist/");
+                    catechist.ImageUrl = avatar;
+                }
+
                 request.Adapt(catechist);
                 _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
 
