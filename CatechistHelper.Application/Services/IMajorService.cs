@@ -1,4 +1,6 @@
-﻿using CatechistHelper.Domain.Common;
+﻿using CatechistHelper.Application.Repositories;
+using CatechistHelper.Domain.Common;
+using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Major;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Level;
@@ -15,5 +17,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetMajorResponse>> Create(CreateMajorRequest request);
         Task<Result<bool>> CreateLevelOfMajor(Guid MajorId, Guid LevelId);
         Task<Result<bool>> Update(Guid id, UpdateMajorRequest request);
+        Task<Result<bool>> Delete(Guid id);
     }
 }

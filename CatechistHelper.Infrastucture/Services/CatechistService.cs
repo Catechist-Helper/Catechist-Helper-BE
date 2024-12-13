@@ -215,7 +215,10 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                var catechist = await GetById(id);
+                var catechist = await _unitOfWork.GetRepository<Catechist>().SingleOrDefaultAsync(
+                        predicate: c => c.Id.Equals(id) && !c.IsDeleted,
+                        include: c => c.Include(n => n.Account)
+                );
 
                 if (catechist.IsTeaching && !request.IsTeaching)
                 {
@@ -233,24 +236,25 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }
 
-                if (request.LevelId.HasValue)
+                if (catechist.ImageUrl != null)
                 {
-                    var trainingList = catechist.TrainingLists
-                        .OrderByDescending(x => x.CreatedAt)
-                        .Where(x => x.TrainingListStatus == TrainingListStatus.Finished)
-                        .FirstOrDefault();
-                    if (trainingList != null)
-                    {
-                        if (request.LevelId !=  trainingList.NextLevelId)
-                        {
-                            throw new Exception("Không thể cập nhật cập độ nếu chưa qua đào tạo.");
-                        }
-                    }
+                    await _firebaseService.DeleteImageAsync(catechist.ImageUrl);
+                    catechist.ImageUrl = null;
                 }
 
+<<<<<<< Updated upstream
+=======
+                if (request.ImageUrl != null)
+                {
+                    string image = await _firebaseService.UploadImageAsync(request.ImageUrl, "catechist/");
+                    catechist.ImageUrl = image;
+                    catechist.Account.Avatar = image;
+                }
+
+                catechist.Account.Phone = request.Phone;   
+>>>>>>> Stashed changes
                 request.Adapt(catechist);
                 _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
-
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
 
                 if (!isSuccessful)
@@ -265,7 +269,6 @@ namespace CatechistHelper.Infrastructure.Services
                 return Fail<bool>(ex.Message);
             }
         }
-
 
         public async Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request)
         {

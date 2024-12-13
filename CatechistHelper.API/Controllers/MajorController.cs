@@ -64,7 +64,16 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _majorService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
         }
-        
+
+        [HttpDelete(ApiEndPointConstant.Major.MajorEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            Result<bool> result = await _majorService.Delete(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [HttpGet(ApiEndPointConstant.Major.LevelOfMajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetLevelResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLevelOfMajor([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
