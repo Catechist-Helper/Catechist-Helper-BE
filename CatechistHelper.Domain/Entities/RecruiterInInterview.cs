@@ -13,5 +13,7 @@ namespace CatechistHelper.Domain.Entities
         public virtual Interview Interview { get; set; } = null!;
         [Column("online_room_url")]
         public string? OnlineRoomUrl { get; set; }
+        [Column("evaluation")]
+        public string? Evaluation { get; set; }
     }
 }

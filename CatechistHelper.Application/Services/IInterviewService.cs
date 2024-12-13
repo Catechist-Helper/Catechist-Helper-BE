@@ -9,5 +9,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetInterviewResponse>> Create(CreateInterviewRequest request);
         Task<Result<bool>> Update(Guid id, UpdateInterviewRequest request);
         Task<Result<bool>> Delete(Guid id);
+        Task<Result<bool>> PostEvaluation(Guid id, CreateEvaluationRequest request);
     }
 }
