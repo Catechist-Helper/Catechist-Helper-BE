@@ -19,6 +19,8 @@ using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
+using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
+using CatechistHelper.Domain.Dtos.Requests.Catechist;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -76,6 +78,8 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Ignore(x => x.Avatar);
             config.NewConfig<UpdateAccountRequest, Account>()
                 .Ignore(x => x.Avatar);
+            config.NewConfig<UpdateCatechistRequest, Catechist>()
+                .Ignore(x => x.ImageUrl);
             config.NewConfig<CreateRoomRequest, Room>()
                 .Ignore(x => x.Image);
             config.NewConfig<UpdateRoomRequest, Room>()
