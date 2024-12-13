@@ -309,7 +309,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var holidaysTime = holidays.Items.Select(e => new CalendarResponse
                 {
                     Title = e.Summary,
-                    Description = e.Description,
+                    Description = "Ngày lễ",
                     Start = e.Start.Date,
                     End = e.End.Date
                 });
