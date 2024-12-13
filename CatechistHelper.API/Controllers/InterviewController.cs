@@ -42,5 +42,14 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _interviewService.Delete(id);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [HttpPut(ApiEndPointConstant.Interview.InterviewEvaluationEndPoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PostEvaluation([FromRoute] Guid id, [FromBody] CreateEvaluationRequest request)
+        {
+            Result<bool> result = await _interviewService.PostEvaluation(id, request);
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
 }

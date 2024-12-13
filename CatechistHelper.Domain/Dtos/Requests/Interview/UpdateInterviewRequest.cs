@@ -12,4 +12,10 @@
 
         public List<Guid>? Accounts { get; set; }
     }
+
+    public class CreateEvaluationRequest
+    {
+        public string? Evaluation { get; set; }
+        public Guid RecruiterAccountId { get; set; }
+    }
 }

@@ -296,5 +296,28 @@ namespace CatechistHelper.Infrastructure.Services
 
             return interview;
         }
+
+        public async Task<Result<bool>> PostEvaluation(Guid id, CreateEvaluationRequest request)
+        {
+            try
+            {
+                RecruiterInInterview recruiterInInterview = await _unitOfWork.GetRepository<RecruiterInInterview>()
+                    .SingleOrDefaultAsync(predicate: r => r.AccountId == request.RecruiterAccountId && r.InterviewId == id);
+
+                recruiterInInterview.Evaluation = request.Evaluation;
+
+                _unitOfWork.GetRepository<RecruiterInInterview>().UpdateAsync(recruiterInInterview);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    throw new Exception(MessageConstant.Interview.Fail.DeleteInterview);
+                }
+                return Success(isSuccessful);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
+            }
+        }
     }
 }

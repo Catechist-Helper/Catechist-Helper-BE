@@ -8,7 +8,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Interview
     {
         public Guid AccountId { get; set; }
         public string? OnlineRoomUrl { get; set; }
-
+        public string? Evaluation { get; set; }
     }
 
     public class GetInterviewResponse
