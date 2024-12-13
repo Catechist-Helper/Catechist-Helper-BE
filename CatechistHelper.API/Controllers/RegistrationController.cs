@@ -8,6 +8,7 @@ using CatechistHelper.Domain.Dtos.Responses.Interview;
 using Microsoft.AspNetCore.Mvc;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CatechistHelper.API.Controllers
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 namespace CatechistHelper.API.Configurations
 {
@@ -19,13 +20,29 @@ namespace CatechistHelper.API.Configurations
                         //Url = new Uri("")
                     }
                 });
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "Standard Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
                     In = ParameterLocation.Header,
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = JwtBearerDefaults.AuthenticationScheme
                 });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = JwtBearerDefaults.AuthenticationScheme
+                        }
+                    },
+                    new string[] { }
+                }
+            });
             });
         }
     }

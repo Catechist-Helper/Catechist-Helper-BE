@@ -183,7 +183,8 @@ namespace CatechistHelper.Infrastructure.Services
                                 .Include(n => n.Account)
                                 .Include(n => n.Certificates),
                             predicate: a => !a.IsDeleted,
-                            orderBy: a => a.OrderByDescending(x => x.CreatedAt),
+                            orderBy: a => a.OrderByDescending(x => x.CreatedAt)
+                                           .OrderByDescending(x => x.IsTeaching),
                             page: page,
                             size: size
                     );

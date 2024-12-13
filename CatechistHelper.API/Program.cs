@@ -33,7 +33,6 @@ try
 
     // Add Configuration
     builder.Configuration.SettingsBinding();
-
     builder.Services.AddSwaggerGenOption();
     builder.Services.AddDbContext();
     builder.Services.AddMvc()
@@ -44,6 +43,7 @@ try
     {
         options.LowercaseUrls = true;
     });
+    builder.Services.AddJwtValidation();
 
     var app = builder.Build();
 
