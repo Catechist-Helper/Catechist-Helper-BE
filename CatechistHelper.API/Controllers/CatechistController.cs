@@ -3,6 +3,7 @@ using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCatechist;
 using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,14 @@ namespace CatechistHelper.API.Controllers
         public async Task<IActionResult> GetCertificateOfCatechist([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<GetCertificateOfCatechistResponse> result = await _catechistService.GetCertificateOfCatechistById(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Catechist.TrainingOfCatechistEnpoint)]
+        [ProducesResponseType(typeof(Result<GetTrainingInfomationResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetTrainingInformationOfCatechist([FromRoute] Guid id)
+        {
+            Result<GetTrainingInfomationResponse> result = await _catechistService.GetTrainingInformationOfCatechist(id);
             return StatusCode((int)result.StatusCode, result);
         }
 

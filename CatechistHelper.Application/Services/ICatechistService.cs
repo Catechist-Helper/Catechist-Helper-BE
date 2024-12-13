@@ -20,5 +20,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> UpdateImage(Guid id, UpdateImageRequest request);
         Task<PagingResult<ClassOfCatechist>> GetCatechistClasses(Guid id, string pastoralYear,int page, int size, ClassStatus status);
         Task<PagingResult<GradeOfCatechist>> GetCatechistGrades(Guid id, int page, int size);
+        Task<Result<GetTrainingInfomationResponse>> GetTrainingInformationOfCatechist(Guid id);
     }
 }

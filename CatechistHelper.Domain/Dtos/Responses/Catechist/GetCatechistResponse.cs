@@ -24,6 +24,8 @@ namespace CatechistHelper.Domain.Dtos.Responses.Catechist
         public string ImageUrl { get; set; } = string.Empty;
         public string FatherName { get; set; } = string.Empty;
         public string MotherName { get; set; } = string.Empty;
+        public string FatherPhone { get; set; } = string.Empty;
+        public string MotherPhone { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string LevelName { get; set; } = string.Empty;

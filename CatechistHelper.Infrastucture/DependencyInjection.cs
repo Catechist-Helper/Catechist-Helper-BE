@@ -18,12 +18,9 @@ using CatechistHelper.Domain.Dtos.Requests.Interview;
 using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Registration;
-<<<<<<< Updated upstream
-=======
 using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
->>>>>>> Stashed changes
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -120,7 +117,7 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.RequestImages, src => src.RequestImages ?? null)
                 .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
 
-            config.NewConfig<SlotResponse, Domain.Dtos.Responses.AbsenceRequest.GetAbsentRequest>()
+            config.NewConfig<SlotResponse, GetAbsentRequest>()
                 .Map(dest => dest.Slot, src => src);
 
             config.NewConfig<RecruiterInInterview, GetRegistrationResponse>()
@@ -144,6 +141,21 @@ namespace CatechistHelper.Infrastructure.Extensions
 
             config.NewConfig<MemberOfProcess, GetMemberOfProcessRepsonse>()
                 .Map(dest => dest.GetAccountResponse, src => src.Account);
+
+            config.NewConfig<Catechist, GetTrainingInfomationResponse>()
+                    .Map(dest => dest.Id, src => src.Id)
+                    .Map(dest => dest.Name, src => src.FullName)
+                    .Map(dest => dest.TrainingInformation, src => src.CatechistInTrainings.Select(c => new TrainingOfCatechist
+                    {
+                        Id = c.TrainingListId,
+                        CatechistInTrainingStatus = c.CatechistInTrainingStatus.ToString(),
+                        Name = c.TrainingList.Name,
+                        StartTime = c.TrainingList.StartTime,
+                        EndTime = c.TrainingList.EndTime,
+                        NextLevel = c.TrainingList.NextLevel.Name ?? string.Empty,
+                        PreviousLevel = c.TrainingList.PreviousLevel.Name ?? string.Empty 
+                    }));
+
 
             return config;
         }

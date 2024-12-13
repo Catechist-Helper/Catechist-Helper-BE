@@ -6,9 +6,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
 {
     public class CreateCatechistRequest : UpdateCatechistRequest
     {
-<<<<<<< Updated upstream
         public IFormFile? ImageUrl { get; set; }
-=======
         [Required(ErrorMessage = MessageConstant.Catechist.Require.FullNameRequired)]
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string FullName { get; set; } = null!;
@@ -52,6 +50,5 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
         public Guid? AccountId { get; set; }
         public Guid ChristianNameId { get; set; }
         public Guid? LevelId { get; set; }
->>>>>>> Stashed changes
     }
 }

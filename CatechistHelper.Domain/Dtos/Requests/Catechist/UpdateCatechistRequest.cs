@@ -1,4 +1,5 @@
 ﻿using CatechistHelper.Domain.Constants;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatechistHelper.Domain.Dtos.Requests.Catechist
@@ -26,13 +27,8 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Qualification { get; set; }
         public bool IsTeaching { get; set; } = true;
-<<<<<<< Updated upstream
 
-        [MaxLength(100, ErrorMessage = "Tối đa {1} kí tự!")]
-        public string? Note { get; set; }
-=======
         public IFormFile? ImageUrl { get; set; }
->>>>>>> Stashed changes
 
         // Foreign keys
         public Guid? AccountId { get; set; }
