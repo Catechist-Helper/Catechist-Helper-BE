@@ -1,4 +1,4 @@
-using CatechistHelper.Application.Repositories;
+﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
@@ -18,9 +18,7 @@ using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Dtos.Requests.Authentication;
-using Azure.Core;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -323,6 +321,31 @@ namespace CatechistHelper.Infrastructure.Services
             catch (Exception ex)
             {
                 return BadRequest<IEnumerable<CalendarResponse>>(ex.Message);
+            }
+        }
+
+        public async Task<Result<bool>> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(predicate: a => a.Email.Equals(request.Email));
+                if (account == null)
+                    return Fail<bool>("Email không tồn tại");
+
+                if (!PasswordUtil.VerifyPassword(request.OldPassword, account.HashedPassword))
+                    return Fail<bool>("Password không đúng");
+
+                account.HashedPassword = PasswordUtil.HashPassword(request.NewPassword);
+                _unitOfWork.GetRepository<Account>().UpdateAsync(account);
+
+                if (await _unitOfWork.CommitAsync() <= 0)
+                    return Fail<bool>("Cập nhật password thất bại");
+
+                return Success(true);
+            }
+            catch (Exception ex)
+            {
+                return Fail<bool>(ex.Message);
             }
         }
 
