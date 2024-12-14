@@ -1,4 +1,6 @@
-﻿namespace CatechistHelper.Domain.Dtos.Responses.CatechistInTraining
+﻿using CatechistHelper.Domain.Enums;
+
+namespace CatechistHelper.Domain.Dtos.Responses.CatechistInTraining
 {
     public class GetTrainingInfomationResponse
     {
@@ -15,7 +17,8 @@
         public string NextLevel { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public string CatechistInTrainingStatus { get; set; } = string.Empty;
+        public TrainingListStatus TrainingListStatus { get; set; }
+        public CatechistInTrainingStatus CatechistInTrainingStatus { get; set; }
 
     }
 }
