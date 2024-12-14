@@ -6,6 +6,7 @@ using CatechistHelper.Domain.Dtos.Requests.TrainingList;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.TrainingList;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
 using Mapster;
@@ -163,7 +164,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 TrainingList trainingList = await _unitOfWork.GetRepository<TrainingList>().SingleOrDefaultAsync(
-                    predicate: a => a.Id.Equals(id)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
+                    predicate: a => a.Id.Equals(id),
+                    include: tl => tl.Include(tl => tl.CatechistInTrainings)) ?? throw new Exception(MessageConstant.TrainingList.Fail.NotFoundTrainingList);
                 Level previouseLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
                    predicate: l => l.Id == request.PreviousLevelId) ?? throw new Exception(MessageConstant.Level.Fail.NotFoundLevel);
                 Level nextLevel = await _unitOfWork.GetRepository<Level>().SingleOrDefaultAsync(
@@ -182,6 +184,13 @@ namespace CatechistHelper.Infrastructure.Services
                 if (nextLevel.HierarchyLevel > previouseLevel.HierarchyLevel + 1)
                 {
                     throw new Exception(MessageConstant.TrainingList.Fail.InvalidNextLevel);
+                }
+                if (request.TrainingListStatus == TrainingListStatus.Training)
+                {
+                    foreach (var catechist in trainingList.CatechistInTrainings)
+                    {
+                        catechist.CatechistInTrainingStatus = CatechistInTrainingStatus.Training;
+                    }
                 }
                 request.Adapt(trainingList);
                 _unitOfWork.GetRepository<TrainingList>().UpdateAsync(trainingList);
