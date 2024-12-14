@@ -279,10 +279,16 @@ namespace CatechistHelper.Infrastructure.Utils
                     var address = worksheet.Cells[row, 7].Text;
 
 
-                    if (!DateTime.TryParseExact(dateOfBirthText, AllowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateOfBirth))
+                    DateTime? dateOfBirth = null;
+                    if (!string.IsNullOrEmpty(dateOfBirthText))
                     {
-                        throw new FormatException(
-                            $"Invalid date format in row {row}, column 5. Value: '{dateOfBirthText}' does not match expected format: {string.Join(", ", AllowedFormats)}.");
+                        if (!DateTime.TryParseExact(dateOfBirthText, AllowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                        {
+                            // Log the issue or continue processing other rows
+                            Console.WriteLine($"Warning: Invalid date format in row {row}, column 6. Value: '{dateOfBirthText}'.");
+                            continue;
+                        }
+                        dateOfBirth = parsedDate;
                     }
 
 
@@ -292,7 +298,7 @@ namespace CatechistHelper.Infrastructure.Utils
                         Email = email,
                         Phone = phone,
                         Gender = gender,
-                        DateOfBirth = dateOfBirth,
+                        DateOfBirth = dateOfBirth ?? DateTime.Today,
                         Address = address,
                         IsAttended = true,
                         EventId = eventId
