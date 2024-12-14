@@ -148,7 +148,8 @@ namespace CatechistHelper.Infrastructure.Extensions
                     .Map(dest => dest.TrainingInformation, src => src.CatechistInTrainings.Select(c => new TrainingOfCatechist
                     {
                         Id = c.TrainingListId,
-                        CatechistInTrainingStatus = c.CatechistInTrainingStatus.ToString(),
+                        TrainingListStatus = c.TrainingList.TrainingListStatus
+                        CatechistInTrainingStatus = c.CatechistInTrainingStatus,
                         Name = c.TrainingList.Name,
                         StartTime = c.TrainingList.StartTime,
                         EndTime = c.TrainingList.EndTime,
