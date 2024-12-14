@@ -71,13 +71,13 @@ namespace CatechistHelper.Infrastructure.Repositories
                 if (entityEntry.State == EntityState.Added)
                 {
                     entityEntry.Property(x => x.CreatedAt)
-                        .CurrentValue = DateTime.UtcNow;
+                        .CurrentValue = DateTime.Now;
                 }
 
                 if (entityEntry.State == EntityState.Modified)
                 {
                     entityEntry.Property(x => x.UpdatedAt)
-                        .CurrentValue = DateTime.UtcNow;
+                        .CurrentValue = DateTime.Now;
                 }
             }
         }
