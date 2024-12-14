@@ -255,7 +255,8 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "An error occurred while fetching free recruiters for meeting time {MeetingTime}, page {Page}, and size {Size}.", meetingTime, page, size);
+                return null!;
             }
         }
 

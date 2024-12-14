@@ -9,19 +9,16 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? FatherName { get; set; }
 
-        [RegularExpression(@"^(\d{10})$", ErrorMessage = MessageConstant.Common.InvalidPhoneNumber)]
         public string? FatherPhone { get; set; }
 
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? MotherName { get; set; }
 
-        [RegularExpression(@"^(\d{10})$", ErrorMessage = MessageConstant.Common.InvalidPhoneNumber)]
         public string? MotherPhone { get; set; }
 
         [MaxLength(200, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Address { get; set; }
 
-        [RegularExpression(@"^(\d{10})$", ErrorMessage = MessageConstant.Common.InvalidPhoneNumber)]
         public string? Phone { get; set; }
 
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]

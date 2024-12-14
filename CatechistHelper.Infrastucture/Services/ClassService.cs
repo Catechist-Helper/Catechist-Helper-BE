@@ -51,9 +51,9 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError(ex, "An error occurred while fetching paginated class data with filter {Filter}, page {Page}, and size {Size}.", filter, page, size);
+                return null!;
             }
-            return null!;
         }
 
         public async Task<IPaginate<Class>> GetAll(ClassFilter? filter, int page, int size)
@@ -92,13 +92,14 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching catechists for class ID {ClassId} with page {Page} and size {Size}.", id, page, size);
+                return null!;
             }
-            return null!;
         }
 
         private Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)
         {
-            Expression<Func<Class, bool>> filterQuery = x => x.IsDeleted == false;
+            Expression<Func<Class, bool>> filterQuery = x => !x.IsDeleted;
             if (filter.MajorId != null)
             {
                 filterQuery = filterQuery.AndAlso(x => x.Grade.Major.Id.Equals(filter.MajorId));
@@ -135,8 +136,9 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching slots for class ID {ClassId} with page {Page} and size {Size}.", id, page, size);
+                return null!;
             }
-            return null!;
         }
 
         private async Task CheckRestrictionDateAsync()
@@ -174,16 +176,12 @@ namespace CatechistHelper.Infrastructure.Services
                 await UpdateClassEntityAsync(classToUpdate);
 
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-                if (!isSuccessful)
-                {
-                    throw new Exception("Commit failed");
-                }
 
                 return Success(isSuccessful);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass);
             }
         }
 
@@ -282,22 +280,15 @@ namespace CatechistHelper.Infrastructure.Services
                     slot.RoomId = request.RoomId;
                 }
 
-                // Update the class entity
                 _unitOfWork.GetRepository<Class>().UpdateAsync(classToUpdate);
 
-                // Save changes
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-
-                if (!isSuccessful)
-                {
-                    throw new Exception("Commit fail");
-                }
 
                 return Success(isSuccessful);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass);
             }
         }
 
@@ -312,7 +303,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (pastoralYear.PastoralYearStatus == PastoralYearStatus.Finished)
                 {
-                    throw new Exception("Pastoral year finished, cannot add class");
+                    throw new Exception("Năm học này đã kết thúc, không thể thêm mới");
                 }
 
                 var grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(predicate: g => g.Id == request.GradeId);
@@ -330,16 +321,11 @@ namespace CatechistHelper.Infrastructure.Services
                 await _unitOfWork.GetRepository<Class>().InsertAsync(classEntity);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
 
-                if (!isSuccessful)
-                {
-                    throw new Exception("Commit fail");
-                }
-
                 return Success(isSuccessful);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(MessageConstant.Class.Fail.CreateClass + ex.Message);
+                return Fail<bool>(MessageConstant.Class.Fail.CreateClass);
             }
         }
 
@@ -354,16 +340,12 @@ namespace CatechistHelper.Infrastructure.Services
                 _unitOfWork.GetRepository<Class>().UpdateAsync(classEntity);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
 
-                if (!isSuccessful)
-                {
-                    throw new Exception(MessageConstant.Class.Fail.UpdateClass);
-                }
-
                 return Success(isSuccessful);
             }
             catch (Exception ex)
             {
-                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass + ex.Message);
+                _logger.LogError(ex, "An error occurred while updating the class with ID {ClassId}.", id);
+                return Fail<bool>(MessageConstant.Class.Fail.UpdateClass);
             }
         }
 
@@ -371,46 +353,41 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
-                // Retrieve the class along with its related data
                 var classToDelete = await _unitOfWork.GetRepository<Class>()
                     .SingleOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(cls => cls.CatechistInClasses)
                                                                                   .Include(cls => cls.Slots));
-
-                // Check if the class exists
                 if (classToDelete == null)
                 {
-                    return BadRequest<bool>("Class not found.");
+                    return BadRequest<bool>("Không tìm thấy lớp này.");
                 }
 
-                // Remove related CatechistInClass entities
-                if (classToDelete.CatechistInClasses.Any())
+                if (classToDelete.CatechistInClasses.Count != 0)
                 {
                     _unitOfWork.GetRepository<CatechistInClass>().DeleteRangeAsync(classToDelete.CatechistInClasses);
                 }
 
-                // Remove related CatechistInSlot entities (associated with Slots)
                 foreach (var slot in classToDelete.Slots)
                 {
-                    // Get the related CatechistInSlot entities for the current slot and delete them
                     var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
                         .GetListAsync(predicate: cis => cis.SlotId == slot.Id);
 
-                    if (catechistInSlots.Any())
+                    if (slot.Date > DateTime.Now)
+                    {
+                        return BadRequest<bool>("Không thể xóa vì đã có slot.");
+                    }
+
+                    if (catechistInSlots.Count != 0)
                     {
                         _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(catechistInSlots);
                     }
                 }
 
-                // Remove the Slot entities
-                if (classToDelete.Slots.Any())
+                if (classToDelete.Slots.Count != 0)
                 {
                     _unitOfWork.GetRepository<Slot>().DeleteRangeAsync(classToDelete.Slots);
                 }
 
-                // Delete the class itself
                 _unitOfWork.GetRepository<Class>().DeleteAsync(classToDelete);
-
-                // Commit the changes to the database
                 var result = await _unitOfWork.CommitAsync();
 
                 return Success(result > 0);
