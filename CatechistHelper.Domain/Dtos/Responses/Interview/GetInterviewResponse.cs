@@ -18,8 +18,8 @@ namespace CatechistHelper.Domain.Dtos.Responses.Interview
         public string Note { get; set; }
         public bool IsPassed { get; set; }
         public InterviewType? InterviewType { get; set; }
-        public List<RecruiterInInterviewReponse> RecruiterInInterviews { get; set; }
+        public List<RecruiterInInterviewReponse> RecruiterInInterviews { get; set; } = [];
         [JsonPropertyName("recruiters")]
-        public List<GetAccountResponse> Accounts { get; set; }
+        public List<GetAccountResponse> Accounts { get; set; } = [];
     }
 }

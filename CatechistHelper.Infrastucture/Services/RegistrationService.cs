@@ -20,6 +20,8 @@ using CatechistHelper.Infrastructure.Utils;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 using Microsoft.IdentityModel.Tokens;
+using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -40,9 +42,12 @@ namespace CatechistHelper.Infrastructure.Services
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: r => r.Id.Equals(id),
                     include: r => r.Include(r => r.CertificateOfCandidates)
-                                   .Include(r => r.Interview).ThenInclude(i => i.Accounts)
-                                           .ThenInclude(i => i.RecruiterInInterviews)
+                                   .Include(r => r.Interview)
+                                      .ThenInclude(i => i.Accounts)
+                                   .Include(r => r.Interview)
+                                      .ThenInclude(i => i.RecruiterInInterviews)
                                    .Include(r => r.RegistrationProcesses));
+
                 return Success(registration.Adapt<GetRegistrationResponse>());
             }
             catch (Exception ex)
@@ -50,6 +55,60 @@ namespace CatechistHelper.Infrastructure.Services
                 return BadRequest<GetRegistrationResponse>(ex.Message);
             }
         }
+
+        public static GetRegistrationResponse MapToGetRegistrationResponse(Registration registration)
+        {
+            return new GetRegistrationResponse
+            {
+                Id = registration.Id,
+                FullName = registration.FullName,
+                Gender = registration.Gender,
+                DateOfBirth = registration.DateOfBirth,
+                Address = registration.Address,
+                Email = registration.Email,
+                Phone = registration.Phone,
+                IsTeachingBefore = registration.IsTeachingBefore,
+                YearOfTeaching = registration.YearOfTeaching,
+                Note = registration.Note,
+                CreatedAt = registration.CreatedAt,
+                Status = registration.Status,
+                CertificateOfCandidates = registration.CertificateOfCandidates.Select(c => new GetCertificateOfCandidateResponse
+                {
+                    Id = c.Id,
+                    ImageUrl = c.ImageUrl
+                }).ToList(),
+                Interview = registration.Interview != null
+                    ? new GetInterviewResponse
+                    {
+                        Id = registration.Interview.Id,
+                        MeetingTime = registration.Interview.MeetingTime,
+                        Note = registration.Interview.Note,
+                        IsPassed = registration.Interview.IsPassed,
+                        InterviewType = registration.Interview.InterviewType,
+                        RecruiterInInterviews = registration.Interview.RecruiterInInterviews.Select(r => new RecruiterInInterviewReponse
+                        {
+                            AccountId = r.AccountId,
+                            OnlineRoomUrl = r.OnlineRoomUrl,
+                            Evaluation = r.Evaluation
+                        }).ToList(),
+                        Accounts = registration.Interview.Accounts.Select(a => new GetAccountResponse
+                        {
+                            Id = a.Id,
+                            FullName = a.FullName,
+                            Email = a.Email
+                        }).ToList()
+                    }
+                    : null,
+                RegistrationProcesses = registration.RegistrationProcesses.Select(rp => new GetRegistrationProcessResponse
+                {
+                    Id = rp.Id,
+                    Name = rp.Name,
+                    CreatedAt = rp.CreatedAt,
+                    Status = rp.Status
+                }).ToList()
+            };
+        }
+
 
         public async Task<PagingResult<GetRegistrationResponse>> GetPagination(RegistrationFilter? filter, int page, int size)
         {
