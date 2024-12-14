@@ -21,6 +21,10 @@ using CatechistHelper.Domain.Dtos.Responses.Registration;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInTraining;
 using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
+using CatechistHelper.Domain.Dtos.Responses.Account;
+using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
+using CatechistHelper.Domain.Dtos.Responses.Interview;
+using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -156,6 +160,35 @@ namespace CatechistHelper.Infrastructure.Extensions
                         NextLevel = c.TrainingList.NextLevel.Name ?? string.Empty,
                         PreviousLevel = c.TrainingList.PreviousLevel.Name ?? string.Empty 
                     }));
+
+            // Map Registration -> GetRegistrationResponse
+            config.NewConfig<Registration, GetRegistrationResponse>()
+                .Map(dest => dest.CertificateOfCandidates,
+                    src => src.CertificateOfCandidates.Adapt<List<GetCertificateOfCandidateResponse>>())
+                .Map(dest => dest.Interview,
+                    src => src.Interview.Adapt<GetInterviewResponse>())
+                .Map(dest => dest.RegistrationProcesses,
+                    src => src.RegistrationProcesses.Adapt<List<GetRegistrationProcessResponse>>());
+
+            // Map Interview -> GetInterviewResponse
+
+            config.NewConfig<Interview, GetInterviewResponse>()
+                .Map(dest => dest.RecruiterInInterviews,
+                    src => src.RecruiterInInterviews.Adapt<List<RecruiterInInterviewReponse>>())
+                .Map(dest => dest.Accounts,
+                    src => src.Accounts.Adapt<List<GetAccountResponse>>());
+
+            // Map CertificateOfCandidate -> GetCertificateOfCandidateResponse
+            config.NewConfig<CertificateOfCandidate, GetCertificateOfCandidateResponse>();
+
+            // Map RegistrationProcess -> GetRegistrationProcessResponse
+            config.NewConfig<RegistrationProcess, GetRegistrationProcessResponse>();
+
+            // Map RecruiterInInterview -> RecruiterInInterviewReponse
+            config.NewConfig<RecruiterInInterview, RecruiterInInterviewReponse>();
+
+            // Map Account -> GetAccountResponse
+            config.NewConfig<Account, GetAccountResponse>();
 
 
             return config;

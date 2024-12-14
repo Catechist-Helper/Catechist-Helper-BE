@@ -23,6 +23,10 @@ namespace CatechistHelper.Domain.Dtos.Requests.Catechist
 
         [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
         public string? Qualification { get; set; }
+
+        [MaxLength(50, ErrorMessage = "Tối đa {1} kí tự!")]
+        public string? BirthPlace { get; set; }
+
         public bool IsTeaching { get; set; } = true;
 
         public IFormFile? ImageUrl { get; set; }
