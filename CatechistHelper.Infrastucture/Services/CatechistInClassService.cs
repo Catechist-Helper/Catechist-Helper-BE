@@ -125,7 +125,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (otherClassesWithSamePastoralYear.Count != 0)
                 {
-                    throw new Exception("Catechist is marked as main in another class within the same Pastoral Year.");
+                    return Fail<bool>("Giáo lý viên được đánh dấu là giáo lý viên chính trong một lớp khác trong năm học");
                 }
 
                 _unitOfWork.GetRepository<CatechistInClass>().DeleteAsync(catechistInClass);

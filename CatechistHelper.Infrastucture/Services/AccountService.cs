@@ -58,7 +58,7 @@ namespace CatechistHelper.Infrastructure.Services
                 IPaginate<Account> accounts =
                     await _unitOfWork.GetRepository<Account>()
                     .GetPagingListAsync(
-                            predicate: a => a.IsDeleted == false,
+                            predicate: a => !a.IsDeleted,
                             include: a => a.Include(x => x.Role),
                             orderBy: a => a.OrderByDescending(x => x.CreatedAt),
                             page: page,
