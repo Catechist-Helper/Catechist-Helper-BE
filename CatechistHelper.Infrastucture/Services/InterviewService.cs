@@ -52,7 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Registration registration = await _unitOfWork.GetRepository<Registration>().SingleOrDefaultAsync(
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
-                //await ValidateInterviewScheduling(request.MeetingTime);
+                await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
@@ -264,8 +264,7 @@ namespace CatechistHelper.Infrastructure.Services
 
             string roomId = createdRoom.Id;
 
-            // Generate meeting URLs for interviewers and assign to RecruiterInInterviews
-            var meetingUrl = _configuration["FrontendUrl:Meeting"];
+            var meetingUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? _configuration["FrontendUrl:Meeting"];
 
             for (int i = 0; i < interview.RecruiterInInterviews.Count; i++)
             {

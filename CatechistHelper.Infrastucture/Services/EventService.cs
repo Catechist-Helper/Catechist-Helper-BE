@@ -10,6 +10,7 @@ using CatechistHelper.Domain.Dtos.Responses.Member;
 using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
 using CatechistHelper.Domain.Dtos.Responses.Process;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Pagination;
 using CatechistHelper.Infrastructure.Database;
@@ -33,32 +34,47 @@ namespace CatechistHelper.Infrastructure.Services
         {
         }
 
+        public async Task<Event> GetById(Guid id)
+        {
+            Event eventEntity = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
+                predicate: e => e.Id == id);
+            Validator.EnsureNonNull(eventEntity);
+            return eventEntity;
+        }
+
         public async Task<Result<GetEventResponse>> Create(CreateEventRequest request)
         {
-            EventCategory eventCategory = await _unitOfWork.GetRepository<EventCategory>().SingleOrDefaultAsync(
-                    predicate: ec => ec.Id.Equals(request.EventCategoryId)) ?? throw new Exception(MessageConstant.EventCategory.Fail.NotFoundEventCategory);
-            Event newEvent = request.Adapt<Event>();
-            Event result = await _unitOfWork.GetRepository<Event>().InsertAsync(newEvent);
-            bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
-            if (!isSuccessful)
+            try
             {
-                throw new Exception(MessageConstant.Event.Fail.Create);
+                Event newEvent = request.Adapt<Event>();
+                Event result = await _unitOfWork.GetRepository<Event>().InsertAsync(newEvent);
+                bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+                if (!isSuccessful)
+                {
+                    return Fail<GetEventResponse>(MessageConstant.Event.Fail.Create);
+                }
+                return Success(result.Adapt<GetEventResponse>());
             }
-            return Success(result.Adapt<GetEventResponse>());
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return null!;
+            }
+            
+            
         }
 
         public async Task<Result<bool>> Delete(Guid id)
         {
             try
             {
-                Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                    predicate: g => g.Id.Equals(id)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                Event eventFromDb = await GetById(id);
                 eventFromDb.IsDeleted = true;
                 _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Event.Fail.Delete);
+                    return Fail<bool>(MessageConstant.Event.Fail.Delete);
                 }
                 return Success(isSuccessful);
             }
@@ -70,8 +86,7 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<GetEventResponse>> Get(Guid id)
         {
-            Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                predicate: e => e.Id == id) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+            Event eventFromDb = await GetById(id);
             return Success(eventFromDb.Adapt<GetEventResponse>());
         }
 
@@ -113,7 +128,7 @@ namespace CatechistHelper.Infrastructure.Services
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Event.Fail.Update);
+                    return Fail<bool>(MessageConstant.Event.Fail.Update);
                 }
                 return Success(isSuccessful);
             }
@@ -183,32 +198,51 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<Result<bool>> AddParticipant(Guid id, IFormFile file)
         {
+            if (file == null)
+                return Fail<bool>("No file provided");
+
             try
             {
-                Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                    predicate: m => m.Id.Equals(id), include: e => e.Include(x => x.ParticipantInEvents)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                var eventFromDb = await _unitOfWork.GetRepository<Event>()
+                    .SingleOrDefaultAsync(
+                        predicate: m => m.Id == id,
+                        include: e => e.Include(x => x.ParticipantInEvents)
+                    );
 
-                var participants = FileHelper.ReadFileReturnParticipants(file, id);
-
-                foreach (var participant in participants)
+                return eventFromDb.EventStatus switch
                 {
-                    // Avoid duplicates by checking if the participant already exists
-                    if (!eventFromDb.ParticipantInEvents.Any(p => p.Email == participant.Email
-                    && p.FullName.ToLower().Equals(participant.FullName.ToLower())))
-                    {
-                        eventFromDb.ParticipantInEvents.Add(participant);
-                        await _unitOfWork.GetRepository<ParticipantInEvent>().InsertAsync(participant);
-                    }
-                }
-
-                //_unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
-                bool isSuccessful = await _unitOfWork.CommitAsync() >= 0;
-                return Success(isSuccessful);
+                    EventStatus.Cancelled => Fail<bool>("Sự kiện đã hủy bỏ, không thể thêm người"),
+                    EventStatus.Completed => Fail<bool>("Sự kiện đã kết thúc, không thể thêm người"),
+                    _ => await ProcessParticipants(eventFromDb, file)
+                };
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error adding participants to event {EventId}", id);
                 return Fail<bool>(ex.Message);
             }
+        }
+
+        private async Task<Result<bool>> ProcessParticipants(Event eventFromDb, IFormFile file)
+        {
+            var participants = FileHelper.ReadFileReturnParticipants(file, eventFromDb.Id);
+
+            var existingParticipants = new HashSet<(string Email, string FullName)>(
+                eventFromDb.ParticipantInEvents
+                    .Select(p => (p.Email.ToLower(), p.FullName.ToLower()))
+            );
+
+            var newParticipants = participants
+                .Where(p => !existingParticipants.Contains((p.Email.ToLower(), p.FullName.ToLower())))
+                .ToList();
+
+            if (newParticipants.Count == 0)
+                return Success(true);
+
+            await _unitOfWork.GetRepository<ParticipantInEvent>().InsertRangeAsync(newParticipants);
+
+            bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+            return Success(isSuccessful);
         }
 
         public async Task<byte[]> ExportParticipants(Guid id)

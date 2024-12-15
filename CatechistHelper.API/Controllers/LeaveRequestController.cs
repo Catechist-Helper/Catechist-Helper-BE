@@ -43,7 +43,7 @@ namespace CatechistHelper.API.Controllers
         [HttpGet(ApiEndPointConstant.LeaveRequestEndpoint.Endpoint)]
         [ProducesResponseType(typeof(Result<List<GetLeaveRequest>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAll([FromQuery] RequestStatus status = RequestStatus.Pending, [FromQuery] Guid? cId = null)
+        public async Task<IActionResult> GetAll([FromQuery] RequestStatus? status, [FromQuery] Guid? cId = null)
         {
             Result<List<GetLeaveResponse>> result = await _leaveRequestService.GetAll(status, cId);
             return StatusCode((int)result.StatusCode, result);

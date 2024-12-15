@@ -239,7 +239,7 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }
 
-                if (catechist.ImageUrl != null)
+                if (catechist.ImageUrl != null && request.ImageUrl != null)
                 {
                     await _firebaseService.DeleteImageAsync(catechist.ImageUrl);
                     catechist.ImageUrl = null;
@@ -336,7 +336,9 @@ namespace CatechistHelper.Infrastructure.Services
                     .GetPagingListAsync(
                         predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear && c.Class.ClassStatus == status,
                         include: c => c.Include(cl => cl.Class)
-                                       .ThenInclude(y => y.PastoralYear),
+                                       .ThenInclude(y => y.PastoralYear)
+                                       .Include(cl => cl.Class.Grade)
+                                       .ThenInclude(gr => gr.Major),
                         page: page,
                         size: size);
 
