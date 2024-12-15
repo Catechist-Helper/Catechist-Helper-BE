@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using CatechistHelper.Domain.Models;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 using Microsoft.AspNetCore.Authorization;
+using CatechistHelper.API.Validator;
+using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.API.Controllers
 {
@@ -21,6 +23,7 @@ namespace CatechistHelper.API.Controllers
             _registrationService = registrationService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationsEndPoint)]
         [ProducesResponseType(typeof(PagingResult<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] RegistrationFilter filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -29,6 +32,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Registration.InterviewsOfRegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetInterviewOfApplication([FromRoute] Guid id)
@@ -37,6 +41,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationProcessesOfRegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<List<GetRegistrationResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRegistrationProcessesOfApplication([FromRoute] Guid id)
@@ -45,6 +50,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -62,6 +68,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Registration.RegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -71,6 +78,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Registration.RegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
