@@ -22,7 +22,7 @@ namespace CatechistHelper.API.Controllers
         }
 
         [HttpGet(ApiEndPointConstant.Account.AccountsEndPoint)]
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
         {

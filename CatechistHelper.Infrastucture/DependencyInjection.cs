@@ -25,6 +25,7 @@ using CatechistHelper.Domain.Dtos.Responses.Account;
 using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
+using CatechistHelper.Domain.Dtos.Responses.LeaveRequest;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -119,6 +120,19 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
                 .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
                 .Map(dest => dest.RequestImages, src => src.RequestImages ?? null)
+                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
+
+            config.NewConfig<LeaveRequest, GetLeaveResponse>()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.CatechistId, src => src.CatechistId)
+                .Map(dest => dest.Reason, src => src.Reason)
+                .Map(dest => dest.Status, src => src.Status)
+                .Map(dest => dest.ApproverId, src => src.ApproverId)
+                .Map(dest => dest.Comment, src => src.Comment)
+                .Map(dest => dest.ApprovalDate, src => src.ApprovalDate)
+                .Map(dest => dest.CreateAt, src => src.CreatedAt)
+                .Map(dest => dest.UpdateAt, src => src.UpdatedAt)
+                .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
                 .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
 
             config.NewConfig<SlotResponse, GetAbsentRequest>()

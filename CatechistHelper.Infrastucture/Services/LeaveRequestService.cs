@@ -21,13 +21,13 @@ namespace CatechistHelper.Infrastructure.Services
         {
         }
 
-        public async Task<Result<List<GetLeaveResponse>>> GetAll(RequestStatus status, Guid? cId)
+        public async Task<Result<List<GetLeaveResponse>>> GetAll(RequestStatus? status, Guid? cId)
         {
             try
             {
                 var absenceRequests = await _unitOfWork.GetRepository<LeaveRequest>()
                                    .GetListAsync(
-                                       predicate: a => a.Status == status,
+                                       predicate: a => !status.HasValue || (status.HasValue && a.Status == status),
                                        include: a => a.Include(a => a.Catechist));
                 if (cId != null)
                 {

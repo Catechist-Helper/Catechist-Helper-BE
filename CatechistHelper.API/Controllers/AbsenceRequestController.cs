@@ -21,7 +21,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPost(ApiEndPointConstant.AbsenceRequest.Submit)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SubmitAbsenceRequest([FromBody] AbsenceRequestDto absenceRequest)
+        public async Task<IActionResult> SubmitAbsenceRequest([FromForm] AbsenceRequestDto absenceRequest)
         {
             Result<bool> result = await _absenceRequestService.SubmitAbsentRequest(absenceRequest);
             return StatusCode((int)result.StatusCode, result);
