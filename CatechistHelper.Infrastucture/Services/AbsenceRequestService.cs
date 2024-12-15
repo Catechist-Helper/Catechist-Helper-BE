@@ -186,7 +186,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.AbsentRequest.Fail.Update);
+                    return Fail<bool>(MessageConstant.AbsentRequest.Fail.Update);
                 }
 
                 return Success(true);

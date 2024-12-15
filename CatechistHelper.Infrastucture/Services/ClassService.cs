@@ -97,9 +97,13 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        private Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)
+        private static Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)
         {
             Expression<Func<Class, bool>> filterQuery = x => !x.IsDeleted;
+            if(filter == null)
+            {
+                return filterQuery;
+            }
             if (filter.MajorId != null)
             {
                 filterQuery = filterQuery.AndAlso(x => x.Grade.Major.Id.Equals(filter.MajorId));
@@ -181,6 +185,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return Fail<bool>(MessageConstant.Class.Fail.UpdateClass);
             }
         }
@@ -303,7 +308,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (pastoralYear.PastoralYearStatus == PastoralYearStatus.Finished)
                 {
-                    throw new Exception("Năm học này đã kết thúc, không thể thêm mới");
+                    return Fail<bool>("Năm học này đã kết thúc, không thể thêm mới");
                 }
 
                 var grade = await _unitOfWork.GetRepository<Grade>().SingleOrDefaultAsync(predicate: g => g.Id == request.GradeId);
@@ -325,6 +330,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return Fail<bool>(MessageConstant.Class.Fail.CreateClass);
             }
         }
