@@ -1,10 +1,12 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Major;
 using CatechistHelper.Domain.Dtos.Responses.Catechist;
 using CatechistHelper.Domain.Dtos.Responses.Level;
 using CatechistHelper.Domain.Dtos.Responses.Major;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -18,6 +20,7 @@ namespace CatechistHelper.API.Controllers
             _majorService = majorService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Major.MajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetMajorResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -26,6 +29,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Major.CatechistInMajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetQualifiedCatechistByMajorId(
@@ -39,6 +43,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Major.MajorEndpoint)]
         [ProducesResponseType(typeof(Result<GetMajorResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -47,6 +52,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Major.MajorsEndpoint)]
         [ProducesResponseType(typeof(Result<GetMajorResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -56,6 +62,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Major.MajorEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -65,6 +72,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Major.MajorEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -74,6 +82,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Major.LevelOfMajorsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetLevelResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLevelOfMajor([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -82,6 +91,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Major.LevelOfMajorEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

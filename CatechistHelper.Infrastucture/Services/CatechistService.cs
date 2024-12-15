@@ -394,9 +394,16 @@ namespace CatechistHelper.Infrastructure.Services
                                                             .ThenInclude(c=> c.NextLevel)
                                                          .Include(c => c.CatechistInTrainings)
                                                           .ThenInclude(c => c.TrainingList)
-                                                            .ThenInclude(c => c.PreviousLevel));
+                                                            .ThenInclude(c => c.PreviousLevel));             
 
                 var response = catechist.Adapt<GetTrainingInfomationResponse>();
+                if (response.TrainingInformation != null)
+                {
+                    response.TrainingInformation = response.TrainingInformation
+                        .OrderBy(ti => ti.TrainingListStatus)
+                        .ThenByDescending(ti => ti.EndTime)
+                        .ThenBy(ti => ti.CatechistInTrainingStatus);
+                }
                 return Success(response);
             }
             catch (Exception ex)

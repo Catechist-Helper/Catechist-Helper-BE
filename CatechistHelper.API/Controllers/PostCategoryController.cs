@@ -1,8 +1,10 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.PostCategory;
 using CatechistHelper.Domain.Dtos.Responses.PostCategory;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -16,6 +18,7 @@ namespace CatechistHelper.API.Controllers
             _postCategoryService = postCategoryService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.PostCategory.PostCategoriesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetPostCategoryResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -24,6 +27,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.PostCategory.PostCategoryEndpoint)]
         [ProducesResponseType(typeof(Result<List<GetPostCategoryResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -32,7 +36,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.PostCategory.PostCategoriesEndpoint)]
         [ProducesResponseType(typeof(Result<GetPostCategoryResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -42,6 +46,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.PostCategory.PostCategoryEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -51,6 +56,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.PostCategory.PostCategoryEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

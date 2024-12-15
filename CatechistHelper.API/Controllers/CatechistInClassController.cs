@@ -1,9 +1,11 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInSlot;
 using CatechistHelper.Domain.Dtos.Responses.Class;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ namespace CatechistHelper.API.Controllers
             _catechistInClassService = catechistInClassService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.CatechistInClass.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -28,7 +31,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPatch(ApiEndPointConstant.CatechistInClass.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -38,7 +41,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassSearchEndpoint)]
         [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -48,6 +51,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassRemainSlotEndpoint)]
         [ProducesResponseType(typeof(Result<List<GetClassResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

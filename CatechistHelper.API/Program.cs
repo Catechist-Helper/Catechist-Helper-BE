@@ -72,7 +72,6 @@ try
 
     app.MapControllers();
     await app.RunAsync();
-
 }
 catch (Exception ex)
 {

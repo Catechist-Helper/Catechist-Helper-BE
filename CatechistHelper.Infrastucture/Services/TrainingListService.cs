@@ -144,6 +144,8 @@ namespace CatechistHelper.Infrastructure.Services
                             include: tl => tl.Include(tl => tl.PreviousLevel)
                                              .Include(tl => tl.NextLevel)
                                              .Include(tl => tl.Certificate),
+                            orderBy: tl => tl.OrderBy(tl => tl.TrainingListStatus)
+                                             .ThenByDescending(tl => tl.EndTime),
                             page: page,
                             size: size
                         );

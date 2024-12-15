@@ -1,8 +1,10 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -16,6 +18,7 @@ namespace CatechistHelper.API.Controllers
             _timetableService = timetableService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Timetable.TimetableEndpoint)]
         [ProducesResponseType(typeof(Result<ClassResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -25,6 +28,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Timetable.SlotsEndpoint)]
         [ProducesResponseType(typeof(Result<List<SlotResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -34,6 +38,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Timetable.ExportEndpoint)]
         [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -51,6 +56,7 @@ namespace CatechistHelper.API.Controllers
             }
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Timetable.ExportYearEndpoint)]
         [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -68,6 +74,7 @@ namespace CatechistHelper.API.Controllers
             }
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Timetable.ExportCatechistEndpoint)]
         [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

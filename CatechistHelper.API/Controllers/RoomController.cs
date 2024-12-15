@@ -1,8 +1,10 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Room;
 using CatechistHelper.Domain.Dtos.Responses.Room;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -16,6 +18,7 @@ namespace CatechistHelper.API.Controllers
             _roomService = roomService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Room.RoomsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetRoomResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] Guid? pastoralYearId, [FromQuery] int page = 1, [FromQuery] int size = 100, [FromQuery] bool excludeRoomAssigned = false)
@@ -24,6 +27,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Room.RoomEndpoint)]
         [ProducesResponseType(typeof(Result<List<GetRoomResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -32,6 +36,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Room.RoomsEndpoint)]
         [ProducesResponseType(typeof(Result<GetRoomResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -41,7 +46,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Room.RoomEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -51,6 +56,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Room.RoomEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

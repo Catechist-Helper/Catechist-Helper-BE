@@ -95,7 +95,8 @@ namespace CatechistHelper.Infrastructure.Services
             IPaginate<Event> events =
                    await _unitOfWork.GetRepository<Event>().GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
-                            orderBy: e => e.OrderBy(e => e.CreatedAt),
+                            orderBy: e => e.OrderBy(e => e.EventStatus)
+                                           .ThenByDescending(e => e.CreatedAt),
                             include: e => e.Include(x => x.EventCategory),
                             page: page,
                             size: size);
