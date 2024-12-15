@@ -287,16 +287,16 @@ namespace CatechistHelper.Infrastructure.Services
 
                 var slotsTime = slots.Select(s => new CalendarResponse
                 {
-                    Title = s.Slot.Class.Name,
+                    Title = "[Giáo lý] - " + s.Slot.Class.Name,
                     Start = HolidayService.ApplyDateToTimes(s.Slot.Date, s.Slot.StartTime),
                     End = HolidayService.ApplyDateToTimes(s.Slot.Date, s.Slot.EndTime),
                 });
 
                 var interviewsTime = interviews.Select(i => new CalendarResponse
                 {
-                    Title = "Interview Meeting",
+                    Title = "[Phỏng vấn] - Lịch phỏng vấn ứng viên",
                     Start = HolidayService.TimeToString(i.Interview.MeetingTime),
-                    Description = i.OnlineRoomUrl
+                    Description = "<a href=\"" + i.OnlineRoomUrl + "\" target=\"_blank\"\r\n>Bấm vào để tham gia phòng phỏng vấn</a>"
                 });
 
                 ICollection<Event>? events;
@@ -312,7 +312,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 var eventsTime = events.Select(e => new CalendarResponse
                 {
-                    Title = e.Name,
+                    Title = "[Sự kiện] - " + e.Name,
                     Start = HolidayService.TimeToString(e.StartTime),
                     End = HolidayService.TimeToString(e.EndTime),
                     Description = e.Description
@@ -322,8 +322,8 @@ namespace CatechistHelper.Infrastructure.Services
 
                 var holidaysTime = holidays.Items.Select(e => new CalendarResponse
                 {
-                    Title = e.Summary,
-                    Description = "Ngày lễ",
+                    Title = "[Ngày lễ] - " + e.Summary,
+                    Description = "Ngày nghỉ lễ",
                     Start = e.Start.Date,
                     End = e.End.Date
                 });
