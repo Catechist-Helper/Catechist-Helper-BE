@@ -18,7 +18,7 @@ namespace CatechistHelper.API.Controllers
             _pastoralYearService = pastoralYearService;
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.PastoralYear.PastoralYearsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -27,7 +27,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.PastoralYear.PastoralYearEndpoint)]
         [ProducesResponseType(typeof(Result<List<GetPastoralYearResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)

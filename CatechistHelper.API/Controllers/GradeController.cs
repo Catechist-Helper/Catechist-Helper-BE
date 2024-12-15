@@ -1,10 +1,12 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Grade;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInGrade;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Grade;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +24,7 @@ namespace CatechistHelper.API.Controllers
             _gradeService = gradeService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Grade.GradesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetGradeResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] GradeFilter filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -30,6 +33,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Grade.CatechistsInGradeEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInGradeResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistsByGradeId(
@@ -43,6 +47,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Grade.ClassesByGradeEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetClassResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetClassesByGradeId([FromRoute] Guid id, [FromQuery] Guid? pastoralYearId, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -51,6 +56,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Grade.GradeEndpoint)]
         [ProducesResponseType(typeof(Result<List<GetGradeResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -59,6 +65,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Grade.GradesEndpoint)]
         [ProducesResponseType(typeof(Result<GetGradeResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -68,6 +75,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Grade.GradeEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

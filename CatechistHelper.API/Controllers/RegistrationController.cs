@@ -23,7 +23,7 @@ namespace CatechistHelper.API.Controllers
             _registrationService = registrationService;
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationsEndPoint)]
         [ProducesResponseType(typeof(PagingResult<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] RegistrationFilter filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -32,7 +32,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Registration.InterviewsOfRegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetInterviewOfApplication([FromRoute] Guid id)
@@ -41,7 +41,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationProcessesOfRegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<List<GetRegistrationResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRegistrationProcessesOfApplication([FromRoute] Guid id)
@@ -50,7 +50,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Registration.RegistrationEndPoint)]
         [ProducesResponseType(typeof(Result<GetRegistrationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)

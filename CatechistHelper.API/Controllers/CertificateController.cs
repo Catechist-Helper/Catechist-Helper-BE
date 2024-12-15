@@ -1,8 +1,10 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Certificate;
 using CatechistHelper.Domain.Dtos.Responses.Certificate;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -17,6 +19,7 @@ namespace CatechistHelper.API.Controllers
             _certificateService = certificateService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Certificate.CertificatesEndPoint)]
         [ProducesResponseType(typeof(Result<GetCertificateResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -26,6 +29,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Certificate.CertificateEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

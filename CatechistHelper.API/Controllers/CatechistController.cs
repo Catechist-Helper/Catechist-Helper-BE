@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Catechist;
@@ -27,6 +28,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Catechist.CatechistEndpoint)]
         [ProducesResponseType(typeof(Result<GetCatechistResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -35,6 +37,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Catechist.CertificateOfCatechistsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCertificateOfCatechistResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCertificateOfCatechist([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -43,6 +46,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Catechist.TrainingOfCatechistEnpoint)]
         [ProducesResponseType(typeof(Result<GetTrainingInfomationResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTrainingInformationOfCatechist([FromRoute] Guid id)
@@ -51,6 +55,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Catechist.CatechistsEndpoint)]
         [ProducesResponseType(typeof(Result<GetCatechistResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -59,7 +64,7 @@ namespace CatechistHelper.API.Controllers
             Result<GetCatechistResponse> result = await _catechistService.Create(request);
             return StatusCode((int)result.StatusCode, result);
         }
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Catechist.CatechistEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -69,7 +74,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Catechist.UpdateImageEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -79,6 +84,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Catechist.CatechistEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
@@ -87,6 +93,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Catechist.ClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<ClassOfCatechist>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistClasses([FromRoute] Guid id, [FromQuery] string pastoralYear, [FromQuery] int page = 1, [FromQuery] int size = 100, [FromQuery] ClassStatus status = ClassStatus.Active)
@@ -94,6 +101,8 @@ namespace CatechistHelper.API.Controllers
             PagingResult<ClassOfCatechist> result = await _catechistService.GetCatechistClasses(id, pastoralYear, page, size, status);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Catechist.GradesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GradeOfCatechist>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistGrades([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)

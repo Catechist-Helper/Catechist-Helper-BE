@@ -18,7 +18,6 @@ namespace CatechistHelper.API.Controllers
             _postService = postService;
         }
 
-
         [HttpGet(ApiEndPointConstant.Post.PostsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetPostResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)

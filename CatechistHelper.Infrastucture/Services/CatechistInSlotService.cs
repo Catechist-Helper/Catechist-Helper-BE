@@ -125,7 +125,5 @@ namespace CatechistHelper.Infrastructure.Services
             }
             
         }
-
-
     }
 }

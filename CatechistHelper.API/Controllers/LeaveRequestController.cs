@@ -1,12 +1,12 @@
-﻿
+﻿using CatechistHelper.API.Validator;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Requests.LeaveRequest;
-using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Responses.LeaveRequest;
 using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -19,6 +19,7 @@ namespace CatechistHelper.API.Controllers
             _leaveRequestService = leaveRequestService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.LeaveRequestEndpoint.Submit)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -28,6 +29,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.LeaveRequestEndpoint.AbsenceProcess)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -37,7 +39,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.LeaveRequestEndpoint.Endpoint)]
         [ProducesResponseType(typeof(Result<List<GetLeaveRequest>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

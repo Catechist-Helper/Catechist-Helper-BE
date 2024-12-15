@@ -1,15 +1,15 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Event;
 using CatechistHelper.Domain.Dtos.Responses.BudgetTransaction;
 using CatechistHelper.Domain.Dtos.Responses.Event;
-using CatechistHelper.Domain.Dtos.Responses.Major;
 using CatechistHelper.Domain.Dtos.Responses.Member;
 using CatechistHelper.Domain.Dtos.Responses.ParticipantInEvent;
 using CatechistHelper.Domain.Dtos.Responses.Process;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
-using CatechistHelper.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -23,6 +23,7 @@ namespace CatechistHelper.API.Controllers
             _eventService = eventService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.EventsEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetEventResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] EventFilter? filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -31,6 +32,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.MemberInEventEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetMemberResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMemberInEvent([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -39,6 +41,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.BudgetTransactionInEventEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetBudgetTransactionResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBudgetTransactionByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -47,6 +50,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.ProcessInEventEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetProcessResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProcessByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -55,6 +59,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.ParticipantInEventEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetParicipantInEventResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetParticipantByEventId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -63,6 +68,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Event.EventEndpoint)]
         [ProducesResponseType(typeof(Result<GetEventResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -70,7 +76,7 @@ namespace CatechistHelper.API.Controllers
             Result<GetEventResponse> result = await _eventService.Get(id);
             return StatusCode((int)result.StatusCode, result);
         }
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Event.EventsEndpoint)]
         [ProducesResponseType(typeof(Result<GetEventResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -80,6 +86,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Event.EventEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -89,6 +96,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Event.EventEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -98,6 +106,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Event.ParticipantInEventEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -107,6 +116,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Event.ParticipantInEventEndpointExport)]
         [ProducesResponseType(typeof(Result<IActionResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

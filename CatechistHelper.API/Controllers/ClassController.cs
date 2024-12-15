@@ -1,10 +1,12 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Class;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Slot;
+using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace CatechistHelper.API.Controllers
             _classService = classService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Class.ClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetClassResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] ClassFilter? filter, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -26,6 +29,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Class.ClassesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateClass([FromBody] ClassRequest request)
@@ -34,6 +38,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Class.ClassEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateClass([FromRoute] Guid id, [FromBody] ClassRequest request)
@@ -42,7 +47,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Class.ClassEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
@@ -51,6 +56,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetCatechistInClassResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCatechistInClasses([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -59,6 +65,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Class.SlotsOfClassEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetSlotResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSlotsByClassId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -67,6 +74,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPatch(ApiEndPointConstant.Class.CatechistInClassesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateClassCatechists([FromRoute] Guid id, [FromBody] CatechistInClassRequest classRequest)
@@ -75,6 +83,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPatch(ApiEndPointConstant.Class.RoomOfClassEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateClassRoom([FromRoute] Guid id, [FromBody] RoomOfClassRequest request)

@@ -21,8 +21,8 @@ namespace CatechistHelper.API.Controllers
             _accountService = accountService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Account.AccountsEndPoint)]
-        [AuthorizePolicy(RoleEnum.Admin)]
         [ProducesResponseType(typeof(PagingResult<GetAccountResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
         {
@@ -30,6 +30,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Account.AccountEndPoint)]
         [ProducesResponseType(typeof(Result<GetAccountResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get([FromRoute] Guid id)
@@ -38,6 +39,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Account.AccountsEndPoint)]
         [ProducesResponseType(typeof(Result<GetAccountResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -65,15 +67,6 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
-        [HttpDelete(ApiEndPointConstant.Account.AccountEndPoint)]
-        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
-        {
-            Result<bool> result = await _accountService.Delete(id);
-            return StatusCode((int)result.StatusCode, result);
-        }
-
-
         [HttpPost(ApiEndPointConstant.Authentication.LoginEndPoint)]
         [ProducesResponseType(typeof(Result<LoginResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -83,6 +76,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpGet(ApiEndPointConstant.Account.RecruitersEndPoint)]
         [ProducesResponseType(typeof(PagingResult<GetRecruiterResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFreeRecruiter([FromQuery] DateTime meetingTime, [FromQuery] int page = 1, [FromQuery] int size = 100)
@@ -91,6 +85,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.Account.CalendarEndPoint)]
         [ProducesResponseType(typeof(Result<IEnumerable<CalendarResponse>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCalendar([FromRoute] Guid id)
