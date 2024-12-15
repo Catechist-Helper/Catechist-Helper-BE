@@ -264,8 +264,7 @@ namespace CatechistHelper.Infrastructure.Services
 
             string roomId = createdRoom.Id;
 
-            // Generate meeting URLs for interviewers and assign to RecruiterInInterviews
-            var meetingUrl = _configuration["FrontendUrl:Meeting"];
+            var meetingUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? _configuration["FrontendUrl:Meeting"];
 
             for (int i = 0; i < interview.RecruiterInInterviews.Count; i++)
             {
