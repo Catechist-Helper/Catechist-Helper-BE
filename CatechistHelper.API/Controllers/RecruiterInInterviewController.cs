@@ -1,7 +1,9 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.RecruiterInInterview;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -20,6 +22,7 @@ namespace CatechistHelper.API.Controllers
             _recruiterInInterviewService = recruiterInInterviewService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.RecruiterInInterview.RecruiterInInterviewsEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

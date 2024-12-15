@@ -1,8 +1,10 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Interview;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -16,6 +18,7 @@ namespace CatechistHelper.API.Controllers
             _interviewService = interviewService;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Interview.InterviewsEndPoint)]
         [ProducesResponseType(typeof(Result<GetInterviewResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -25,6 +28,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPut(ApiEndPointConstant.Interview.InterviewEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -34,6 +38,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpDelete(ApiEndPointConstant.Interview.InterviewEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -43,6 +48,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Catechist)]
         [HttpPut(ApiEndPointConstant.Interview.InterviewEvaluationEndPoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

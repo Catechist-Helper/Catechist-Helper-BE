@@ -181,7 +181,6 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-
         public async Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid excludeId, int page, int size)
         {
             try

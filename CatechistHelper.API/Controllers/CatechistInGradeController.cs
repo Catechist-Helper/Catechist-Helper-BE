@@ -1,7 +1,9 @@
-﻿using CatechistHelper.Application.Services;
+﻿using CatechistHelper.API.Validator;
+using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.CatechistInGrade;
+using CatechistHelper.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatechistHelper.API.Controllers
@@ -18,6 +20,7 @@ namespace CatechistHelper.API.Controllers
             _catechistInGrade = catechistInGrade;
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.CatechistInGrade.CatechistInGradesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -27,6 +30,7 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPatch(ApiEndPointConstant.CatechistInGrade.CatechistInGradesEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

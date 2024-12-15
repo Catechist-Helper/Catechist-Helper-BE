@@ -18,7 +18,7 @@ namespace CatechistHelper.API.Controllers
             _postCategoryService = postCategoryService;
         }
 
-        [AuthorizePolicy(RoleEnum.Admin)]
+        [AuthorizePolicy(RoleEnum.Admin, RoleEnum.Catechist)]
         [HttpGet(ApiEndPointConstant.PostCategory.PostCategoriesEndpoint)]
         [ProducesResponseType(typeof(PagingResult<GetPostCategoryResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
