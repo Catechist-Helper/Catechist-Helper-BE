@@ -19,6 +19,7 @@ using CatechistHelper.Domain.Dtos.Requests.Account;
 using CatechistHelper.Domain.Dtos.Responses.Authentication;
 using CatechistHelper.Domain.Dtos.Requests.Authentication;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -266,7 +267,8 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 var account = await _unitOfWork.GetRepository<Account>().SingleOrDefaultAsync(
                     predicate: a => a.Id == id,
-                    include: e => e.Include(e => e.Events));
+                    include: e => e.Include(e => e.Events)
+                                   .Include(e => e.Role));
 
                 if (account == null)
                 {
@@ -297,7 +299,18 @@ namespace CatechistHelper.Infrastructure.Services
                     Description = i.OnlineRoomUrl
                 });
 
-                var eventsTime = account.Events.Select(e => new CalendarResponse
+                ICollection<Event>? events;
+
+                if (account.Role.RoleName == RoleEnum.Admin.ToString())
+                {
+                    events = await _unitOfWork.GetRepository<Event>().GetListAsync();
+                }
+                else
+                {
+                    events = account.Events;
+                }
+
+                var eventsTime = events.Select(e => new CalendarResponse
                 {
                     Title = e.Name,
                     Start = HolidayService.TimeToString(e.StartTime),
