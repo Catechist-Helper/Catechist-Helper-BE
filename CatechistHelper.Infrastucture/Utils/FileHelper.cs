@@ -8,7 +8,7 @@ namespace CatechistHelper.Infrastructure.Utils
 {
     public static class FileHelper
     {
-        public const string AllowedFormats = "dd/MM/yyyy";
+
 
         public static PastoralYearDto ReadFile(IFormFile file)
         {
@@ -261,6 +261,13 @@ namespace CatechistHelper.Infrastructure.Utils
 
         public static List<ParticipantInEvent> ReadFileReturnParticipants(FileInfo file, Guid eventId)
         {
+            string[] AllowedFormats = {
+                "dd-MM-yyyy",
+                "d/M/yyyy",
+                //"M/d/yyyy",  
+                //"MM/dd/yyyy", 
+                "yyyy-MM-dd"
+            };
 
             var participants = new List<ParticipantInEvent>();
 
@@ -279,15 +286,9 @@ namespace CatechistHelper.Infrastructure.Utils
                     var address = worksheet.Cells[row, 7].Text;
 
 
-                    DateTime? dateOfBirth = null;
-                    if (!string.IsNullOrEmpty(dateOfBirthText))
+                    DateTime dateOfBirth = DateTime.Today;
+                    if (!string.IsNullOrEmpty(dateOfBirthText) && DateTime.TryParseExact(dateOfBirthText, AllowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
                     {
-                        if (!DateTime.TryParseExact(dateOfBirthText, AllowedFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-                        {
-                            // Log the issue or continue processing other rows
-                            Console.WriteLine($"Warning: Invalid date format in row {row}, column 6. Value: '{dateOfBirthText}'.");
-                            continue;
-                        }
                         dateOfBirth = parsedDate;
                     }
 
@@ -298,7 +299,7 @@ namespace CatechistHelper.Infrastructure.Utils
                         Email = email,
                         Phone = phone,
                         Gender = gender,
-                        DateOfBirth = dateOfBirth ?? DateTime.Today,
+                        DateOfBirth = dateOfBirth,
                         Address = address,
                         IsAttended = true,
                         EventId = eventId
@@ -323,6 +324,7 @@ namespace CatechistHelper.Infrastructure.Utils
 
         public static byte[] ExportParticipantsToExcel(ICollection<ParticipantInEvent> participants)
         {
+            string AllowedFormats = "dd/MM/yyyy";
 
             // Create an Excel package
             using var package = new ExcelPackage();
