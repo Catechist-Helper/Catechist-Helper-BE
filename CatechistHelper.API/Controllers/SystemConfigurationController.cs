@@ -40,5 +40,11 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _systemConfigurationService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [HttpGet(ApiEndPointConstant.SystemConfiguration.UrlConfigurationsEndpoint)]
+        public string CheckUrl()
+        {
+            return Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "URL not work";
+        }
     }
 }

@@ -122,6 +122,8 @@ namespace CatechistHelper.Domain.Constants
         {
             /// <summary>"api/v1/system-configurations"</summary>
             public const string SystemConfigurationsEndpoint = ApiEndpoint + "/system-configurations";
+
+            public const string UrlConfigurationsEndpoint = SystemConfigurationsEndpoint + "/url";
             /// <summary>"api/v1/system-configurations/{id}"</summary>
             public const string SystemConfigurationEndpoint = SystemConfigurationsEndpoint + ByIdRoute;
         }
