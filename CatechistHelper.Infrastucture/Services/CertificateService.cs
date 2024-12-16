@@ -111,6 +111,7 @@ namespace CatechistHelper.Infrastructure.Services
                     await _unitOfWork.GetRepository<Certificate>()
                     .GetPagingListAsync(
                             include: a => a.Include(a => a.Level),
+                            orderBy: c => c.OrderBy(c => c.Level.HierarchyLevel),
                             page: page,
                             size: size
                         );
