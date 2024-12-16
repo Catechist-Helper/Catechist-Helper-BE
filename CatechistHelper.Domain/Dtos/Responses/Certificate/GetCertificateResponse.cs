@@ -1,4 +1,6 @@
-﻿namespace CatechistHelper.Domain.Dtos.Responses.Certificate
+﻿using CatechistHelper.Domain.Dtos.Responses.Level;
+
+namespace CatechistHelper.Domain.Dtos.Responses.Certificate
 {
     public class GetCertificateResponse
     {
@@ -6,6 +8,6 @@
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Image { get; set; }
-        public Guid LevelId { get; set; }
+        public GetLevelResponse? Level { get; set; }
     }
 }
