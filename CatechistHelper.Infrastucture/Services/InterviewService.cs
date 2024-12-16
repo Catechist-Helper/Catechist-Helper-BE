@@ -54,6 +54,10 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: a => a.Id.Equals(request.RegistrationId)) ?? throw new Exception(MessageConstant.Registration.Fail.NotFoundRegistration);
                 await ValidateInterviewScheduling(request.MeetingTime);
                 Interview interview = request.Adapt<Interview>();
+
+                string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
+                var interviewAddress = ContentMailUtil.INTERVIEW_ADDRESS;
+
                 // Add recruiters
                 if (request.Accounts != null && request.Accounts.Count != 0)
                 {
@@ -68,11 +72,20 @@ namespace CatechistHelper.Infrastructure.Services
                             AccountId = account.Id
                         };
 
+                        if (request.InterviewType == InterviewType.Offline)
+                        {
+                            MailUtil.SendEmail("hmtminhthuan@gmail.com",
+                                                ContentMailUtil.Title_AnnounceRecruiterInterviewSchedule,
+                                                ContentMailUtil.AnnounceRecruiterInterviewSchedule(
+                                                    account.FullName,
+                                                    formattedMeetingTime,
+                                                    "Trực tiếp tại " + interviewAddress,
+                                                    registration.FullName)
+                                            );
+                        }
                         interview.RecruiterInInterviews.Add(rii);
                     }
                 }
-
-                var interviewAddress = ContentMailUtil.INTERVIEW_ADDRESS;
 
                 if (request.InterviewType == InterviewType.Online)
                 {
@@ -81,7 +94,6 @@ namespace CatechistHelper.Infrastructure.Services
                 }
                 else
                 {
-                    string formattedMeetingTime = interview.MeetingTime.ToString("HH:mm, dd/MM/yyyy");
                     MailUtil.SendEmail(
                         registration.Email,
                         ContentMailUtil.Title_AnnounceInterviewSchedule,
