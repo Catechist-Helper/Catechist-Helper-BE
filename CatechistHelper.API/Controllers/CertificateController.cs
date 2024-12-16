@@ -19,6 +19,22 @@ namespace CatechistHelper.API.Controllers
             _certificateService = certificateService;
         }
 
+        [HttpGet(ApiEndPointConstant.Certificate.CertificatesEndPoint)]
+        [ProducesResponseType(typeof(PagingResult<GetCertificateResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllPagination([FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<GetCertificateResponse> result = await _certificateService.GetPagination(x => false, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet(ApiEndPointConstant.Certificate.CertificateEndPoint)]
+        [ProducesResponseType(typeof(Result<List<GetCertificateResponse>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Get([FromRoute] Guid id)
+        {
+            Result<GetCertificateResponse> result = await _certificateService.Get(id);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [AuthorizePolicy(RoleEnum.Admin)]
         [HttpPost(ApiEndPointConstant.Certificate.CertificatesEndPoint)]
         [ProducesResponseType(typeof(Result<GetCertificateResponse>), StatusCodes.Status200OK)]

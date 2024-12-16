@@ -1,4 +1,4 @@
-﻿namespace CatechistHelper.Domain.Enums
+﻿ namespace CatechistHelper.Domain.Enums
 {
     public enum RegistrationStatus : byte
     {
