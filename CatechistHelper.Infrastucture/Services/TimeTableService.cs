@@ -304,8 +304,9 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: c => c.Id == id,
                     include: q => q.Include(c => c.Slots)
                                     .ThenInclude(s => s.Room)
-                                   .Include(c => c.CatechistInClasses)
-                                    .ThenInclude(s => s.Catechist)
+                                   .Include(c => c.Slots)
+                                    .ThenInclude(c => c.CatechistInSlots)
+                                     .ThenInclude(c => c.Catechist)
                 );
         }
 

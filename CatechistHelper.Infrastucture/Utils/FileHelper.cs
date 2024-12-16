@@ -135,7 +135,7 @@ namespace CatechistHelper.Infrastructure.Utils
                 worksheet.Cells[row, 7].Value = slot.Class.Name;
 
                 // Join catechist names into a single string
-                var catechists = string.Join(", ", slot.CatechistInSlots.Select(c => c.Catechist.Account.FullName));
+                var catechists = string.Join(", ", slot.CatechistInSlots.Select(c => c.Catechist.FullName));
                 worksheet.Cells[row, 8].Value = catechists;
 
                 row++;
