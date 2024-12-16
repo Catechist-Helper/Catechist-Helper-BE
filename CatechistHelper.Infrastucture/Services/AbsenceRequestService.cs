@@ -43,7 +43,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var absenceRequest = requestDto.Adapt<AbsenceRequest>();
 
                 if (!requestDto.RequestImages.IsNullOrEmpty()) {
-                    string folderName = $"absence/{requestDto.ReplacementCatechistId}";
+                    string folderName = $"absence/{requestDto.SlotId}{requestDto.CatechistId}";
                     string[] absenceRequestImages = await _firebaseService.UploadImagesAsync(requestDto.RequestImages, folderName);
                     foreach (var image in absenceRequestImages)
                     {
@@ -206,7 +206,8 @@ namespace CatechistHelper.Infrastructure.Services
                                   include: ar => ar.Include(ar => ar.Catechist)
                                                    .Include(ar => ar.ReplacementCatechist)
                                                    .Include(ar => ar.Slot)
-                                                   .Include(ar => ar.Slot.Class));
+                                                   .Include(ar => ar.Slot.Class)
+                                                   .Include(ar => ar.RequestImages));
                 
                 if(cId != null)
                 {

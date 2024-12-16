@@ -2,8 +2,16 @@
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
 {
+    public class RequestImageResponse
+    {
+        public Guid Id { get; set; }
+        public Guid AbsenceRequestId { get; set; }
+        public string ImageUrl { get; set; }
+        public DateTime UploadAt { get; set; }
+    }
     public class GetAbsentRequest
     {
         public Guid CatechistId { get; set; }
@@ -27,6 +35,6 @@ namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
         public string? Approver { get; set; }
         public SlotResponse? Slot { get; set; }
         //public GetClassResponse? Class { get; set; }
-        public List<string>? RequestImages { get; set; }
+        public List<RequestImageResponse>? RequestImages { get; set; }
     }
 }
