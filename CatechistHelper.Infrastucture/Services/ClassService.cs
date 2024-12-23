@@ -100,7 +100,7 @@ namespace CatechistHelper.Infrastructure.Services
         private static Expression<Func<Class, bool>> BuildGetPaginationQuery(ClassFilter? filter)
         {
             Expression<Func<Class, bool>> filterQuery = x => !x.IsDeleted;
-            if(filter == null)
+            if (filter == null)
             {
                 return filterQuery;
             }
@@ -266,14 +266,12 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 await CheckRestrictionDateAsync();
-
-                // Retrieve the class along with related data
                 var classToUpdate = await _unitOfWork.GetRepository<Class>()
-                    .SingleOrDefaultAsync(
-                        predicate: c => c.Id == id,
-                        include: c => c.Include(c => c.Slots)
-                                       .ThenInclude(s => s.CatechistInSlots)
-                    );
+                                        .SingleOrDefaultAsync(
+                                            predicate: c => c.Id == id,
+                                            include: c => c.Include(c => c.Slots.Where(s => s.Date >= DateTime.Now))
+                                                           .ThenInclude(s => s.CatechistInSlots)
+                );
 
                 if (classToUpdate == null)
                 {

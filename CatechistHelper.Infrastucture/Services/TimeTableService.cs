@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Application.Repositories;
+﻿using Azure.Core;
+using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
@@ -132,11 +133,47 @@ namespace CatechistHelper.Infrastructure.Services
                 EndDate = classDto.EndDate,
                 NumberOfCatechist = classDto.NumberOfCatechist,
                 GradeId = gradeId,
-                PastoralYearId = pastoralYearId
+                PastoralYearId = pastoralYearId,
             };
+
+            var slots = await CreateSlots(classEntity);
+            classEntity.Slots = slots;
 
             await _unitOfWork.GetRepository<Class>().InsertAsync(classEntity);
             return classEntity;
+        }
+
+        public async Task<List<Slot>> CreateSlots(Class classDto)
+        {
+            var fixedDay = await GetWeekDay();
+            var holidayDates = await GetHolidayDates(classDto.StartDate, classDto.EndDate);
+
+            var slots = new List<Slot>();
+            var currentDate = AdjustToFixedWeekDay(classDto.StartDate, fixedDay);
+
+            var startTime = await GetStartTime();
+            var endTime = await GetEndTime();
+
+            while (currentDate <= classDto.EndDate)
+            {
+                if (!holidayDates.Contains(currentDate))
+                {
+                    var slot = new Slot
+                    {
+                        ClassId = classDto.Id,
+                        Date = currentDate,
+                        StartTime = startTime,
+                        EndTime = endTime
+                    };
+                    AddCatechistsToSlot(slot, classDto.CatechistInClasses);
+                    await _unitOfWork.GetRepository<Slot>().InsertAsync(slot);
+                    slots.Add(slot);
+                }
+
+                currentDate = currentDate.AddDays(7);
+            }
+
+            return slots;
         }
 
         public async Task<List<Slot>> CreateSlot(CreateSlotsRequest request)
