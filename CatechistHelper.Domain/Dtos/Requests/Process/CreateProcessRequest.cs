@@ -14,8 +14,6 @@ namespace CatechistHelper.Domain.Dtos.Requests.Process
         [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
         public string Description { get; set; } = null!;
 
-        public long Duration { get; set; }
-
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -23,13 +21,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Process
         [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
         public double Fee { get; set; }
 
-        [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
-        public double ActualFee { get; set; }
-
-        [MaxLength(500, ErrorMessage = "Tối đa {1} kí tự!")]
-        public string Note { get; set; }
-
-        public ProcessStatus Status { get; set; }
+        public string? Note { get; set; }
 
         public Guid EventId { get; set; }
 

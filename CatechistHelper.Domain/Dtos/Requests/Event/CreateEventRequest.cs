@@ -14,19 +14,12 @@ namespace CatechistHelper.Domain.Dtos.Requests.Event
         [MaxLength(1000, ErrorMessage = "Tối đa {1} kí tự.")]
         public string Description { get; set; } = null!;
 
-        public bool IsPeriodic { get; set; }
-
-        public bool IsCheckedIn { get; set; }
-
         [MaxLength(200, ErrorMessage = "Tối đa {1} kí tự.")]
         public string? Address { get; set; }
 
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
-
-        [Range(0, double.MaxValue, ErrorMessage = MessageConstant.Common.NegativeNumberError)]
-        public double current_budget { get; set; }
 
         public EventStatus EventStatus { get; set; }
 

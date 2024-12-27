@@ -274,6 +274,8 @@ namespace CatechistHelper.Domain.Constants
             public const string ProcessesEndpoint = ApiEndpoint + "/processes";
             /// <summary>"api/v1/processes/{id}"</summary>
             public const string ProcessEndpoint = ProcessesEndpoint + ByIdRoute;
+            /// <summary>"api/v1/processes/{id}"</summary>
+            public const string ApproveProcessEndpoint = ProcessEndpoint + "/approve";
             /// <summary>"api/v1/processes/{id}/members"</summary>
             public const string MemberOfProcessEndpoint = ProcessEndpoint + "/members";
         }

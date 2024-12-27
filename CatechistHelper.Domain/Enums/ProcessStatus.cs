@@ -2,9 +2,10 @@
 {
     public enum ProcessStatus : byte
     {
-        Not_Started,
+        Wait_Approval,
+        Approval,
         In_Progress,
         Completed,
-        Cancelled
+        Not_Approval,
     }
 }

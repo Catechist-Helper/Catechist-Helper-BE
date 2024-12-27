@@ -17,9 +17,6 @@ namespace CatechistHelper.Domain.Entities
         [Column("description")]
         public string Description { get; set; } = null!;
 
-        [Column("duration")]
-        public long Duration { get; set; }
-
         [Column("start_time")]
         public DateTime StartTime { get; set; }
 
@@ -33,12 +30,14 @@ namespace CatechistHelper.Domain.Entities
         public double ActualFee { get; set; }
 
         [Column("note")]
-        [StringLength(500)]
-        public string Note { get; set; } = string.Empty;
+        public string? Note { get; set; }
+
+        [Column("comment")]
+        public string? Comment { get; set; }
 
         [Column("status")]
         [EnumDataType(typeof(ProcessStatus))]
-        public ProcessStatus Status { get; set; }
+        public ProcessStatus Status { get; set; } = ProcessStatus.Wait_Approval;
 
         [Column("event_id")]
         [ForeignKey(nameof(Event))]
@@ -47,6 +46,7 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
         public virtual ICollection<MemberOfProcess> MemberOfProcesses { get; set; } = new List<MemberOfProcess>();
+        public virtual ICollection<ReceiptImage> ReceiptImages { get; set; } = new List<ReceiptImage>();
 
     }
 }

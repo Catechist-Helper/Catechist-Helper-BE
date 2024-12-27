@@ -211,7 +211,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 return eventFromDb.EventStatus switch
                 {
-                    EventStatus.Cancelled => Fail<bool>("Sự kiện đã hủy bỏ, không thể thêm người"),
+                    //EventStatus.Cancelled => Fail<bool>("Sự kiện đã hủy bỏ, không thể thêm người"),
                     EventStatus.Completed => Fail<bool>("Sự kiện đã kết thúc, không thể thêm người"),
                     _ => await ProcessParticipants(eventFromDb, file)
                 };

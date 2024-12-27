@@ -1,7 +1,6 @@
 ﻿using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Requests.LeaveRequest;
-using CatechistHelper.Domain.Dtos.Responses.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Responses.LeaveRequest;
 using CatechistHelper.Domain.Entities;
 
