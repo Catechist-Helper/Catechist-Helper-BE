@@ -642,6 +642,8 @@ namespace CatechistHelper.Domain.Constants
                 public static string Update = String.Format(UpdateFailTemplate, Message);
                 public static string Delete = String.Format(DeleteFailTemplate, Message);
                 public static string NotFound = String.Format(NotFoundTemplate, Message);
+                public static string EventNotStarted = "Sự kiện chưa bắt đầu.";
+                public static string ProcessCompleted = "Hoạt động đã kết thúc.";
 
             }
         }

@@ -59,6 +59,16 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+        [AuthorizePolicy(RoleEnum.Admin)]
+        [HttpPut(ApiEndPointConstant.Process.ApproveProcessEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AdminApproveProcess([FromRoute] Guid id, [FromBody] ProcessApproveRequest request)
+        {
+            Result<bool> result = await _processService.AdminApproveProcess(id, request);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
         [AuthorizePolicy(RoleEnum.Catechist)]
         [HttpDelete(ApiEndPointConstant.Process.ProcessEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]

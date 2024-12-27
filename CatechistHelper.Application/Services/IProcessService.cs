@@ -11,6 +11,7 @@ namespace CatechistHelper.Application.Services
         Task<Result<GetProcessResponse>> Get(Guid id);
         Task<Result<GetProcessResponse>> Create(CreateProcessRequest request);
         Task<Result<bool>> Update(Guid id, UpdateProcessRequest request);
+        Task<Result<bool>> AdminApproveProcess(Guid id, ProcessApproveRequest request);
         Task<Result<bool>> Delete(Guid id);
     }
 }

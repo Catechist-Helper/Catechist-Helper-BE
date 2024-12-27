@@ -16,12 +16,6 @@ namespace CatechistHelper.Domain.Entities
         [StringLength(1000)]
         public string Description { get; set; } = null!;
 
-        [Column("is_periodic")]
-        public bool IsPeriodic { get; set; }
-
-        [Column("is_checked_in")]
-        public bool IsCheckedIn { get; set; }
-
         [Column("address")]
         [StringLength(200)]
         public string? Address { get; set; }
@@ -32,8 +26,8 @@ namespace CatechistHelper.Domain.Entities
         [Column("end_time")]
         public DateTime EndTime { get; set; }
 
-        [Column("current_budget")]
-        public double current_budget { get; set; } = 0;
+        [Column("total_cost")]
+        public double TotalCost { get; set; } = 0;
 
         [Column("note")]
         [StringLength(500)]
