@@ -26,6 +26,7 @@ using CatechistHelper.Domain.Dtos.Responses.CertificateOfCandidate;
 using CatechistHelper.Domain.Dtos.Responses.Interview;
 using CatechistHelper.Domain.Dtos.Responses.RegistrationProcess;
 using CatechistHelper.Domain.Dtos.Responses.LeaveRequest;
+using CatechistHelper.Domain.Dtos.Requests.Process;
 
 namespace CatechistHelper.Infrastructure.Extensions
 {
@@ -152,6 +153,8 @@ namespace CatechistHelper.Infrastructure.Extensions
 
             config.NewConfig<CreateBudgetTransactionRequest, BudgetTransaction>()
                 .Ignore(x => x.TransactionImages);
+            config.NewConfig<UpdateProcessRequest, Process>()
+               .Ignore(x => x.ReceiptImages);
             config.NewConfig<CreateInterviewRequest, Interview>()
                 .Ignore(x => x.Accounts);
             config.NewConfig<UpdateInterviewRequest, Interview>()

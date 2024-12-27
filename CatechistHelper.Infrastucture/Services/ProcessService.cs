@@ -140,6 +140,7 @@ namespace CatechistHelper.Infrastructure.Services
                     eventFromDb.TotalCost += request.ActualFee;
                 }
                 request.Adapt(process);
+                _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
                 _unitOfWork.GetRepository<Process>().UpdateAsync(process);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
