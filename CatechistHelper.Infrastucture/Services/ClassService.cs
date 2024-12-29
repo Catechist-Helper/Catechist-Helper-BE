@@ -375,9 +375,9 @@ namespace CatechistHelper.Infrastructure.Services
                     var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
                         .GetListAsync(predicate: cis => cis.SlotId == slot.Id);
 
-                    if (slot.Date > DateTime.Now)
+                    if (slot.Date < DateTime.Now)
                     {
-                        return BadRequest<bool>("Không thể xóa vì đã có slot.");
+                        return BadRequest<bool>("Không thể xóa vì đã bắt đầu lớp học.");
                     }
 
                     if (catechistInSlots.Count != 0)
