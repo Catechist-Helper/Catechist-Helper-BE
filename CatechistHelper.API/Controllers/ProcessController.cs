@@ -53,7 +53,7 @@ namespace CatechistHelper.API.Controllers
         [HttpPut(ApiEndPointConstant.Process.ProcessEndpoint)]
         [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProcessRequest request)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromForm] UpdateProcessRequest request)
         {
             Result<bool> result = await _processService.Update(id, request);
             return StatusCode((int)result.StatusCode, result);
