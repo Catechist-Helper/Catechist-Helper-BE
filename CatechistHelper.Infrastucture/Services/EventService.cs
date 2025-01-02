@@ -173,6 +173,7 @@ namespace CatechistHelper.Infrastructure.Services
             IPaginate<Process> processes =
                    await _unitOfWork.GetRepository<Process>().GetPagingListAsync(
                             predicate: bt => bt.EventId == id,
+                            include: process => process.Include(a => a.ReceiptImages),
                             page: page,
                             size: size);
             return SuccessWithPaging(

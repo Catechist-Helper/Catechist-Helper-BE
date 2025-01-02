@@ -1,7 +1,16 @@
-﻿using CatechistHelper.Domain.Enums;
+﻿using CatechistHelper.Domain.Entities;
+using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Domain.Dtos.Responses.Process
 {
+    public class GetReceiptImage
+    {
+        public Guid Id { get; set; }
+        public string ImageUrl { get; set; }
+        public DateTime UploadAt { get; set; }
+        public Guid ProcessId { get; set; }
+    }
+
     public class GetProcessResponse
     {
         public Guid Id { get; set; } 
@@ -13,7 +22,10 @@ namespace CatechistHelper.Domain.Dtos.Responses.Process
         public double Fee { get; set; }
         public double ActualFee { get; set; }
         public string Note { get; set; }
+        public string Comment { get; set; }
         public ProcessStatus Status { get; set; }
         public Guid EventId { get; set; }
+        public List<GetReceiptImage> ReceiptImages { get; set; }
+
     }
 }
