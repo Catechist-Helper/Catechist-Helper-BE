@@ -91,5 +91,15 @@ namespace CatechistHelper.API.Controllers
             Result<bool> result = await _classService.UpdateClassRoom(id, request);
             return StatusCode((int)result.StatusCode, result);
         }
+
+        [AuthorizePolicy(RoleEnum.Admin)]
+        [HttpPatch(ApiEndPointConstant.Class.UpdateSlotEndpoint)]
+        [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateCatechistInSlot([FromRoute] Guid id, [FromBody] Domain.Dtos.Requests.Slot.UpdateSlotRequest request)
+        {
+            Result<bool> result = await _classService.UpdateSlot(id, request);
+            return StatusCode((int)result.StatusCode, result);
+        }
     }
+
 }
