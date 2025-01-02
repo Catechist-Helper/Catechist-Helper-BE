@@ -434,7 +434,7 @@ namespace CatechistHelper.Infrastructure.Services
                     slot.EndTime = request.EndTime.Value;
                 }
 
-                if (request.CatechistInSlots.Any())
+                if (request.CatechistInSlots.Count != 0)
                 {
                     // Clear existing slots and add new ones
                     slot.CatechistInSlots = request.CatechistInSlots
@@ -448,6 +448,12 @@ namespace CatechistHelper.Infrastructure.Services
                         })
                         .ToList();
                 }
+
+                if (request.RoomId != null)
+                {
+                    slot.RoomId = request.RoomId.Value;
+                }
+
                 _unitOfWork.GetRepository<Slot>().UpdateAsync(slot);
 
                 var result = await _unitOfWork.CommitAsync();
