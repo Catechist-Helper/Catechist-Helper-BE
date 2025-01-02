@@ -185,6 +185,8 @@ namespace CatechistHelper.Domain.Constants
             public const string SlotsOfClassEndpoint = ClassEndpoint + "/slots";
 
             public const string RoomOfClassEndpoint = ClassEndpoint + "/room";
+
+            public const string UpdateSlotEndpoint = ApiEndpoint + "/slots" + ByIdRoute;
         }
         public static class CatechistInGrade
         {

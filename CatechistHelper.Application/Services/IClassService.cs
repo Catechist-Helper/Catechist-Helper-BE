@@ -17,5 +17,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> CreateClass(ClassRequest request);
         Task<Result<bool>> UpdateClass(Guid id, ClassRequest request);
         Task<Result<bool>> DeleteClass(Guid id);
+        Task<Result<bool>> UpdateSlot(Guid id, Domain.Dtos.Requests.Slot.UpdateSlotRequest request);
     }
 }

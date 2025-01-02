@@ -5,6 +5,7 @@ using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Constants;
 using CatechistHelper.Domain.Dtos.Requests.Class;
+using CatechistHelper.Domain.Dtos.Requests.Slot;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
@@ -402,6 +403,62 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
+        public async Task<Result<bool>> UpdateSlot(Guid id, UpdateSlotRequest request)
+        {
+            try
+            {
+                var slot = await _unitOfWork.GetRepository<Slot>()
+                    .SingleOrDefaultAsync(
+                       predicate: s => s.Id == id,
+                       include: s => s.Include(s => s.CatechistInSlots)
+                    );
+
+                if (slot == null)
+                {
+                    return BadRequest<bool>("Không tìm thấy slot");
+                }
+
+                if (slot.Date < DateTime.Now)
+                {
+                    return BadRequest<bool>("Slot không thể chỉnh sửa");
+                }
+
+                if (request.StartTime < DateTime.Now && request.EndTime < DateTime.Now)
+                {
+                    return BadRequest<bool>("Thời gian không thể trước thời gian hiện tại");
+                }
+
+                if (request.StartTime.HasValue && request.EndTime.HasValue)
+                {
+                    slot.StartTime = request.StartTime.Value;
+                    slot.EndTime = request.EndTime.Value;
+                }
+
+                if (request.CatechistInSlots.Any())
+                {
+                    // Clear existing slots and add new ones
+                    slot.CatechistInSlots = request.CatechistInSlots
+                        .Select(cate => new CatechistInSlot
+                        {
+                            SlotId = slot.Id,
+                            CatechistId = cate.CatechistId,
+                            Type = cate.IsMain
+                                ? CatechistInSlotType.Main.ToString()
+                                : CatechistInSlotType.Assistant.ToString(),
+                        })
+                        .ToList();
+                }
+                _unitOfWork.GetRepository<Slot>().UpdateAsync(slot);
+
+                var result = await _unitOfWork.CommitAsync();
+
+                return Success(result > 0);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<bool>($"Error updating slot: {ex.Message}");
+            }
+        }
 
     }
 }
