@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatechistHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241125092043_update_25_11_v2")]
-    partial class update_25_11_v2
+    [Migration("20241228124921_update_28_12")]
+    partial class update_28_12
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -602,17 +602,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("tinyint")
                         .HasColumnName("status");
 
-                    b.Property<bool>("IsCheckedIn")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_checked_in");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
-
-                    b.Property<bool>("IsPeriodic")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_periodic");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -620,17 +612,22 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("note");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("start_time");
 
+                    b.Property<double>("TotalCost")
+                        .HasColumnType("float")
+                        .HasColumnName("total_cost");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
-
-                    b.Property<double>("current_budget")
-                        .HasColumnType("float")
-                        .HasColumnName("current_budget");
 
                     b.HasKey("Id");
 
@@ -715,9 +712,69 @@ namespace CatechistHelper.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RegistrationId");
+                    b.HasIndex("RegistrationId")
+                        .IsUnique();
 
                     b.ToTable("interview");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("approval_date");
+
+                    b.Property<Guid?>("ApproverId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("approver_id");
+
+                    b.Property<Guid>("CatechistId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("catechist_id");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("comment");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("LeaveDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("leave_date");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("reason");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("CatechistId");
+
+                    b.ToTable("leave_request");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Level", b =>
@@ -991,15 +1048,18 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
+                    b.Property<double>("ActualFee")
+                        .HasColumnType("float")
+                        .HasColumnName("actual_fee");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("comment");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
-
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time")
-                        .HasColumnName("duration");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2")
@@ -1019,6 +1079,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("note");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("start_time");
@@ -1034,24 +1098,32 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.ToTable("process");
                 });
 
-            modelBuilder.Entity("CatechistHelper.Domain.Entities.Recruiter", b =>
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.ReceiptImage", b =>
                 {
-                    b.Property<Guid>("AccountId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("account_id");
+                        .HasColumnName("id");
 
-                    b.Property<Guid>("RegistrationId")
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<Guid>("ProcessId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("registration_id");
+                        .HasColumnName("process_id");
 
-                    b.Property<string>("RoomUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("UploadAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
-                    b.HasKey("AccountId", "RegistrationId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RegistrationId");
+                    b.HasIndex("ProcessId");
 
-                    b.ToTable("recruiter");
+                    b.ToTable("receipt_image");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
@@ -1063,6 +1135,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Property<Guid>("InterviewId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("interview_id");
+
+                    b.Property<string>("Evaluation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("evaluation");
+
+                    b.Property<string>("OnlineRoomUrl")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("online_room_url");
 
                     b.HasKey("AccountId", "InterviewId");
 
@@ -1176,6 +1256,34 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasIndex("RegistrationId");
 
                     b.ToTable("registration_process");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RequestImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AbsenceRequestId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("request_id");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<DateTime>("UploadAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AbsenceRequestId");
+
+                    b.ToTable("request_image");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Role", b =>
@@ -1315,8 +1423,7 @@ namespace CatechistHelper.Infrastructure.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("value");
 
                     b.HasKey("Id");
@@ -1405,6 +1512,34 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasIndex("PreviousLevelId");
 
                     b.ToTable("training_list");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.TransactionImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BudgetTransactionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("budget_transaction_id");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<DateTime>("UploadAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BudgetTransactionId");
+
+                    b.ToTable("transaction_image");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.AbsenceRequest", b =>
@@ -1646,12 +1781,29 @@ namespace CatechistHelper.Infrastructure.Migrations
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Interview", b =>
                 {
                     b.HasOne("CatechistHelper.Domain.Entities.Registration", "Registration")
-                        .WithMany("Interviews")
-                        .HasForeignKey("RegistrationId")
+                        .WithOne("Interview")
+                        .HasForeignKey("CatechistHelper.Domain.Entities.Interview", "RegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Registration");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.Account", "Approver")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("ApproverId");
+
+                    b.HasOne("CatechistHelper.Domain.Entities.Catechist", "Catechist")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("CatechistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("Catechist");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Member", b =>
@@ -1741,23 +1893,15 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("CatechistHelper.Domain.Entities.Recruiter", b =>
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.ReceiptImage", b =>
                 {
-                    b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
-                        .WithMany("Recruiters")
-                        .HasForeignKey("AccountId")
+                    b.HasOne("CatechistHelper.Domain.Entities.Process", "Process")
+                        .WithMany("ReceiptImages")
+                        .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CatechistHelper.Domain.Entities.Registration", "Registration")
-                        .WithMany("Recruiters")
-                        .HasForeignKey("RegistrationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Registration");
+                    b.Navigation("Process");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
@@ -1765,13 +1909,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
                         .WithMany("RecruiterInInterviews")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CatechistHelper.Domain.Entities.Interview", "Interview")
                         .WithMany("RecruiterInInterviews")
                         .HasForeignKey("InterviewId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1788,6 +1932,17 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Registration");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.RequestImage", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.AbsenceRequest", "AbsenceRequest")
+                        .WithMany("RequestImages")
+                        .HasForeignKey("AbsenceRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AbsenceRequest");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Slot", b =>
@@ -1855,11 +2010,29 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("PreviousLevel");
                 });
 
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.TransactionImage", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.BudgetTransaction", "BudgetTransaction")
+                        .WithMany("TransactionImages")
+                        .HasForeignKey("BudgetTransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BudgetTransaction");
+                });
+
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.AbsenceRequest", b =>
+                {
+                    b.Navigation("RequestImages");
+                });
+
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Account", b =>
                 {
                     b.Navigation("AbsenceRequests");
 
                     b.Navigation("Catechist");
+
+                    b.Navigation("LeaveRequests");
 
                     b.Navigation("MemberOfProcesses");
 
@@ -1868,8 +2041,11 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("RecruiterInInterviews");
+                });
 
-                    b.Navigation("Recruiters");
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.BudgetTransaction", b =>
+                {
+                    b.Navigation("TransactionImages");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Catechist", b =>
@@ -1885,6 +2061,8 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("CatechistInTrainings");
 
                     b.Navigation("CertificateOfCatechists");
+
+                    b.Navigation("LeaveRequests");
 
                     b.Navigation("ReplacementAbsenceRequests");
                 });
@@ -1969,15 +2147,15 @@ namespace CatechistHelper.Infrastructure.Migrations
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Process", b =>
                 {
                     b.Navigation("MemberOfProcesses");
+
+                    b.Navigation("ReceiptImages");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Registration", b =>
                 {
                     b.Navigation("CertificateOfCandidates");
 
-                    b.Navigation("Interviews");
-
-                    b.Navigation("Recruiters");
+                    b.Navigation("Interview");
 
                     b.Navigation("RegistrationProcesses");
                 });

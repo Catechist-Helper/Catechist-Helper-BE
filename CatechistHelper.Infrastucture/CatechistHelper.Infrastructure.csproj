@@ -33,4 +33,8 @@
     <ProjectReference Include="..\CatechistHelper.Domain\CatechistHelper.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
