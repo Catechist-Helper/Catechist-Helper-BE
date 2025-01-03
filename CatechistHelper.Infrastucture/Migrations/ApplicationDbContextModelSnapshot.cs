@@ -599,17 +599,9 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("tinyint")
                         .HasColumnName("status");
 
-                    b.Property<bool>("IsCheckedIn")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_checked_in");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
                         .HasColumnName("is_deleted");
-
-                    b.Property<bool>("IsPeriodic")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_periodic");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -626,13 +618,13 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("start_time");
 
+                    b.Property<double>("TotalCost")
+                        .HasColumnType("float")
+                        .HasColumnName("total_cost");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
-
-                    b.Property<double>("current_budget")
-                        .HasColumnType("float")
-                        .HasColumnName("current_budget");
 
                     b.HasKey("Id");
 
@@ -1057,14 +1049,14 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnType("float")
                         .HasColumnName("actual_fee");
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("comment");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
-
-                    b.Property<long>("Duration")
-                        .HasColumnType("bigint")
-                        .HasColumnName("duration");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2")
@@ -1085,9 +1077,7 @@ namespace CatechistHelper.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Note")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("note");
 
                     b.Property<DateTime>("StartTime")
@@ -1105,6 +1095,34 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.ToTable("process");
                 });
 
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.ReceiptImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<Guid>("ProcessId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("process_id");
+
+                    b.Property<DateTime>("UploadAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessId");
+
+                    b.ToTable("receipt_image");
+                });
+
             modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
                 {
                     b.Property<Guid>("AccountId")
@@ -1114,6 +1132,10 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Property<Guid>("InterviewId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("interview_id");
+
+                    b.Property<string>("Evaluation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("evaluation");
 
                     b.Property<string>("OnlineRoomUrl")
                         .HasColumnType("nvarchar(max)")
@@ -1868,6 +1890,17 @@ namespace CatechistHelper.Infrastructure.Migrations
                     b.Navigation("Event");
                 });
 
+            modelBuilder.Entity("CatechistHelper.Domain.Entities.ReceiptImage", b =>
+                {
+                    b.HasOne("CatechistHelper.Domain.Entities.Process", "Process")
+                        .WithMany("ReceiptImages")
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Process");
+                });
+
             modelBuilder.Entity("CatechistHelper.Domain.Entities.RecruiterInInterview", b =>
                 {
                     b.HasOne("CatechistHelper.Domain.Entities.Account", "Account")
@@ -2111,6 +2144,8 @@ namespace CatechistHelper.Infrastructure.Migrations
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Process", b =>
                 {
                     b.Navigation("MemberOfProcesses");
+
+                    b.Navigation("ReceiptImages");
                 });
 
             modelBuilder.Entity("CatechistHelper.Domain.Entities.Registration", b =>
