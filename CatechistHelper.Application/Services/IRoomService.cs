@@ -8,7 +8,7 @@ namespace CatechistHelper.Application.Services
 {
     public interface IRoomService
     {
-        Task<PagingResult<GetRoomResponse>> GetPagination(Guid? pastoralYearId, int page, int size, bool excludeRoomAssigned = false);
+        Task<PagingResult<GetRoomResponse>> GetPagination(Guid? pastoralYearId, Guid? slotId, int page, int size, bool excludeRoomAssigned = false);
         Task<Result<GetRoomResponse>> Get(Guid id);
         Task<Result<GetRoomResponse>> Create(CreateRoomRequest request);
         Task<Result<bool>> Update(Guid id, UpdateRoomRequest request);

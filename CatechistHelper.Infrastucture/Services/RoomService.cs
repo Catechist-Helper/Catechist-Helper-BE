@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CatechistHelper.Infrastructure.Services
 {
@@ -103,7 +104,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<GetRoomResponse>> GetPagination(Guid? pastoralYearId, int page, int size, bool excludeRoomAssigned = false)
+        public async Task<PagingResult<GetRoomResponse>> GetPagination(Guid? pastoralYearId, Guid? slotId, int page, int size, bool excludeRoomAssigned = false)
         {
             try
             {
@@ -117,7 +118,8 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     assignedRoomIds = await _unitOfWork.GetRepository<Slot>()
                         .GetListAsync(
-                            predicate: s => s.Class.PastoralYearId == pastoralYearId,
+                            predicate: s => s.Class.PastoralYearId == pastoralYearId
+                            && s.Date > DateTime.Now,
                             selector: s => s.RoomId);
                 }
                 IPaginate<Room> rooms =
@@ -128,6 +130,86 @@ namespace CatechistHelper.Infrastructure.Services
                             page: page,
                             size: size
                         );
+                
+                if(pastoralYearId != null && slotId != null)
+                {
+                    PastoralYear SelectedPastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(
+                        predicate: py => py.Id == pastoralYearId) ?? throw new Exception(MessageConstant.PastoralYear.Fail.NotFoundPastoralYear);
+                    Slot selectedSlot= await _unitOfWork.GetRepository<Slot>().SingleOrDefaultAsync(
+                                            predicate: py => py.Id == slotId) ?? throw new Exception();
+
+                    // Kết hợp ngày từ date và giờ từ startTime
+                    DateTime combinedDateStartTime = new DateTime(
+                        selectedSlot.Date.Year,
+                        selectedSlot.Date.Month,
+                        selectedSlot.Date.Day,
+                        selectedSlot.StartTime.Hour,
+                        selectedSlot.StartTime.Minute,
+                        selectedSlot.StartTime.Second,
+                        DateTimeKind.Utc
+                    );
+
+                    DateTime combinedDateEndTime = new DateTime(
+                        selectedSlot.Date.Year,
+                        selectedSlot.Date.Month,
+                        selectedSlot.Date.Day,
+                        selectedSlot.EndTime.Hour,
+                        selectedSlot.EndTime.Minute,
+                        selectedSlot.EndTime.Second,
+                        DateTimeKind.Utc
+                    );
+
+                    // Lấy tất cả các slot cần thiết và chuyển về client để đánh giá
+                    var allSlots = await _unitOfWork.GetRepository<Slot>()
+                        .GetListAsync(
+                            predicate: s => s.Class.PastoralYearId == pastoralYearId,
+                            selector: s => new {
+                                s.RoomId,
+                                s.Date,
+                                s.StartTime,
+                                s.EndTime
+                            });
+
+                    // Kiểm tra giao thoa thời gian trên client side
+                    var selectedAssignedRoomIds = allSlots
+                        .Where(s => combinedDateStartTime <= new DateTime(
+                                        s.Date.Year,
+                                        s.Date.Month,
+                                        s.Date.Day,
+                                        s.EndTime.Hour,
+                                        s.EndTime.Minute,
+                                        s.EndTime.Second,
+                                        DateTimeKind.Utc
+                                    )
+                                    && combinedDateEndTime >= new DateTime(
+                                        s.Date.Year,
+                                        s.Date.Month,
+                                        s.Date.Day,
+                                        s.StartTime.Hour,
+                                        s.StartTime.Minute,
+                                        s.StartTime.Second,
+                                        DateTimeKind.Utc
+                                    ))
+                        .Select(s => s.RoomId)
+                        .ToList();
+
+
+                    IPaginate<Room> selectedRooms =
+                    await _unitOfWork.GetRepository<Room>()
+                    .GetPagingListAsync(
+                            predicate: r => r.IsDeleted == false
+                                            && !selectedAssignedRoomIds.Contains(r.Id),
+                            page: page,
+                            size: size
+                        );
+
+                    return SuccessWithPaging(
+                        selectedRooms.Adapt<IPaginate<GetRoomResponse>>(),
+                        page,
+                        size,
+                        selectedRooms.Total);
+                }
+
                 return SuccessWithPaging(
                         rooms.Adapt<IPaginate<GetRoomResponse>>(),
                         page,

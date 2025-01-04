@@ -14,6 +14,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Event
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double current_budget { get; set; } = 0;
+        public double TotalCost { get; set; }
         public EventStatus EventStatus { get; set; }
         public GetEventCategoryResponse? EventCategory { get; set; }
 
