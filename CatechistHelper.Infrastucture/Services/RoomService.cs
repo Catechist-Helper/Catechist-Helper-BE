@@ -119,8 +119,9 @@ namespace CatechistHelper.Infrastructure.Services
                     assignedRoomIds = await _unitOfWork.GetRepository<Slot>()
                         .GetListAsync(
                             predicate: s => s.Class.PastoralYearId == pastoralYearId
+                            && s.RoomId.HasValue
                             && s.Date > DateTime.Now,
-                            selector: s => s.RoomId);
+                            selector: s => s.RoomId.Value);
                 }
                 IPaginate<Room> rooms =
                     await _unitOfWork.GetRepository<Room>()
