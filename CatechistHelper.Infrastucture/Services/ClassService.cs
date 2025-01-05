@@ -133,6 +133,7 @@ namespace CatechistHelper.Infrastructure.Services
                             page: page,
                             size: size
                         );
+
                 return SuccessWithPaging(
                         slots.Adapt<IPaginate<GetSlotResponse>>(),
                         page,
