@@ -270,7 +270,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var classToUpdate = await _unitOfWork.GetRepository<Class>()
                                         .SingleOrDefaultAsync(
                                             predicate: c => c.Id == id,
-                                            include: c => c.Include(c => c.Slots.Where(s => s.Date >= DateTime.Now))
+                                            include: c => c.Include(c => c.Slots.Where(s => s.Date.Date >= DateTime.Now.Date))
                                                            .ThenInclude(s => s.CatechistInSlots)
                 );
 
@@ -436,7 +436,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (request.CatechistInSlots.Count != 0)
                 {
-                    // Clear existing slots and add new ones
+                    _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
                     slot.CatechistInSlots = request.CatechistInSlots
                         .Select(cate => new CatechistInSlot
                         {
@@ -446,7 +446,7 @@ namespace CatechistHelper.Infrastructure.Services
                                 ? CatechistInSlotType.Main.ToString()
                                 : CatechistInSlotType.Assistant.ToString(),
                         })
-                        .ToList();
+                    .ToList();
                 }
 
                 if (request.RoomId != null)
