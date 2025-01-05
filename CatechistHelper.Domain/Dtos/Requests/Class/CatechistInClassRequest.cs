@@ -9,6 +9,7 @@ namespace CatechistHelper.Domain.Dtos.Requests.Class
 
     public class RoomOfClassRequest
     {
-        public Guid RoomId { get; set; }
+        public Guid? RoomId { get; set; }
+        public bool? IsDeletedAllRoom { get; set; }
     }
 }

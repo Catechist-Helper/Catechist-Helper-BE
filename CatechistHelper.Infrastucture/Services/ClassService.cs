@@ -281,7 +281,13 @@ namespace CatechistHelper.Infrastructure.Services
 
                 foreach (var slot in classToUpdate.Slots)
                 {
-                    slot.RoomId = request.RoomId;
+                    if(request.IsDeletedAllRoom.HasValue && request.IsDeletedAllRoom == true)
+                    {
+                        slot.RoomId = null;
+                    } else if(request.RoomId.HasValue)
+                    {
+                        slot.RoomId = request.RoomId;
+                    }
                 }
 
                 _unitOfWork.GetRepository<Class>().UpdateAsync(classToUpdate);
@@ -449,7 +455,11 @@ namespace CatechistHelper.Infrastructure.Services
                     .ToList();
                 }
 
-                if (request.RoomId != null)
+                if(request.IsDeletedRoom.HasValue && request.IsDeletedRoom == true)
+                {
+                    slot.RoomId = null;
+                }
+                else if (request.RoomId != null)
                 {
                     slot.RoomId = request.RoomId.Value;
                 }
