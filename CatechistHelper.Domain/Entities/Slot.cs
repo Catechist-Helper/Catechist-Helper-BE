@@ -30,7 +30,7 @@ namespace CatechistHelper.Domain.Entities
 
         [Column("room_id")]
         [ForeignKey(nameof(Room))]
-        public Guid RoomId { get; set; }
+        public Guid? RoomId { get; set; }
         public Room? Room { get; set; }
 
         public virtual ICollection<Catechist> Catechists { get; set; } = new List<Catechist>();
