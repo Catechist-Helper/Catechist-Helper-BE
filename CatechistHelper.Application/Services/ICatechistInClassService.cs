@@ -10,6 +10,6 @@ namespace CatechistHelper.Application.Services
         Task<Result<bool>> AddCatechistToClass(CreateCatechistInClassRequest request);
         Task<Result<List<GetClassResponse>>> GetClassesCatechistHaveSlots(Guid id);
         Task<Result<bool>> ReplaceCatechistInClass(ReplaceCatechistInClassRequest request);
-        Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid excludeId, int page, int size);
+        Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid? excludeId, int page, int size);
     }
 }
