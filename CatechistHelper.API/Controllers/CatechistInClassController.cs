@@ -45,7 +45,7 @@ namespace CatechistHelper.API.Controllers
         [HttpGet(ApiEndPointConstant.CatechistInClass.CatechistInClassSearchEndpoint)]
         [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SearchCatechists([FromRoute] Guid id, [FromQuery] Guid excludeId, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        public async Task<IActionResult> SearchCatechists([FromRoute] Guid id, [FromQuery] Guid? excludeId, [FromQuery] int page = 1, [FromQuery] int size = 100)
         {
             PagingResult<SearchCatechistResponse> result = await _catechistInClassService.SearchAvailableCatechists(id, excludeId, page, size);
             return StatusCode((int)result.StatusCode, result);

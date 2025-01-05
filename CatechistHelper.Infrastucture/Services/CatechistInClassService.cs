@@ -181,14 +181,14 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid excludeId, int page, int size)
+        public async Task<PagingResult<SearchCatechistResponse>> SearchAvailableCatechists(Guid id, Guid? excludeId, int page, int size)
         {
             try
             {
                 // Step 1: Retrieve the CatechistInSlot for the excluded catechist (from the same slot)
                 var catechistInClass = await _unitOfWork.GetRepository<CatechistInClass>()
                 .SingleOrDefaultAsync(
-                    predicate: s => s.ClassId == id && s.CatechistId == excludeId,
+                    predicate: s => s.ClassId == id && (!excludeId.HasValue || (excludeId.HasValue && s.CatechistId == excludeId)),
                     include: s => s.Include(c => c.Class)
                                    .Include(c => c.Catechist)
                                   .ThenInclude(c => c.CatechistInGrades)
@@ -209,7 +209,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var predicate = PredicateBuilder.New<Catechist>()
                     .And(c => c.IsTeaching && !c.IsDeleted)  // Catechist must be teaching and not deleted
                     .And(c => c.CatechistInGrades.Any(g => g.GradeId == gradeId || g.Grade.MajorId == majorId)) // Same grade or major
-                    .And(c => c.Id != excludeId)  // Exclude the current catechist
+                    .And(c => !excludeId.HasValue || (excludeId.HasValue && c.Id != excludeId))  // Exclude the current catechist
                     .And(c => !c.CatechistInClasses
                         .Any(cs => cs.IsMain));  // Exclude catechists with the same date
 
