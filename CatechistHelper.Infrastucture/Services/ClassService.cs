@@ -238,7 +238,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             foreach (var slot in slots)
             {
-                if (slot.Date >= DateTime.Now)
+                if (slot.Date.Date >= DateTime.Now.Date)
                 {
                     foreach (var catechistSlot in catechistSlots)
                     {
@@ -418,7 +418,7 @@ namespace CatechistHelper.Infrastructure.Services
                     return BadRequest<bool>("Không tìm thấy slot");
                 }
 
-                if (slot.Date < DateTime.Now)
+                if (slot.Date.Date < DateTime.Now.Date)
                 {
                     return BadRequest<bool>("Slot không thể chỉnh sửa");
                 }
