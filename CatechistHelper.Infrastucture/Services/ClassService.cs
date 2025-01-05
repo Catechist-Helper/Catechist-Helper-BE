@@ -211,7 +211,7 @@ namespace CatechistHelper.Infrastructure.Services
 
             foreach (var slot in classToUpdate.Slots)
             {
-                if (slot.CatechistInSlots != null && slot.Date >= DateTime.Now)
+                if (slot.CatechistInSlots != null && slot.Date.Date >= DateTime.Now.Date)
                 {
                     _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
                 }
