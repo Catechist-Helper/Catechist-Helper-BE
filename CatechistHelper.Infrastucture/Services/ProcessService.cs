@@ -52,8 +52,9 @@ namespace CatechistHelper.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                return null!;
             }
-            return null!;
+            
         }
 
         public async Task<Result<GetProcessResponse>> Create(CreateProcessRequest request)
@@ -65,14 +66,18 @@ namespace CatechistHelper.Infrastructure.Services
                 // Cant create process if event is not in progress
                 if (eventFromDb.EventStatus != EventStatus.In_Progress)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.EventNotStarted);
+                    return Fail<GetProcessResponse>(MessageConstant.Process.Fail.EventNotStarted);
+                }
+                if(request.StartTime > eventFromDb.EndTime || request.EndTime < eventFromDb.StartTime)
+                {
+                    return Fail<GetProcessResponse>("Thời gian hoạt động phải nằm trong thời gian sự kiện");
                 }
                 Process process = request.Adapt<Process>();
                 Process result = await _unitOfWork.GetRepository<Process>().InsertAsync(process);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.Create);
+                    return Fail<GetProcessResponse>(MessageConstant.Process.Fail.Create);
                 }
                 return Success(result.Adapt<GetProcessResponse>());
             }
@@ -92,7 +97,7 @@ namespace CatechistHelper.Infrastructure.Services
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.Delete);
+                    return Fail<bool>(MessageConstant.Process.Fail.Delete);
                 }
                 return Success(isSuccessful);
             }
@@ -120,7 +125,7 @@ namespace CatechistHelper.Infrastructure.Services
                 // Cant update if process has completed
                 if (process.Status == ProcessStatus.Completed)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.ProcessCompleted);
+                    return Fail<bool>(MessageConstant.Process.Fail.ProcessCompleted);
                 }
 
                 if (request.ActualFee > process.Fee) {
@@ -146,7 +151,7 @@ namespace CatechistHelper.Infrastructure.Services
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.Update);
+                    return Fail<bool>(MessageConstant.Process.Fail.Update);
                 }
                 return Success(isSuccessful);
             }
@@ -164,14 +169,14 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Process.Fail.NotFound);
                 if (process.Status == ProcessStatus.Completed)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.ProcessCompleted);
+                    return Fail<bool>(MessageConstant.Process.Fail.ProcessCompleted);
                 }
                 request.Adapt(process);
                 _unitOfWork.GetRepository<Process>().UpdateAsync(process);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
                 {
-                    throw new Exception(MessageConstant.Process.Fail.Update);
+                    return Fail<bool>(MessageConstant.Process.Fail.Update);
                 }
                 return Success(isSuccessful);
             }
