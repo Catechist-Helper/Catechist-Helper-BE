@@ -62,13 +62,14 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                    predicate: e => e.Id == request.EventId) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                    predicate: e => e.Id == request.EventId,
+                    include: e=> e.Include(e=> e.Processes)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
                 // Cant create process if event is not in progress
                 if (eventFromDb.EventStatus != EventStatus.In_Progress)
                 {
                     return Fail<GetProcessResponse>(MessageConstant.Process.Fail.EventNotStarted);
                 }
-                if(request.StartTime > eventFromDb.EndTime || request.EndTime < eventFromDb.StartTime)
+                if(request.StartTime < eventFromDb.StartTime || request.EndTime > eventFromDb.StartTime)
                 {
                     return Fail<GetProcessResponse>("Thời gian hoạt động phải nằm trong thời gian sự kiện");
                 }
