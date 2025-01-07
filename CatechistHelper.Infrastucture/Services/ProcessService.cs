@@ -122,6 +122,11 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     throw new Exception(MessageConstant.Process.Fail.ProcessCompleted);
                 }
+
+                if (request.ActualFee > process.Fee) {
+                    return Fail<bool>("Chi phí thực tế phải nhỏ hơn chi phí dự tính");
+                }
+
                 if (request.ReceiptImages.Count > 0)
                 {
                     string folderName = $"event/{request.EventId}/process/{process.Id}";
@@ -134,10 +139,6 @@ namespace CatechistHelper.Infrastructure.Services
                             ImageUrl = image
                         });
                     }
-                }
-                if (request.ActualFee != 0)
-                {
-                    eventFromDb.TotalCost += request.ActualFee;
                 }
                 request.Adapt(process);
                 _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
