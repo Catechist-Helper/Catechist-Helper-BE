@@ -89,12 +89,33 @@ namespace CatechistHelper.Infrastructure.Services
         {
             Event eventFromDb = await GetById(id);
             var response = eventFromDb.Adapt<GetEventResponse>();
-            var totalFee = eventFromDb.Processes.Sum(process => process.Fee);
-            var totalActualFee = eventFromDb.Processes.Sum(process => process.ActualFee);
+            var totalFee = GetFee(eventFromDb);
+            var totalActualFee = GetActualFee(eventFromDb);
             response.TotalCost = totalFee;
             response.TotalActualCost = totalActualFee;
             response.SurplusCost = totalFee - totalActualFee;
             return Success(response);
+        }
+
+        public static double GetActualFee(Event evt)
+        {
+            var totalActualFee = evt.Processes
+                .Where(process => process.Status == ProcessStatus.Approval 
+                || process.Status == ProcessStatus.In_Progress 
+                || process.Status == ProcessStatus.Completed)
+                .Sum(process => process.ActualFee);
+            return totalActualFee;
+
+        }
+
+        public static double GetFee(Event evt) {
+            var totalFee = evt.Processes
+                .Where(process => process.Status == ProcessStatus.Approval
+                || process.Status == ProcessStatus.In_Progress
+                || process.Status == ProcessStatus.Completed)
+                .Sum(process => process.Fee);
+            return totalFee;
+
         }
 
         public async Task<PagingResult<GetEventResponse>> GetPagination(EventFilter? filter, int page, int size)
@@ -111,8 +132,8 @@ namespace CatechistHelper.Infrastructure.Services
             // Transform the events into GetEventResponse while calculating fees
             var transformedResult = events.Items.Select(evt =>
             {
-                var totalFee = evt.Processes.Sum(process => process.Fee);
-                var totalActualFee = evt.Processes.Sum(process => process.ActualFee);
+                var totalFee = GetFee(evt);
+                var totalActualFee = GetActualFee(evt);
 
                 var response = evt.Adapt<GetEventResponse>();
                 response.TotalCost = totalFee;
