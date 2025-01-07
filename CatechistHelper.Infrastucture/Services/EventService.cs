@@ -55,13 +55,13 @@ namespace CatechistHelper.Infrastructure.Services
                 }
                 return Success(result.Adapt<GetEventResponse>());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return null!;
             }
-            
-            
+
+
         }
 
         public async Task<Result<bool>> Delete(Guid id)
@@ -92,20 +92,43 @@ namespace CatechistHelper.Infrastructure.Services
 
         public async Task<PagingResult<GetEventResponse>> GetPagination(EventFilter? filter, int page, int size)
         {
-            IPaginate<Event> events =
-                   await _unitOfWork.GetRepository<Event>().GetPagingListAsync(
+            var events = await _unitOfWork.GetRepository<Event>().GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
                             orderBy: e => e.OrderBy(e => e.EventStatus)
                                            .ThenByDescending(e => e.CreatedAt),
-                            include: e => e.Include(x => x.EventCategory),
+                            include: e => e.Include(x => x.EventCategory)
+                                           .Include(x => x.Processes),
                             page: page,
                             size: size);
+
+            // Transform the events into GetEventResponse while calculating fees
+            var transformedResult = events.Items.Select(evt =>
+            {
+                var totalFee = evt.Processes.Sum(process => process.Fee);
+                var totalActualFee = evt.Processes.Sum(process => process.ActualFee);
+
+                var response = evt.Adapt<GetEventResponse>();
+                response.TotalCost = totalFee;
+                response.TotalActualCost = totalActualFee;
+                response.SurplusCost = totalFee - totalActualFee;
+
+                return response;
+            }).ToList();
+
+            // Convert the transformed result to IPaginate
+            var paginatedResult = new Paginate<GetEventResponse>
+            {
+                Items = transformedResult
+            };
+
             return SuccessWithPaging(
-                    events.Adapt<IPaginate<GetEventResponse>>(),
+                    paginatedResult,
                     page,
                     size,
                     events.Total);
         }
+
+
 
         private Expression<Func<Event, bool>> BuildGetPaginationQuery(EventFilter? filter)
         {
@@ -122,10 +145,29 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                    predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                    predicate: m => m.Id.Equals(id),
+                    include: m => m.Include(i => i.Processes));
+
+                if (eventFromDb.EventStatus == EventStatus.Completed)
+                {
+                    return Fail<bool>("Sự kiện đã hoàn thành. Không thể chỉnh sửa");
+                }
+
+                if (request.EventStatus == EventStatus.Completed)
+                {
+                    foreach (var process in eventFromDb.Processes)
+                    {
+                        if (process.Status != ProcessStatus.Completed)
+                        {
+                            process.Status = ProcessStatus.Completed;
+                        }
+                    }
+                }
+
                 request.Adapt(eventFromDb);
                 _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
+
                 if (!isSuccessful)
                 {
                     return Fail<bool>(MessageConstant.Event.Fail.Update);
