@@ -118,7 +118,10 @@ namespace CatechistHelper.Infrastructure.Services
             // Convert the transformed result to IPaginate
             var paginatedResult = new Paginate<GetEventResponse>
             {
-                Items = transformedResult
+                Items = transformedResult,
+                Page = page,
+                Size= size,
+                Total = events.Total
             };
 
             return SuccessWithPaging(
