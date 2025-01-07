@@ -37,7 +37,8 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Event> GetById(Guid id)
         {
             Event eventEntity = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
-                predicate: e => e.Id == id);
+                predicate: e => e.Id == id,
+                include: e => e.Include(e=> e.Processes));
             Validator.EnsureNonNull(eventEntity);
             return eventEntity;
         }
@@ -87,7 +88,13 @@ namespace CatechistHelper.Infrastructure.Services
         public async Task<Result<GetEventResponse>> Get(Guid id)
         {
             Event eventFromDb = await GetById(id);
-            return Success(eventFromDb.Adapt<GetEventResponse>());
+            var response = eventFromDb.Adapt<GetEventResponse>();
+            var totalFee = eventFromDb.Processes.Sum(process => process.Fee);
+            var totalActualFee = eventFromDb.Processes.Sum(process => process.ActualFee);
+            response.TotalCost = totalFee;
+            response.TotalActualCost = totalActualFee;
+            response.SurplusCost = totalFee - totalActualFee;
+            return Success(response);
         }
 
         public async Task<PagingResult<GetEventResponse>> GetPagination(EventFilter? filter, int page, int size)
