@@ -131,7 +131,7 @@ namespace CatechistHelper.Infrastructure.Utils
                 worksheet.Cells[row, 3].Value = slot.EndTime.ToString("HH:mm");
                 worksheet.Cells[row, 4].Value = slot.Date.ToString("yyyy-MM-dd");
                 worksheet.Cells[row, 5].Value = slot.Note ?? string.Empty;
-                worksheet.Cells[row, 6].Value = slot.Room.Name;
+                worksheet.Cells[row, 6].Value = slot.Room?.Name;
                 worksheet.Cells[row, 7].Value = slot.Class.Name;
 
                 // Join catechist names into a single string
@@ -176,7 +176,7 @@ namespace CatechistHelper.Infrastructure.Utils
                     worksheet.Cells[row, 3].Value = slot.EndTime.ToString("HH:mm");
                     worksheet.Cells[row, 4].Value = slot.Date.ToString("dd-MM-yyyy");
                     worksheet.Cells[row, 5].Value = slot.Note ?? string.Empty;
-                    worksheet.Cells[row, 6].Value = slot.Room.Name;
+                    worksheet.Cells[row, 6].Value = slot.Room?.Name;
                     worksheet.Cells[row, 7].Value = classDto.Name;
 
                     var catechists = string.Join(", ",

@@ -1,6 +1,7 @@
 ﻿using CatechistHelper.Domain.Common;
 using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.Timetable;
+using CatechistHelper.Domain.Entities;
 
 namespace CatechistHelper.Application.Services
 {
@@ -15,5 +16,6 @@ namespace CatechistHelper.Application.Services
         Task<DateTime> GetEndTime();
         Task<DateTime> GetStartDate(string year);
         Task<DateTime> GetEndDate(string year);
+        Task<Class> CreateClass(ClassDto classDto, Guid gradeId, Guid pastoralYearId);
     }
 }

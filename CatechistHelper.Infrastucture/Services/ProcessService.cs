@@ -69,7 +69,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     return Fail<GetProcessResponse>(MessageConstant.Process.Fail.EventNotStarted);
                 }
-                if(request.StartTime < eventFromDb.StartTime || request.EndTime > eventFromDb.StartTime)
+                if(request.StartTime.Date < eventFromDb.StartTime.Date || request.EndTime.Date > eventFromDb.StartTime.Date)
                 {
                     return Fail<GetProcessResponse>("Thời gian hoạt động phải nằm trong thời gian sự kiện");
                 }
