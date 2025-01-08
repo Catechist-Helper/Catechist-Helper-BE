@@ -10,6 +10,7 @@ using CatechistHelper.Domain.Dtos.Requests.Timetable;
 using CatechistHelper.Domain.Dtos.Responses.CatechistInClass;
 using CatechistHelper.Domain.Dtos.Responses.Class;
 using CatechistHelper.Domain.Dtos.Responses.Slot;
+using CatechistHelper.Domain.Dtos.Responses.Timetable;
 using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Enums;
 using CatechistHelper.Domain.Models;
@@ -308,7 +309,8 @@ namespace CatechistHelper.Infrastructure.Services
             try
             {
                 await CheckRestrictionDateAsync();
-                var pastoralYear = await _unitOfWork.GetRepository<PastoralYear>().SingleOrDefaultAsync(predicate: y => y.Id == request.PastoralYearId);
+                var pastoralYear = await _unitOfWork.GetRepository<PastoralYear>()
+                    .SingleOrDefaultAsync(predicate: y => y.Id == request.PastoralYearId);
 
                 Validator.EnsureNonNull(pastoralYear);
 
@@ -325,11 +327,16 @@ namespace CatechistHelper.Infrastructure.Services
                 var startDate = await _timetableService.GetStartDate(years[0]);
                 var endDate = await _timetableService.GetEndDate(years[1]);
 
-                var classEntity = request.Adapt<Class>();
-                classEntity.StartDate = startDate;
-                classEntity.EndDate = endDate;
+                ClassDto classDto = new()
+                {
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    Name = request.Name,
+                    NumberOfCatechist = request.NumberOfCatechist
+                };
 
-                await _unitOfWork.GetRepository<Class>().InsertAsync(classEntity);
+                await _timetableService.CreateClass(classDto, grade.Id, pastoralYear.Id);
+
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
 
                 return Success(isSuccessful);

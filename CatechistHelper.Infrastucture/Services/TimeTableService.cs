@@ -124,7 +124,7 @@ namespace CatechistHelper.Infrastructure.Services
             return grade;
         }
 
-        private async Task<Class> CreateClass(ClassDto classDto, Guid gradeId, Guid pastoralYearId)
+        public async Task<Class> CreateClass(ClassDto classDto, Guid gradeId, Guid pastoralYearId)
         {
             var classEntity = new Class
             {
