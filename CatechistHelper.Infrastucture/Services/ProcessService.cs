@@ -54,7 +54,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 return null!;
             }
-            
+
         }
 
         public async Task<Result<GetProcessResponse>> Create(CreateProcessRequest request)
@@ -63,13 +63,13 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Event eventFromDb = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
                     predicate: e => e.Id == request.EventId,
-                    include: e=> e.Include(e=> e.Processes)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
+                    include: e => e.Include(e => e.Processes)) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
                 // Cant create process if event is not in progress
                 if (eventFromDb.EventStatus != EventStatus.In_Progress)
                 {
                     return Fail<GetProcessResponse>(MessageConstant.Process.Fail.EventNotStarted);
                 }
-                if(request.StartTime.Date < eventFromDb.StartTime.Date || request.EndTime.Date > eventFromDb.StartTime.Date)
+                if (request.StartTime.Date < eventFromDb.StartTime.Date || request.EndTime.Date > eventFromDb.EndTime.Date)
                 {
                     return Fail<GetProcessResponse>("Thời gian hoạt động phải nằm trong thời gian sự kiện");
                 }
@@ -129,7 +129,8 @@ namespace CatechistHelper.Infrastructure.Services
                     return Fail<bool>(MessageConstant.Process.Fail.ProcessCompleted);
                 }
 
-                if (request.ActualFee > process.Fee) {
+                if (request.ActualFee > process.Fee)
+                {
                     return Fail<bool>("Chi phí thực tế phải nhỏ hơn chi phí dự tính");
                 }
 
