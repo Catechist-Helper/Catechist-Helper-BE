@@ -374,7 +374,10 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 var classToDelete = await _unitOfWork.GetRepository<Class>()
                     .SingleOrDefaultAsync(predicate: c => c.Id == id, include: c => c.Include(cls => cls.CatechistInClasses)
-                                                                                  .Include(cls => cls.Slots));
+                                                                                  .Include(cls => cls.Slots)
+                                                                                   .ThenInclude(c=> c.AbsenceRequests)
+                                                                                  .Include(c=> c.Slots)
+                                                                                   .ThenInclude(c=> c.CatechistInSlots));
                 if (classToDelete == null)
                 {
                     return BadRequest<bool>("Không tìm thấy lớp này.");
@@ -387,17 +390,20 @@ namespace CatechistHelper.Infrastructure.Services
 
                 foreach (var slot in classToDelete.Slots)
                 {
-                    var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
-                        .GetListAsync(predicate: cis => cis.SlotId == slot.Id);
 
                     if (slot.Date < DateTime.Now)
                     {
                         return BadRequest<bool>("Không thể xóa vì đã bắt đầu lớp học.");
                     }
 
-                    if (catechistInSlots.Count != 0)
+                    if (slot.CatechistInSlots.Count != 0)
                     {
-                        _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(catechistInSlots);
+                        _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
+                    }
+
+                    if (slot.AbsenceRequests.Count != 0)
+                    {
+                        _unitOfWork.GetRepository<AbsenceRequest>().DeleteRangeAsync(slot.AbsenceRequests);
                     }
                 }
 
