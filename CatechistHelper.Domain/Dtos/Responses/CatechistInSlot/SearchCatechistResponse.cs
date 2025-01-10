@@ -3,6 +3,7 @@
     public class SearchCatechistResponse
     {
         public Guid Id { get; set; }
+        public string ImageUrl { get; set; }
         public string Code { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
