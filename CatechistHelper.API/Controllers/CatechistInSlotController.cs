@@ -28,5 +28,16 @@ namespace CatechistHelper.API.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+
+        [AuthorizePolicy(RoleEnum.Admin)]
+        [HttpGet(ApiEndPointConstant.CatechistInSlots.CatechistInSlotFindEndpoint)]
+        [ProducesResponseType(typeof(PagingResult<SearchCatechistResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> FindCatechists([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int size = 100)
+        {
+            PagingResult<SearchCatechistResponse> result = await _catechistInSlotService.FindAvailableCatechists(id, page, size);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
     }
 }
