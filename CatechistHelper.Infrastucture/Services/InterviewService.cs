@@ -74,7 +74,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                         if (request.InterviewType == InterviewType.Offline)
                         {
-                            MailUtil.SendEmail("hmtminhthuan@gmail.com",
+                            MailUtil.SendEmail(account.Email,
                                                 ContentMailUtil.Title_AnnounceRecruiterInterviewSchedule,
                                                 ContentMailUtil.AnnounceRecruiterInterviewSchedule(
                                                     account.FullName,
@@ -163,7 +163,8 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (interview.Registration.Status == RegistrationStatus.Approved_Duyet_Don
                     && !interview.IsPassed
-                    && request.MeetingTime != interview.MeetingTime)
+                    && request.MeetingTime != interview.MeetingTime
+                    && !request.EmailInterview.HasValue)
                 {
                     string? formattedMeetingTime = request.MeetingTime?.ToString("HH:mm, dd/MM/yyyy");
                     MailUtil.SendEmail(
@@ -178,7 +179,7 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-                if (interview.Registration.Status == RegistrationStatus.Approved_Phong_Van
+                if (request.EmailInterview.HasValue
                     && request.IsPassed)
                 {
                     MailUtil.SendEmail(
@@ -190,7 +191,7 @@ namespace CatechistHelper.Infrastructure.Services
                         ""
                     );
                 }
-                if (interview.Registration.Status == RegistrationStatus.Rejected_Phong_Van
+                if (request.EmailInterview.HasValue
                     && !request.IsPassed)
                 {
                     MailUtil.SendEmail(
