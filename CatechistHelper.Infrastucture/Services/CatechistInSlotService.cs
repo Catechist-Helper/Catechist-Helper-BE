@@ -24,6 +24,50 @@ namespace CatechistHelper.Infrastructure.Services
         {
         }
 
+        public async Task<PagingResult<SearchCatechistResponse>> FindAvailableCatechists(Guid id, int page, int size)
+        {
+            try
+            {
+                var slot = await _unitOfWork.GetRepository<Slot>()
+                    .SingleOrDefaultAsync(predicate: p => p.Id == id,
+                                          include: p=> p.Include(p=> p.Class)
+                                                        .ThenInclude(p=> p.Grade)
+                                                        .ThenInclude(p=> p.Major));
+                var gradeId = slot.Class.Grade.Id;
+                var majorLevel = slot.Class.Grade.Major.HierarchyLevel;
+                var date = slot.Date;
+                var predicate  = PredicateBuilder.New<Catechist>()
+                    .And(c => c.IsTeaching && !c.IsDeleted)
+                    .And(c => c.CatechistInGrades.Any(g => g.GradeId == gradeId || g.Grade.Major.HierarchyLevel >= majorLevel))
+                    .And(c => !c.CatechistInSlots
+                        .Any(cs => cs.Slot.Date == date && cs.Type == CatechistInSlotType.Main.ToString()));
+
+                IPaginate<Catechist> catechists = await _unitOfWork.GetRepository<Catechist>()
+                    .GetPagingListAsync(
+                        predicate: predicate,
+                        include: s => s.Include(c => c.Level)
+                                      .Include(c => c.ChristianName)
+                                      .Include(c => c.CatechistInGrades)
+                                      .ThenInclude(g => g.Grade)
+                                      .ThenInclude(g => g.Major)
+                                      .Include(c => c.CatechistInSlots)
+                                      .ThenInclude(c => c.Slot),
+                        page: page,
+                        size: size
+                    );
+
+                var data = catechists.Adapt<IPaginate<SearchCatechistResponse>>();
+
+                // Step 5: Return the paginated result
+                return SuccessWithPaging(data, page, size, catechists.Total);
+
+            }
+            catch (Exception ex)
+            {
+                return NotFounds<SearchCatechistResponse>(ex.Message);
+            }
+        }
+
         public async Task<Result<bool>> ReplaceCatechist(Guid id, ReplaceCatechistRequest request)
         {
             try
