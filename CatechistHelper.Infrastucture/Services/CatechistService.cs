@@ -334,7 +334,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 IPaginate<CatechistInClass> catechistInClasses = await _unitOfWork.GetRepository<CatechistInClass>()
                     .GetPagingListAsync(
-                        predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear && c.Class.ClassStatus == status,
+                        predicate: c => c.CatechistId == id && c.Class.PastoralYear.Name == pastoralYear,
                         include: c => c.Include(cl => cl.Class)
                                        .ThenInclude(y => y.PastoralYear)
                                        .Include(cl => cl.Class.Grade)

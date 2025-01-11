@@ -1,4 +1,5 @@
-﻿using CatechistHelper.Domain.Entities;
+﻿using CatechistHelper.Domain.Dtos.Responses.MemberOfProcess;
+using CatechistHelper.Domain.Entities;
 using CatechistHelper.Domain.Enums;
 
 namespace CatechistHelper.Domain.Dtos.Responses.Process
@@ -26,6 +27,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.Process
         public ProcessStatus Status { get; set; }
         public Guid EventId { get; set; }
         public List<GetReceiptImage> ReceiptImages { get; set; }
+        public List<GetMemberOfProcessRepsonse> MemberOfProcesses {  get; set; }
 
     }
 }

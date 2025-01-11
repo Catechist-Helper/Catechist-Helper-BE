@@ -174,6 +174,7 @@ namespace CatechistHelper.Infrastructure.Services
                                 .Include(n => n.Catechist.Level)
                                 .Include(n => n.Catechist.Account)
                                 .Include(n => n.Catechist.Certificates),
+                        orderBy: cig => cig.OrderByDescending(x => x.Catechist.Level.HierarchyLevel),
                         page: page,
                         size: size
                     );

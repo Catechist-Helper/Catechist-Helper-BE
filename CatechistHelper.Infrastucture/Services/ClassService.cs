@@ -63,7 +63,9 @@ namespace CatechistHelper.Infrastructure.Services
             var classes = await _unitOfWork.GetRepository<Class>()
                     .GetPagingListAsync(
                             predicate: BuildGetPaginationQuery(filter),
-                            orderBy: a => a.OrderByDescending(x => x.CreatedAt),
+                            orderBy: a => a.OrderBy(x => x.Grade.Major.HierarchyLevel)
+                            .ThenBy(x => x.Grade.Name)
+                            .ThenBy(x => x.Name),
                             page: page,
                             size: size,
                             include: a => a.Include(p => p.PastoralYear)
@@ -130,7 +132,10 @@ namespace CatechistHelper.Infrastructure.Services
                     .GetPagingListAsync(
                             predicate: s => s.ClassId.Equals(id),
                             include: s => s.Include(s => s.Room)
-                                           .Include(s => s.CatechistInSlots).ThenInclude(cis => cis.Catechist),
+                                           .Include(s => s.CatechistInSlots).ThenInclude(cis => cis.Catechist)
+                                      .ThenInclude(c => c.CatechistInGrades)
+                                      .ThenInclude(g => g.Grade)
+                                      .ThenInclude(g => g.Major),
                             page: page,
                             size: size
                         );
@@ -213,7 +218,8 @@ namespace CatechistHelper.Infrastructure.Services
 
             foreach (var slot in classToUpdate.Slots)
             {
-                if (slot.CatechistInSlots != null && slot.Date.Date >= DateTime.Now.Date)
+                if (slot.CatechistInSlots != null
+                    && slot.Date.Date >= DateTime.Now.Date)
                 {
                     _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
                 }
@@ -272,8 +278,9 @@ namespace CatechistHelper.Infrastructure.Services
                 var classToUpdate = await _unitOfWork.GetRepository<Class>()
                                         .SingleOrDefaultAsync(
                                             predicate: c => c.Id == id,
-                                            include: c => c.Include(c => c.Slots.Where(s => s.Date.Date >= DateTime.Now.Date))
-                                                           .ThenInclude(s => s.CatechistInSlots)
+                                            include: c => c.Include(c => c.Slots
+                                            .Where(s => s.Date.Date >= DateTime.Now.Date)
+                                            ).ThenInclude(s => s.CatechistInSlots)
                 );
 
                 if (classToUpdate == null)

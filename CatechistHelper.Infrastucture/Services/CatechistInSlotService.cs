@@ -52,6 +52,7 @@ namespace CatechistHelper.Infrastructure.Services
                                       .ThenInclude(g => g.Major)
                                       .Include(c => c.CatechistInSlots)
                                       .ThenInclude(c => c.Slot),
+                        orderBy: c => c.OrderByDescending(x => x.Level.HierarchyLevel),
                         page: page,
                         size: size
                     );
@@ -154,6 +155,7 @@ namespace CatechistHelper.Infrastructure.Services
                                       .ThenInclude(g => g.Major)
                                       .Include(c => c.CatechistInSlots)
                                       .ThenInclude(c => c.Slot),
+                        orderBy: c => c.OrderByDescending(x => x.Level.HierarchyLevel),
                         page: page,
                         size: size
                     );
