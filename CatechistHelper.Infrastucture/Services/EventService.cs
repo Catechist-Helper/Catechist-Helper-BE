@@ -38,7 +38,7 @@ namespace CatechistHelper.Infrastructure.Services
         {
             Event eventEntity = await _unitOfWork.GetRepository<Event>().SingleOrDefaultAsync(
                 predicate: e => e.Id == id,
-                include: e => e.Include(e=> e.Processes));
+                include: e => e.Include(e => e.Processes));
             Validator.EnsureNonNull(eventEntity);
             return eventEntity;
         }
@@ -100,15 +100,16 @@ namespace CatechistHelper.Infrastructure.Services
         public static double GetActualFee(Event evt)
         {
             var totalActualFee = evt.Processes
-                .Where(process => process.Status == ProcessStatus.Approval 
-                || process.Status == ProcessStatus.In_Progress 
+                .Where(process => process.Status == ProcessStatus.Approval
+                || process.Status == ProcessStatus.In_Progress
                 || process.Status == ProcessStatus.Completed)
                 .Sum(process => process.ActualFee);
             return totalActualFee;
 
         }
 
-        public static double GetFee(Event evt) {
+        public static double GetFee(Event evt)
+        {
             var totalFee = evt.Processes
                 .Where(process => process.Status == ProcessStatus.Approval
                 || process.Status == ProcessStatus.In_Progress
@@ -148,7 +149,7 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 Items = transformedResult,
                 Page = page,
-                Size= size,
+                Size = size,
                 Total = events.Total
             };
 
@@ -188,7 +189,11 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     foreach (var process in eventFromDb.Processes)
                     {
-                        if (process.Status != ProcessStatus.Completed)
+                        if (process.Status == ProcessStatus.Wait_Approval)
+                        {
+                            process.Status = ProcessStatus.Not_Approval;
+                        }
+                        if (process.Status == ProcessStatus.In_Progress && process.Status == ProcessStatus.Approval)
                         {
                             process.Status = ProcessStatus.Completed;
                         }
