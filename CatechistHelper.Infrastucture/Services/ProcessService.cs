@@ -123,7 +123,16 @@ namespace CatechistHelper.Infrastructure.Services
                     predicate: e => e.Id == request.EventId) ?? throw new Exception(MessageConstant.Event.Fail.NotFound);
                 Process process = await _unitOfWork.GetRepository<Process>().SingleOrDefaultAsync(
                     predicate: m => m.Id.Equals(id)) ?? throw new Exception(MessageConstant.Process.Fail.NotFound);
-                // Cant update if process has completed
+
+                if (eventFromDb.EventStatus == EventStatus.Completed) {
+                    return Fail<bool>("Sự kiện đã hoàn thành. Không thể chỉnh sửa");
+                }
+
+                if (eventFromDb.EventStatus == EventStatus.Cancelled)
+                {
+                    return Fail<bool>("Sự kiện đã hủy bỏ. Không thể chỉnh sửa");
+                }
+
                 if (process.Status == ProcessStatus.Completed)
                 {
                     return Fail<bool>(MessageConstant.Process.Fail.ProcessCompleted);
