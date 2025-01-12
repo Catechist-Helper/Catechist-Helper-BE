@@ -303,11 +303,11 @@ namespace CatechistHelper.Infrastructure.Services
 
                 if (account.Role.RoleName == RoleEnum.Admin.ToString())
                 {
-                    events = await _unitOfWork.GetRepository<Event>().GetListAsync();
+                    events = await _unitOfWork.GetRepository<Event>().GetListAsync(predicate: e=> !e.IsDeleted);
                 }
                 else
                 {
-                    events = account.Events;
+                    events = account.Events.Where(e => !e.IsDeleted).ToList();
                 }
 
                 var eventsTime = events.Select(e => new CalendarResponse

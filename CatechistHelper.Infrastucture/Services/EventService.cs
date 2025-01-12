@@ -198,7 +198,7 @@ namespace CatechistHelper.Infrastructure.Services
                         {
                             process.Status = ProcessStatus.Not_Approval;
                         }
-                        if (process.Status == ProcessStatus.In_Progress && process.Status == ProcessStatus.Approval)
+                        if (process.Status == ProcessStatus.In_Progress || process.Status == ProcessStatus.Approval)
                         {
                             process.Status = ProcessStatus.Completed;
                         }
@@ -209,7 +209,7 @@ namespace CatechistHelper.Infrastructure.Services
                 {
                     foreach (var process in eventFromDb.Processes)
                     {
-                        if(process.Status != ProcessStatus.Completed)
+                        if (process.Status != ProcessStatus.Completed)
                         {
                             process.Status = ProcessStatus.Not_Approval;
                         }
