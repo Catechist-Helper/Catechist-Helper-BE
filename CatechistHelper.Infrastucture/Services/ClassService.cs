@@ -278,9 +278,7 @@ namespace CatechistHelper.Infrastructure.Services
                 var classToUpdate = await _unitOfWork.GetRepository<Class>()
                                         .SingleOrDefaultAsync(
                                             predicate: c => c.Id == id,
-                                            include: c => c.Include(c => c.Slots
-                                            .Where(s => s.Date.Date >= DateTime.Now.Date)
-                                            ).ThenInclude(s => s.CatechistInSlots)
+                                            include: c => c.Include(c => c.Slots).ThenInclude(s => s.CatechistInSlots)
                 );
 
                 if (classToUpdate == null)
@@ -290,12 +288,16 @@ namespace CatechistHelper.Infrastructure.Services
 
                 foreach (var slot in classToUpdate.Slots)
                 {
-                    if(request.IsDeletedAllRoom.HasValue && request.IsDeletedAllRoom == true)
+                    if (slot.Date.Date >= DateTime.Now.Date)
                     {
-                        slot.RoomId = null;
-                    } else if(request.RoomId.HasValue)
-                    {
-                        slot.RoomId = request.RoomId;
+                        if (request.IsDeletedAllRoom.HasValue && request.IsDeletedAllRoom == true)
+                        {
+                            slot.RoomId = null;
+                        }
+                        else if (request.RoomId.HasValue)
+                        {
+                            slot.RoomId = request.RoomId;
+                        }
                     }
                 }
 
@@ -453,6 +455,16 @@ namespace CatechistHelper.Infrastructure.Services
                 if (request.StartTime < DateTime.Now && request.EndTime < DateTime.Now)
                 {
                     return BadRequest<bool>("Thời gian không thể trước thời gian hiện tại");
+                }
+
+                if (request.Date.HasValue)
+                {
+                    var today = DateTime.Today;
+                    if (request.Date.Value.Date <= today)
+                    {
+                        return Fail<bool>("Ngày được chọn phải là một ngày trong tương lai");
+                    }
+                    slot.Date = request.Date.Value;
                 }
 
                 if (request.StartTime.HasValue && request.EndTime.HasValue)

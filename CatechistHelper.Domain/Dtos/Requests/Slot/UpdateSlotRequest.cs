@@ -4,6 +4,7 @@
     public class UpdateSlotRequest
     {
         public List<CatechistSlotUpdate> CatechistInSlots { get; set; } = [];
+        public DateTime? Date { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public Guid? RoomId { get; set; }

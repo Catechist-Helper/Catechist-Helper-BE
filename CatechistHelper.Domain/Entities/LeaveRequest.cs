@@ -19,7 +19,7 @@ namespace CatechistHelper.Domain.Entities
         public string Reason { get; set; } = null!;
 
         [Column("status")]
-        public RequestStatus Status { get; set; } = RequestStatus.Pending;
+        public LeaveRequestStatus Status { get; set; } = LeaveRequestStatus.Pending;
 
         [Column("approver_id")]
         public Guid? ApproverId { get; set; }
@@ -33,5 +33,12 @@ namespace CatechistHelper.Domain.Entities
 
         public virtual Catechist Catechist { get; set; } = null!;
         public virtual Account? Approver { get; set; }
+    }
+
+    public enum LeaveRequestStatus : byte
+    {
+        Pending,
+        Approved,
+        Back
     }
 }
