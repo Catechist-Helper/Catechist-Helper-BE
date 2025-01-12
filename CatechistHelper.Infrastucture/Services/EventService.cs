@@ -212,6 +212,10 @@ namespace CatechistHelper.Infrastructure.Services
                         if (process.Status != ProcessStatus.Completed)
                         {
                             process.Status = ProcessStatus.Not_Approval;
+                            if (process.Comment != null || process.Comment == "")
+                            {
+                                process.Comment = "Sự kiện bị hủy bỏ";
+                            }
                         }
                     }
                 }
