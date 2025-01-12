@@ -53,6 +53,54 @@ namespace CatechistHelper.Infrastructure.Services
             {
                 PastoralYear pastoralYear = await GetById(id);
 
+                var classesToDelete = await _unitOfWork.GetRepository<Class>()
+                    .GetPagingListAsync(predicate: c => c.PastoralYearId == id, include: c => c.Include(cls => cls.CatechistInClasses)
+                                                                                  .Include(cls => cls.Slots)
+                                                                                   .ThenInclude(c => c.AbsenceRequests)
+                                                                                  .Include(c => c.Slots)
+                                                                                   .ThenInclude(c => c.CatechistInSlots));
+                if (classesToDelete != null && classesToDelete.Items.Any()) {
+                    foreach (var classToDelete in classesToDelete.Items)
+                    {
+                        if (classToDelete == null)
+                        {
+                            return BadRequest<bool>("Không tìm thấy lớp này.");
+                        }
+
+                        if (classToDelete.CatechistInClasses.Count != 0)
+                        {
+                            _unitOfWork.GetRepository<CatechistInClass>().DeleteRangeAsync(classToDelete.CatechistInClasses);
+                        }
+
+                        foreach (var slot in classToDelete.Slots)
+                        {
+
+                            if (slot.Date < DateTime.Now)
+                            {
+                                return BadRequest<bool>("Không thể xóa vì đã bắt đầu lớp học.");
+                            }
+
+                            if (slot.CatechistInSlots.Count != 0)
+                            {
+                                _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
+                            }
+
+                            if (slot.AbsenceRequests.Count != 0)
+                            {
+                                _unitOfWork.GetRepository<AbsenceRequest>().DeleteRangeAsync(slot.AbsenceRequests);
+                            }
+                        }
+
+                        if (classToDelete.Slots.Count != 0)
+                        {
+                            _unitOfWork.GetRepository<Slot>().DeleteRangeAsync(classToDelete.Slots);
+                        }
+
+                        _unitOfWork.GetRepository<Class>().DeleteAsync(classToDelete);
+                    }
+                }
+                
+
                 _unitOfWork.GetRepository<PastoralYear>().DeleteAsync(pastoralYear);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccessful)
