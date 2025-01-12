@@ -185,6 +185,11 @@ namespace CatechistHelper.Infrastructure.Services
                     return Fail<bool>("Sự kiện đã hoàn thành. Không thể chỉnh sửa");
                 }
 
+                if (eventFromDb.EventStatus == EventStatus.Cancelled)
+                {
+                    return Fail<bool>("Sự kiện đã hủy bỏ. Không thể chỉnh sửa");
+                }
+
                 if (request.EventStatus == EventStatus.Completed)
                 {
                     foreach (var process in eventFromDb.Processes)
