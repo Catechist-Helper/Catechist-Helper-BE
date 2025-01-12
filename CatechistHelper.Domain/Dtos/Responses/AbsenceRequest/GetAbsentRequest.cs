@@ -34,6 +34,7 @@ namespace CatechistHelper.Domain.Dtos.Responses.AbsenceRequest
         public string? ReplacementCatechistName { get; set; }
         public string? Approver { get; set; }
         public SlotResponse? Slot { get; set; }
+        public string? PastoralYearName { get; set; }
         //public GetClassResponse? Class { get; set; }
         public List<RequestImageResponse>? RequestImages { get; set; }
     }

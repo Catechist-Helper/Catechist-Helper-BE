@@ -121,7 +121,10 @@ namespace CatechistHelper.Infrastructure.Extensions
                 .Map(dest => dest.CatechistName, src => src.Catechist.FullName)
                 .Map(dest => dest.ReplacementCatechistName, src => src.ReplacementCatechist != null ? src.ReplacementCatechist.FullName : null)
                 .Map(dest => dest.RequestImages, src => src.RequestImages ?? null)
-                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null);
+                .Map(dest => dest.Approver, src => src.Approver != null ? src.Approver.FullName : null)
+                .Map(dest => dest.PastoralYearName, src => src.Slot != null
+                && src.Slot.Class != null && src.Slot.Class.PastoralYear != null
+                ?  src.Slot.Class.PastoralYear.Name : "");
 
             config.NewConfig<LeaveRequest, GetLeaveResponse>()
                 .Map(dest => dest.Id, src => src.Id)

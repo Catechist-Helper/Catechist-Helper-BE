@@ -207,6 +207,7 @@ namespace CatechistHelper.Infrastructure.Services
                                                    .Include(ar => ar.ReplacementCatechist)
                                                    .Include(ar => ar.Slot)
                                                    .Include(ar => ar.Slot.Class)
+                                                   .ThenInclude(cl => cl.PastoralYear)
                                                    .Include(ar => ar.RequestImages));
                 
                 if(cId != null)

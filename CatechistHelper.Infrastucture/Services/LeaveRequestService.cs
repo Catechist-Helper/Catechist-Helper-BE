@@ -1,7 +1,6 @@
 ﻿using CatechistHelper.Application.Repositories;
 using CatechistHelper.Application.Services;
 using CatechistHelper.Domain.Common;
-using CatechistHelper.Domain.Dtos.Requests.AbsenceRequest;
 using CatechistHelper.Domain.Dtos.Requests.LeaveRequest;
 using CatechistHelper.Domain.Dtos.Responses.LeaveRequest;
 using CatechistHelper.Domain.Entities;
@@ -21,14 +20,15 @@ namespace CatechistHelper.Infrastructure.Services
         {
         }
 
-        public async Task<Result<List<GetLeaveResponse>>> GetAll(RequestStatus? status, Guid? cId)
+        public async Task<Result<List<GetLeaveResponse>>> GetAll(LeaveRequestStatus? status, Guid? cId)
         {
             try
             {
                 var absenceRequests = await _unitOfWork.GetRepository<LeaveRequest>()
                                    .GetListAsync(
                                        predicate: a => !status.HasValue || (status.HasValue && a.Status == status),
-                                       include: a => a.Include(a => a.Catechist));
+                                       include: a => a.Include(a => a.Catechist),
+                                       orderBy: a => a.OrderByDescending(lev => lev.LeaveDate));
                 if (cId != null)
                 {
                     absenceRequests = absenceRequests.Where(a => a.Catechist.Id == cId).ToList();
@@ -44,7 +44,7 @@ namespace CatechistHelper.Infrastructure.Services
             }
         }
 
-        public async Task<Result<bool>> ProcessLeaveRequest(AbsenceApproveRequest absenceRequest)
+        public async Task<Result<bool>> ProcessLeaveRequest(LeaveApproveRequest absenceRequest)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace CatechistHelper.Infrastructure.Services
 
                 Validator.EnsureNonNull(leaveRequest);
 
-                if (absenceRequest.Status == RequestStatus.Approved)
+                if (absenceRequest.Status == LeaveRequestStatus.Approved)
                 {
                     var catechistInSlots = await _unitOfWork.GetRepository<CatechistInSlot>()
                         .GetListAsync(predicate: c => c.CatechistId == leaveRequest.CatechistId && c.Slot.Date >= DateTime.Now);
@@ -76,6 +76,11 @@ namespace CatechistHelper.Infrastructure.Services
 
                     if (catechistAccount != null) {
                         catechistAccount.IsDeleted = true;
+                        if (leaveRequest.Status == LeaveRequestStatus.Back)
+                        {
+                            catechistAccount.IsDeleted = false;
+                        }
+                        catechistAccount.UpdatedAt = DateTime.Now;
                         _unitOfWork.GetRepository<Account>().UpdateAsync(catechistAccount);
                     }
                 }
@@ -91,6 +96,12 @@ namespace CatechistHelper.Infrastructure.Services
                     .SingleOrDefaultAsync(predicate: c => c.Id == leaveRequest.CatechistId);
                 Validator.EnsureNonNull(catechist);
                 catechist.IsTeaching = false;
+                if (leaveRequest.Status == LeaveRequestStatus.Back)
+                {
+                    catechist.IsTeaching = true;
+                    _unitOfWork.GetRepository<Catechist>().UpdateAsync(catechist);
+                }
+                catechist.UpdatedAt = DateTime.Now;
 
                 return Success(await _unitOfWork.CommitAsync() > 0); 
             }
