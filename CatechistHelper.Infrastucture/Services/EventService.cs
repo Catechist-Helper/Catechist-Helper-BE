@@ -200,6 +200,17 @@ namespace CatechistHelper.Infrastructure.Services
                     }
                 }
 
+                if (request.EventStatus == EventStatus.Cancelled)
+                {
+                    foreach (var process in eventFromDb.Processes)
+                    {
+                        if(process.Status != ProcessStatus.Completed)
+                        {
+                            process.Status = ProcessStatus.Not_Approval;
+                        }
+                    }
+                }
+
                 request.Adapt(eventFromDb);
                 _unitOfWork.GetRepository<Event>().UpdateAsync(eventFromDb);
                 bool isSuccessful = await _unitOfWork.CommitAsync() > 0;
