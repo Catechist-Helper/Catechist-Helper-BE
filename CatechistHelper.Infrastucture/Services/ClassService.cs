@@ -473,22 +473,34 @@ namespace CatechistHelper.Infrastructure.Services
                     slot.EndTime = request.EndTime.Value;
                 }
 
-                if (request.CatechistInSlots.Count != 0)
+                if (request.CatechistInSlots.Count > 0)
                 {
+                    var storedSlotCatechists = slot.CatechistInSlots?.ToList() ?? new List<CatechistInSlot>();
+
                     _unitOfWork.GetRepository<CatechistInSlot>().DeleteRangeAsync(slot.CatechistInSlots);
+
                     slot.CatechistInSlots = request.CatechistInSlots
-                        .Select(cate => new CatechistInSlot
+                        .Select(cate =>
                         {
-                            SlotId = slot.Id,
-                            CatechistId = cate.CatechistId,
-                            Type = cate.IsMain
+                            var storedCate = storedSlotCatechists
+                                .FirstOrDefault(stored => stored.CatechistId == cate.CatechistId);
+
+                            var type = storedCate?.Type ?? (cate.IsMain
                                 ? CatechistInSlotType.Main.ToString()
-                                : CatechistInSlotType.Assistant.ToString(),
+                                : CatechistInSlotType.Assistant.ToString());
+
+                            return new CatechistInSlot
+                            {
+                                SlotId = slot.Id,
+                                CatechistId = cate.CatechistId,
+                                Type = type,
+                            };
                         })
-                    .ToList();
+                        .ToList();
                 }
 
-                if(request.IsDeletedRoom.HasValue && request.IsDeletedRoom == true)
+
+                if (request.IsDeletedRoom.HasValue && request.IsDeletedRoom == true)
                 {
                     slot.RoomId = null;
                 }
