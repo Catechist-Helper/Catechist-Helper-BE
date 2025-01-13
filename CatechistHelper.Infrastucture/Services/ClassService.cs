@@ -323,6 +323,34 @@ namespace CatechistHelper.Infrastructure.Services
 
                 Validator.EnsureNonNull(pastoralYear);
 
+                var endDateCompare = await _unitOfWork.GetRepository<SystemConfiguration>()
+                    .SingleOrDefaultAsync(predicate: y => y.Key.Equals("enddate"));
+
+                Validator.EnsureNonNull(endDateCompare);
+
+                // Lấy năm từ pastoralYear.name
+                var yearRange = pastoralYear.Name?.Split('-');
+                Validator.EnsureNonNull(yearRange[1]);
+
+                var endYear = int.Parse(yearRange[1]);
+
+                // Lấy ngày tháng từ endDate
+                var endDateParts = endDateCompare.Value.Split('/');
+                Validator.EnsureNonNull(endDateParts);
+
+                var day = int.Parse(endDateParts[0]);
+                var month = int.Parse(endDateParts[1]);
+
+                // Tạo đối tượng DateTime từ ngày, tháng, năm
+                var combinedDate = new DateTime(endYear, month, day);
+
+                // Kiểm tra ngày hiện tại có nhỏ hơn hoặc bằng ngày này không
+                if (DateTime.Today >= combinedDate.Date)
+                {
+                    return Fail<bool>($"Đã vượt quá ngày cuối cùng của các tiết học giáo lý vào ngày {combinedDate.ToString("dd/MM/yyyy")}");
+                }
+
+
                 if (pastoralYear.PastoralYearStatus == PastoralYearStatus.Finished)
                 {
                     return Fail<bool>("Năm học này đã kết thúc, không thể thêm mới");
@@ -341,7 +369,8 @@ namespace CatechistHelper.Infrastructure.Services
                     StartDate = startDate,
                     EndDate = endDate,
                     Name = request.Name,
-                    NumberOfCatechist = request.NumberOfCatechist
+                    NumberOfCatechist = request.NumberOfCatechist,
+                    Note = request.Note != null ? request.Note : "",
                 };
 
                 await _timetableService.CreateClass(classDto, grade.Id, pastoralYear.Id);
