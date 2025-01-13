@@ -1071,8 +1071,7 @@ cho ứng viên <strong>" + candidateName + @"</strong> ứng tuyển làm giáo
                       Thân gửi " + fullname + @"
                     </h1>
                     <p style=""margin: 0px; text-align: left; line-height: 20px"">
-                      Hiện tại giáo xứ phân công bạn để dạy thay cho tiết học giáo lý với thông tin sau:
-                    Thông tin cụ thể như sau:
+                      Hiện tại giáo xứ phân công bạn để dạy thay cho tiết học giáo lý với thông tin cụ thể như sau:
                     </p>
                     <ul>
                       <li style=""margin-bottom: 5px"">
@@ -1088,7 +1087,7 @@ cho ứng viên <strong>" + candidateName + @"</strong> ứng tuyển làm giáo
                         margin: 13px 0px;
                       ""
                     >
-                      Kính mong bạn có tham gia giảng dạy thay cho tiết học giáo lý trên!
+                      Kính mong bạn có thể thu xếp tham gia giảng dạy thay cho tiết học giáo lý trên!
                     </p>
                     <p style=""margin: 0; padding: 0"">Trân trọng,</p>
                     <p style=""margin: 0; padding: 0; margin-top: 2px"">

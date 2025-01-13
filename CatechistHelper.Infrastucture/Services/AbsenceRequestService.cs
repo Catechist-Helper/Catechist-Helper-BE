@@ -189,6 +189,51 @@ namespace CatechistHelper.Infrastructure.Services
                     return Fail<bool>(MessageConstant.AbsentRequest.Fail.Update);
                 }
 
+                var cateInfo = await _unitOfWork.GetRepository<Catechist>()
+                    .SingleOrDefaultAsync(
+                    predicate: s => s.Id == assignCatechistRequest.ReplacementCatechistId
+                    );
+
+                if (cateInfo != null)
+                {
+                    var accountInfo = await _unitOfWork.GetRepository<Account>()
+                        .SingleOrDefaultAsync(
+                        predicate: s => s.Id == cateInfo.AccountId
+                        );
+
+                    if (accountInfo != null)
+                    {
+                        var classOfSlot = await _unitOfWork.GetRepository<Class>()
+                            .SingleOrDefaultAsync(
+                            predicate: s => s.Id == slot.ClassId
+                            );
+
+
+                        string calssInfo = "";
+                        if (classOfSlot != null)
+                        {
+                            calssInfo += "Lớp: " + classOfSlot.Name;
+                        }
+
+                        if (slot.RoomId != null)
+                        {
+                            var roomOfSlot = await _unitOfWork.GetRepository<Room>()
+                .               SingleOrDefaultAsync(
+                                predicate: s => s.Id == slot.RoomId
+                                );
+                            if (roomOfSlot != null)
+                            {
+                                calssInfo += " - Phòng: " + roomOfSlot.Name;
+                            }
+                        }
+
+                        MailUtil.SendEmail(accountInfo.Email, ContentMailUtil.Title_AnnouneReplacedCatechist,
+                            ContentMailUtil.AnnouneReplacedCatechis(cateInfo.FullName,
+                            $"{slot.Date.ToString("dd/MM/yyyy")}, {slot.StartTime.ToString("HH:mm")} - {slot.EndTime.ToString("HH:mm")}",
+                            calssInfo), "");
+                    }
+                }
+
                 return Success(true);
             }
             catch (Exception ex)
