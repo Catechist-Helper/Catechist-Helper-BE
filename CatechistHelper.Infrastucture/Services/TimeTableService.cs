@@ -134,6 +134,7 @@ namespace CatechistHelper.Infrastructure.Services
                 NumberOfCatechist = classDto.NumberOfCatechist,
                 GradeId = gradeId,
                 PastoralYearId = pastoralYearId,
+                Note = classDto.Note
             };
 
             var slots = await CreateSlots(classEntity);
@@ -156,7 +157,7 @@ namespace CatechistHelper.Infrastructure.Services
 
             while (currentDate <= classDto.EndDate)
             {
-                if (!holidayDates.Contains(currentDate))
+                if (!holidayDates.Contains(currentDate) && currentDate.Date > DateTime.Now.Date)
                 {
                     var slot = new Slot
                     {
