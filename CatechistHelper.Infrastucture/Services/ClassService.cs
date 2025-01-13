@@ -361,6 +361,16 @@ namespace CatechistHelper.Infrastructure.Services
         {
             try
             {
+                var pastoralYear = await _unitOfWork.GetRepository<PastoralYear>()
+                    .SingleOrDefaultAsync(predicate: y => y.Id == request.PastoralYearId);
+
+                Validator.EnsureNonNull(pastoralYear);
+
+                if (pastoralYear.PastoralYearStatus == PastoralYearStatus.Finished)
+                {
+                    return Fail<bool>("Năm học này đã kết thúc, không thể cập nhật");
+                }
+
                 var classEntity = await _unitOfWork.GetRepository<Class>().SingleOrDefaultAsync(predicate: c => c.Id == id);
 
                 request.Adapt(classEntity);
